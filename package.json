@@ -1,0 +1,38 @@
+{
+  "name": "markdown-mermaid",
+  "displayName": "Markdown Preview Mermaid Support",
+  "description": "",
+  "version": "0.0.1",
+  "publisher": "bierner",
+  "license": "MIT",
+  "repository": {
+    "url": "https://github.com/mjbvz/vscode-markdown-mermaid.git"
+  },
+  "bugs": {
+    "url": "https://github.com/mjbvz/vscode-markdown-mermaid/issues"
+  },
+  "engines": {
+    "vscode": "^1.8.0"
+  },
+  "activationEvents": [],
+  "main": "./index.js",
+  "categories": [
+    "Other"
+  ],
+  "contributes": {
+    "markdown.preview": {
+      "styles": [
+        "./node_modules/mermaid/dist/mermaid.css"
+      ],
+      "scripts": [
+        "./node_modules/mermaid/dist/mermaid.js",
+        "./oceanaut.js"
+      ]
+    },
+    "markdownit.plugins": true
+  },
+  "dependencies": {
+    "github-markdown-css": "^2.4.1",
+    "highlight.js": "^9.10.0"
+  }
+}
