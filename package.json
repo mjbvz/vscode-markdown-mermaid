@@ -32,6 +32,6 @@
     "markdownit.plugins": true
   },
   "dependencies": {
-    "highlight.js": "^9.10.0"
+    "mermaid": "^7.0.0"
   }
 }
