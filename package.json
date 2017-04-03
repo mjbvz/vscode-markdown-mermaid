@@ -25,7 +25,7 @@
         "./node_modules/mermaid/dist/mermaid.css"
       ],
       "scripts": [
-        "./node_modules/mermaid/dist/mermaid.js",
+        "./node_modules/mermaid/dist/mermaid.min.js",
         "./oceanaut.js"
       ]
     },
