@@ -1,1 +1,3 @@
-mermaid.initialize({startOnLoad:true});
+setTimeout(() => {
+    mermaid.initialize({ startOnLoad: true })
+}, 0)

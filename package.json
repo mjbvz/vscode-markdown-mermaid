@@ -12,7 +12,7 @@
     "url": "https://github.com/mjbvz/vscode-markdown-mermaid/issues"
   },
   "engines": {
-    "vscode": "^1.8.0"
+    "vscode": "^1.15.0"
   },
   "activationEvents": [],
   "main": "./index.js",
@@ -20,16 +20,14 @@
     "Other"
   ],
   "contributes": {
-    "markdown.preview": {
-      "styles": [
-        "./node_modules/mermaid/dist/mermaid.css"
-      ],
-      "scripts": [
-        "./node_modules/mermaid/dist/mermaid.min.js",
-        "./oceanaut.js"
-      ]
-    },
-    "markdownit.plugins": true
+    "markdown.previewStyles": [
+      "./node_modules/mermaid/dist/mermaid.css"
+    ],
+    "markdown.previewScripts": [
+      "./node_modules/mermaid/dist/mermaid.min.js",
+      "./oceanaut.js"
+    ],
+    "markdown.markdownItPlugins": true
   },
   "dependencies": {
     "mermaid": "^7.0.0"

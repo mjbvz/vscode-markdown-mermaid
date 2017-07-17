@@ -8,10 +8,7 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": ["--extensionDevelopmentPath=${workspaceRoot}" ],
-            "stopOnEntry": false,
-            "sourceMaps": true,
-            "outDir": "${workspaceRoot}",
-            "preLaunchTask": "npm"
+            "stopOnEntry": false
         }
     ]
 }
