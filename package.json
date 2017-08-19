@@ -28,7 +28,7 @@
   ],
   "contributes": {
     "markdown.previewStyles": [
-      "./node_modules/mermaid/dist/mermaid.dark.css"
+      "./mermaid-markdown.css"
     ],
     "markdown.previewScripts": [
       "./node_modules/mermaid/dist/mermaid.min.js",
@@ -37,7 +37,8 @@
     "markdown.markdownItPlugins": true
   },
   "dependencies": {
-    "mermaid": "^7.0.4"
+    "mermaid": "^7.0.4",
+    "node-sass": "^4.5.3"
   },
   "devDependencies": {
     "babel-core": "^6.25.0",
@@ -52,6 +53,7 @@
   },
   "scripts": {
     "prepublish": "npm run build",
-    "build": "webpack"
+    "build": "webpack",
+    "generate-css": "node build/create-css.js"
   }
 }
