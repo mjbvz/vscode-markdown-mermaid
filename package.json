@@ -9,7 +9,7 @@
     "flowchart",
     "diagram"
   ],
-  "version": "0.0.2",
+  "version": "0.0.3",
   "publisher": "bierner",
   "license": "MIT",
   "repository": {
@@ -37,10 +37,10 @@
     "markdown.markdownItPlugins": true
   },
   "dependencies": {
-    "mermaid": "^7.0.4",
-    "node-sass": "^4.5.3"
+    "mermaid": "^7.0.4"
   },
   "devDependencies": {
+    "node-sass": "^4.5.3",    
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
