@@ -1,8 +1,15 @@
 {
   "name": "markdown-mermaid",
   "displayName": "Markdown Preview Mermaid Support",
-  "description": "",
-  "version": "0.0.1",
+  "description": "Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview",
+  "icon": "resources/logo.png",
+  "keywords": [
+    "mermaid",
+    "markdown",
+    "flowchart",
+    "diagram"
+  ],
+  "version": "0.0.2",
   "publisher": "bierner",
   "license": "MIT",
   "repository": {
@@ -21,15 +28,30 @@
   ],
   "contributes": {
     "markdown.previewStyles": [
-      "./node_modules/mermaid/dist/mermaid.css"
+      "./node_modules/mermaid/dist/mermaid.dark.css"
     ],
     "markdown.previewScripts": [
       "./node_modules/mermaid/dist/mermaid.min.js",
-      "./oceanaut.js"
+      "./page.js"
     ],
     "markdown.markdownItPlugins": true
   },
   "dependencies": {
-    "mermaid": "^7.0.0"
+    "mermaid": "^7.0.4"
+  },
+  "devDependencies": {
+    "babel-core": "^6.25.0",
+    "babel-loader": "^7.1.1",
+    "babel-plugin-transform-remove-strict-mode": "^0.0.2",
+    "css-loader": "^0.28.4",
+    "extract-text-webpack-plugin": "^3.0.0",
+    "standard": "^10.0.3",
+    "style-loader": "^0.18.2",
+    "webpack": "^3.5.3",
+    "webpack-encoding-plugin": "^0.2.1"
+  },
+  "scripts": {
+    "prepublish": "npm run build",
+    "build": "webpack"
   }
 }

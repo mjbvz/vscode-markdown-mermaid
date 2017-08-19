@@ -1,6 +1,5 @@
 "use strict"
 
-
 module.exports.activate = () => {
     return {
         extendMarkdownIt(md) {
