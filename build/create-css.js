@@ -17,7 +17,7 @@ function buildMermaidCss(light, dark) {
 
 ${light}
 
-.vscode-dark {
+.vscode-dark, .vscode-high-contrast {
     ${dark}
 }
 `
