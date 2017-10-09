@@ -1,5 +1,9 @@
 # Change Log
 
+## 0.1.0 - October 9, 2017
+- Support pandoc language identifiers for mermaid blocks. Thanks @larsw!
+- Use webpack to bundle mermaid scripts
+
 ## 0.0.4 - August 23, 2017
 - Fix mermaid styling for high contrast themes
 
