@@ -1,7 +1,6 @@
 // From https://github.com/mermaidjs/mermaid-webpack-demo/
 
 const ExtractTextPlugin = require('extract-text-webpack-plugin')
-const EncodingPlugin = require('webpack-encoding-plugin')
 
 const config = {
   target: 'web',
@@ -42,10 +41,7 @@ const config = {
     ]
   },
   plugins: [
-    new ExtractTextPlugin('[name].bundle.css'),
-  new EncodingPlugin({
-      encoding: 'utf-8'
-    })
+    new ExtractTextPlugin('[name].bundle.css')
   ]
 }
 

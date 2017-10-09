@@ -1,4 +1,3 @@
-const mermaidScript = [].filter.call(
-    document.getElementsByTagName('script'), x => x.getAttribute('src').endsWith('mermaid.min.js'))[0]
+const mermaid = require('mermaid');
 
-mermaidScript.onload = () => mermaid.initialize({ startOnLoad: true });
+mermaid.initialize({ startOnLoad: true });

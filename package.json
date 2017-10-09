@@ -31,16 +31,14 @@
       "./mermaid-markdown.css"
     ],
     "markdown.previewScripts": [
-      "./node_modules/mermaid/dist/mermaid.min.js",
-      "./page.js"
+      "./page.bundle.js"
     ],
     "markdown.markdownItPlugins": true
   },
-  "dependencies": {
-    "mermaid": "^7.0.4"
-  },
+  "dependencies": {},
   "devDependencies": {
-    "node-sass": "^4.5.3",    
+    "mermaid": "^7.0.4",
+    "node-sass": "^4.5.3",
     "babel-core": "^6.25.0",
     "babel-loader": "^7.1.1",
     "babel-plugin-transform-remove-strict-mode": "^0.0.2",
@@ -48,8 +46,7 @@
     "extract-text-webpack-plugin": "^3.0.0",
     "standard": "^10.0.3",
     "style-loader": "^0.18.2",
-    "webpack": "^3.5.3",
-    "webpack-encoding-plugin": "^0.2.1"
+    "webpack": "^3.5.3"
   },
   "scripts": {
     "prepublish": "npm run build",
