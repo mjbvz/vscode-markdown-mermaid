@@ -1,3 +1,7 @@
 const mermaid = require('mermaid');
 
-mermaid.initialize({ startOnLoad: true });
+const body =  document.body;
+
+mermaid.initialize({
+    startOnLoad: true
+});

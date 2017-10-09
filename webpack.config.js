@@ -22,13 +22,9 @@ const config = {
       },
       {
         test: /\.js$/,
+        exclude: /node_modules/,
         use: {
-          loader: 'babel-loader',
-          options: {
-            plugins: [
-              'transform-remove-strict-mode' // in order to make mermaid work
-            ]
-          }
+          loader: 'babel-loader'
         }
       },
       {
