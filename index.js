@@ -5,7 +5,7 @@ module.exports.activate = () => {
         extendMarkdownIt(md) {
             const highlight = md.options.highlight;
             md.options.highlight = (code, lang) => {
-                if (lang && lang.toLowerCase() === 'mermaid') {
+                if (lang && (lang.toLowerCase() === 'mermaid' || lang.toLowerCase() === '{.mermaid')) {
                     return `<div class="mermaid">${code}</div>`;
                 }
                 return highlight(code, lang);
