@@ -1,5 +1,8 @@
 # Change Log
 
+## 0.1.1 - November 3, 2017
+- Multi-root ready
+
 ## 0.1.0 - October 9, 2017
 - Support pandoc language identifiers for mermaid blocks. Thanks @larsw!
 - Use webpack to bundle mermaid scripts
