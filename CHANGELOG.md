@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.0.0 - May 16, 2018
+- Pick up Mermaid 8.0
+
 ## 0.1.1 - November 3, 2017
 - Multi-root ready
 
