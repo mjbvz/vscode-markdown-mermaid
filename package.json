@@ -42,9 +42,8 @@
     "babel-loader": "^7.1.4",
     "css-loader": "^0.28.11",
     "extract-text-webpack-plugin": "^3.0.2",
-    "mermaid": "7.0.x",
+    "mermaid": "8.0.0-rc.8",
     "mini-css-extract-plugin": "^0.4.0",
-    "node-sass": "^4.5.3",
     "standard": "^11.0.1",
     "style-loader": "^0.21.0",
     "webpack": "^4.8.3",
@@ -52,7 +51,6 @@
   },
   "scripts": {
     "prepublish": "npm run build",
-    "build": "webpack-cli",
-    "generate-css": "node build/create-css.js"
+    "build": "webpack-cli"
   }
 }

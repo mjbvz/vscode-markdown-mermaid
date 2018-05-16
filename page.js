@@ -1,7 +1,8 @@
 const mermaid = require('mermaid');
 
-const body = document.body;
-
 mermaid.initialize({
-    startOnLoad: true
+    startOnLoad: true,
+    theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+        ? 'dark'
+        : 'default'
 });
