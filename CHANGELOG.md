@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.1.2 - January 3, 2019
+- Remove dummy menu item
+
 ## 1.1.1 - January 3, 2019
 - Remove dummy command
 
