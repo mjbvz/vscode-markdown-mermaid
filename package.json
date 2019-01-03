@@ -63,6 +63,6 @@
   },
   "scripts": {
     "prepublish": "npm run build",
-    "build": "webpack-cli"
+    "build": "webpack-cli --mode=production"
   }
 }
