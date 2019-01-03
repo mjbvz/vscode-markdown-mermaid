@@ -28,12 +28,6 @@
     "Other"
   ],
   "contributes": {
-    "commands": [
-      {
-        "command": "extension.my_command",
-        "title": "fsdaf"
-      }
-    ],
     "menus": {
       "editor/title": [
         {
