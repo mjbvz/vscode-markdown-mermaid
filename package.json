@@ -29,7 +29,10 @@
   ],
   "contributes": {
     "commands": [
-      {"command": "extension.my_command", "title": "fsdaf"}
+      {
+        "command": "extension.my_command",
+        "title": "fsdaf"
+      }
     ],
     "menus": {
       "editor/title": [
@@ -37,7 +40,6 @@
           "command": "extension.my_command",
           "when": "!markdownPreviewFocus",
           "group": "navigation"
-      
         }
       ]
     },
@@ -52,7 +54,7 @@
     "babel-loader": "^7.1.4",
     "css-loader": "^0.28.11",
     "extract-text-webpack-plugin": "^3.0.2",
-    "mermaid": "8.0.0-rc.8",
+    "mermaid": "8.0.0",
     "mini-css-extract-plugin": "^0.4.0",
     "standard": "^11.0.1",
     "style-loader": "^0.21.0",
