@@ -1,5 +1,11 @@
 # Change Log
 
+## 1.1.1 - January 3, 2019
+- Remove dummy command
+
+## 1.1.0 - January 2, 2019
+- Pick up mermaid 8.0.0.
+
 ## 1.0.0 - May 16, 2018
 - Pick up Mermaid 8.0
 
