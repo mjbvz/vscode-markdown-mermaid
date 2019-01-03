@@ -28,15 +28,6 @@
     "Other"
   ],
   "contributes": {
-    "menus": {
-      "editor/title": [
-        {
-          "command": "extension.my_command",
-          "when": "!markdownPreviewFocus",
-          "group": "navigation"
-        }
-      ]
-    },
     "markdown.previewScripts": [
       "./page.bundle.js"
     ],
