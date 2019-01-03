@@ -28,9 +28,19 @@
     "Other"
   ],
   "contributes": {
-    "markdown.previewStyles": [
-      "./mermaid-markdown.css"
+    "commands": [
+      {"command": "extension.my_command", "title": "fsdaf"}
     ],
+    "menus": {
+      "editor/title": [
+        {
+          "command": "extension.my_command",
+          "when": "!markdownPreviewFocus",
+          "group": "navigation"
+      
+        }
+      ]
+    },
     "markdown.previewScripts": [
       "./page.bundle.js"
     ],
