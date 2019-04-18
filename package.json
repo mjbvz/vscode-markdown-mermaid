@@ -4,6 +4,7 @@
   "displayName": "Markdown Preview Mermaid Support",
   "description": "Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview",
   "icon": "resources/logo.png",
+  "extensionKind": "ui",
   "keywords": [
     "mermaid",
     "markdown",
