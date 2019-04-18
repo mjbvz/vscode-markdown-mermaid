@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.1.3 - April 18, 2019
+- Set explicit `extensionKind` for VS Code compatability.
+
 ## 1.1.2 - January 3, 2019
 - Remove dummy menu item
 
