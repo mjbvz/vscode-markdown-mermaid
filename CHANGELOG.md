@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.2.0 - August 27, 2019
+- Update to latest mermaid version. Thanks @jnnnnn!
+
 ## 1.1.4 - April 26, 2019
 - Remove `extensionKind` as this is no longer required.
 
