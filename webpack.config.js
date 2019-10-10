@@ -1,6 +1,7 @@
 // From https://github.com/mermaidjs/mermaid-webpack-demo/
 
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
+const TerserPlugin = require('terser-webpack-plugin');
 
 const config = {
   target: 'web',
@@ -43,7 +44,11 @@ const config = {
       filename: "[name].css",
       chunkFilename: "[id].css"
     })
-  ]
+  ],
+  optimization: {
+    minimize: true,
+    minimizer: [new TerserPlugin()],
+  },
 }
 
 module.exports = [config]
