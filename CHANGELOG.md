@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.4.0 - October 28, 2019
+- Update to mermaid 8.4.0. Thanks @MrBramme!
+
 ## 1.3.0 - October 8, 2019
 - Update to mermaid 8.3.1.
 - Minify webpacked output.
