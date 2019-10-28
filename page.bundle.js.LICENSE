@@ -1,22 +1,38 @@
-/*!*******************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./src/themes/dark/index.scss ***!
-  \*******************************************************************************************************************/
+/*!
+ * The buffer module from node.js, for the browser.
+ *
+ * @author   Feross Aboukhadijeh <feross@feross.org> <http://feross.org>
+ * @license  MIT
+ */
+
+/**
+ * @license
+ * Lodash <https://lodash.com/>
+ * Copyright OpenJS Foundation and other contributors <https://openjsf.org/>
+ * Released under MIT license <https://lodash.com/license>
+ * Based on Underscore.js 1.8.3 <http://underscorejs.org/LICENSE>
+ * Copyright Jeremy Ashkenas, DocumentCloud and Investigative Reporters & Editors
+ */
+
+/*!*****************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss ***!
+  \*****************************************************************************************************************/
 
 /*! no static exports found */
 
 /*! ../../../node_modules/css-loader/dist/runtime/api.js */
 
-/*!**********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./src/themes/default/index.scss ***!
-  \**********************************************************************************************************************/
+/*!********************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss ***!
+  \********************************************************************************************************************/
 
-/*!*********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./src/themes/forest/index.scss ***!
-  \*********************************************************************************************************************/
+/*!*******************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss ***!
+  \*******************************************************************************************************************/
 
-/*!**********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/lib/loader.js!./src/themes/neutral/index.scss ***!
-  \**********************************************************************************************************************/
+/*!********************************************************************************************************************!*\
+  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss ***!
+  \********************************************************************************************************************/
 
 /*!*****************************************************!*\
   !*** ./node_modules/css-loader/dist/runtime/api.js ***!
@@ -50,13 +66,13 @@
   !*** ./src/config.js ***!
   \***********************/
 
-/*! exports provided: setConfig, getConfig */
+/*! exports provided: setConfig, getConfig, default */
 
 /*!***************************************!*\
   !*** ./src/diagrams/class/classDb.js ***!
   \***************************************/
 
-/*! exports provided: addClass, clear, getClass, getClasses, getRelations, addRelation, addMember, addMembers, cleanupLabel, lineType, relationType, default */
+/*! exports provided: addClass, clear, getClass, getClasses, getRelations, addRelation, addAnnotation, addMember, addMembers, cleanupLabel, lineType, relationType, default */
 
 /*! ../../logger */
 
@@ -74,6 +90,8 @@
 
 /*! ./classDb */
 
+/*! ../../utils */
+
 /*! ./parser/classDiagram */
 
 /*!******************************************************!*\
@@ -88,6 +106,14 @@
 
 /*! ./../../../../node_modules/webpack/buildin/module.js */
 
+/*!***************************************************!*\
+  !*** ./src/diagrams/flowchart/flowChartShapes.js ***!
+  \***************************************************/
+
+/*! exports provided: addToRender, default */
+
+/*! dagre-d3-renderer */
+
 /*!******************************************!*\
   !*** ./src/diagrams/flowchart/flowDb.js ***!
   \******************************************/
@@ -95,8 +121,6 @@
 /*! exports provided: addVertex, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
 
 /*! @braintree/sanitize-url */
-
-/*! ../../utils */
 
 /*! ../../config */
 
@@ -110,9 +134,9 @@
 
 /*! ./parser/flow */
 
-/*! dagre-d3-renderer */
-
 /*! dagre-d3-renderer/lib/label/add-html-label.js */
+
+/*! ./flowChartShapes */
 
 /*!**************************************************!*\
   !*** ./src/diagrams/flowchart/parser/flow.jison ***!
@@ -145,6 +169,8 @@
 /*! exports provided: setDirection, setOptions, getOptions, commit, branch, merge, checkout, reset, prettyPrint, clear, getBranchesAsObjArray, getBranches, getCommits, getCommitsArray, getCurrentBranch, getDirection, getHead, default */
 
 /*! lodash */
+
+/*! crypto-random-string */
 
 /*!**********************************************!*\
   !*** ./src/diagrams/git/gitGraphRenderer.js ***!
@@ -222,6 +248,42 @@
 
 /*! exports provided: drawRect, drawText, drawLabel, drawActor, anchorElement, drawActivation, drawLoop, drawBackgroundRect, insertArrowHead, insertSequenceNumber, insertArrowCrossHead, getTextObj, getNoteRect, default */
 
+/*!****************************************!*\
+  !*** ./src/diagrams/state/id-cache.js ***!
+  \****************************************/
+
+/*! exports provided: set, get, keys, size, default */
+
+/*!******************************************************!*\
+  !*** ./src/diagrams/state/parser/stateDiagram.jison ***!
+  \******************************************************/
+
+/*!**************************************!*\
+  !*** ./src/diagrams/state/shapes.js ***!
+  \**************************************/
+
+/*! exports provided: drawStartState, drawDivider, drawSimpleState, drawDescrState, addIdAndBox, drawText, drawNote, drawState, drawEdge */
+
+/*! ./id-cache.js */
+
+/*! ./stateDb */
+
+/*!***************************************!*\
+  !*** ./src/diagrams/state/stateDb.js ***!
+  \***************************************/
+
+/*! exports provided: addState, clear, getState, getStates, logDocuments, getRelations, addRelation, cleanupLabel, lineType, relationType, default */
+
+/*!*********************************************!*\
+  !*** ./src/diagrams/state/stateRenderer.js ***!
+  \*********************************************/
+
+/*! ./parser/stateDiagram */
+
+/*! ./id-cache */
+
+/*! ./shapes */
+
 /*!***********************!*\
   !*** ./src/logger.js ***!
   \***********************/
@@ -284,6 +346,12 @@
 
 /*! ./diagrams/class/classDb */
 
+/*! ./diagrams/state/stateRenderer */
+
+/*! ./diagrams/state/parser/stateDiagram */
+
+/*! ./diagrams/state/stateDb */
+
 /*! ./diagrams/git/gitGraphRenderer */
 
 /*! ./diagrams/git/parser/gitGraph */
@@ -310,7 +378,7 @@
   !*** ./src/themes/dark/index.scss ***!
   \************************************/
 
-/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/lib/loader.js!./index.scss */
+/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */
 
 /*!***************************************!*\
   !*** ./src/themes/default/index.scss ***!
@@ -333,6 +401,10 @@
 /*!******************************************!*\
   !*** external "@braintree/sanitize-url" ***!
   \******************************************/
+
+/*!***************************************!*\
+  !*** external "crypto-random-string" ***!
+  \***************************************/
 
 /*!*********************!*\
   !*** external "d3" ***!
