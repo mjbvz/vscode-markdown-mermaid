@@ -23,23 +23,19 @@ graph TD;
 
 ## Mermaid
 
-Currently supporting Mermaid version 8.4.0.
+Currently supports Mermaid version 8.4.0.
 
 ## Add custom CSS support
 
-You can use the built-in functionality to add custom CSS.
+You can use the built-in functionality to add custom CSS. More info can be found in the [markdown.styles documentation](https://code.visualstudio.com/Docs/languages/markdown#_using-your-own-css)
 
-For example: **Font Awesome**  
-To use Font Awesome, you can simply add it to your visual studio code settings for markdown. You can add it for the current workspace only, or globally.
-- Open the command pallette
-- Type `settings`
-- Select either the user or workspace settings
-- Search for the markdown section, and within this section go to `styles`
-- Press `Add item`
-- Insert `https://use.fontawesome.com/releases/v5.7.1/css/all.css`
-- Press `Ok`
-- All done. Give it a try
-
+For example, add Font Awesome like this:
+```
+"markdown.styles": [
+    "https://use.fontawesome.com/releases/v5.7.1/css/all.css"
+]
+```
+Use it like this:
 ~~~markdown
 ```mermaid
 graph LR
