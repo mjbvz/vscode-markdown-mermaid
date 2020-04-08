@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.4.3 - April 8, 2020
+
+- Upgate to mermaid 8.4.8.
+
 ## 1.4.2 - February 6, 2020
 
 - Upgate to mermaid 8.4.6.
