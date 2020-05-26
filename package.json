@@ -38,7 +38,7 @@
     "@babel/core": "^7.4.0",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.1",
-    "mermaid": "^8.4.8",
+    "mermaid": "^8.5.1",
     "mini-css-extract-plugin": "^0.5.0",
     "style-loader": "^0.23.0",
     "terser-webpack-plugin": "^2.3.4",
