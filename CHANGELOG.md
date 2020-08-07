@@ -1,12 +1,16 @@
 # Change Log
 
+## 1.6.0 - August 7, 2020
+
+- Update to mermaid 8.6.4.
+
 ## 1.5.1 - May 26, 2020
 
-- Upgate to mermaid 8.5.1.
+- Update to mermaid 8.5.1.
 
 ## 1.4.2 - February 6, 2020
 
-- Upgate to mermaid 8.4.6.
+- Update to mermaid 8.4.6.
 
 ## 1.4.1 - November 8, 2019
 - Fix mermaid class annotations.
