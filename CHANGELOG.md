@@ -3,6 +3,9 @@
 ## 1.7.0 - August 12, 2020
 
 - Update to mermaid 8.7.0
+- Resolve [advisory-1548](https://npmjs.com/advisories/1548)
+  - Update webpack to 4.44.1
+  - Update terser-webpack-plugin to 2.3.8
 
 ## 1.6.0 - August 7, 2020
 
