@@ -23,7 +23,7 @@ graph TD;
 
 ## Mermaid
 
-Currently supports Mermaid version 8.6.4.
+Currently supports Mermaid version 8.7.0.
 
 ## Add custom CSS support
 

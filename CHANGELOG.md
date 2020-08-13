@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.7.0 - August 12, 2020
+
+- Update to mermaid 8.7.0
+
 ## 1.6.0 - August 7, 2020
 
 - Update to mermaid 8.6.4.
