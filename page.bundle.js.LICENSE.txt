@@ -1,27 +1,17 @@
+/*
+ *          __        ___
+ *    _____/ /___  __/ (_)____
+ *   / ___/ __/ / / / / / ___/
+ *  (__  ) /_/ /_/ / / (__  )
+ * /____/\__/\__, /_/_/____/
+ *          /____/
+ *
+ * light - weight css preprocessor @licence MIT
+ */
+
 /*!
    * Wait for document loaded before starting the execution
    */
-
-/*!
- * Escaper v2.5.3
- * https://github.com/kobezzza/Escaper
- *
- * Released under the MIT license
- * https://github.com/kobezzza/Escaper/blob/master/LICENSE
- *
- * Date: Tue, 23 Jan 2018 15:58:45 GMT
- */
-
-/*!
- * The buffer module from node.js, for the browser.
- *
- * @author   Feross Aboukhadijeh <http://feross.org>
- * @license  MIT
- */
-
-/*! !../../../node_modules/css-loader/dist/cjs.js!../../../node_modules/sass-loader/dist/cjs.js!./index.scss */
-
-/*! ../../../node_modules/css-loader/dist/runtime/api.js */
 
 /*! ../../config */
 
@@ -61,11 +51,17 @@
 
 /*! ./createLabel */
 
+/*! ./defaultConfig */
+
 /*! ./diagrams/class/classDb */
 
 /*! ./diagrams/class/classRenderer */
 
+/*! ./diagrams/class/classRenderer-v2 */
+
 /*! ./diagrams/class/parser/classDiagram */
+
+/*! ./diagrams/class/styles */
 
 /*! ./diagrams/common/common */
 
@@ -75,6 +71,8 @@
 
 /*! ./diagrams/er/parser/erDiagram */
 
+/*! ./diagrams/er/styles */
+
 /*! ./diagrams/flowchart/flowDb */
 
 /*! ./diagrams/flowchart/flowRenderer */
@@ -83,11 +81,15 @@
 
 /*! ./diagrams/flowchart/parser/flow */
 
+/*! ./diagrams/flowchart/styles */
+
 /*! ./diagrams/gantt/ganttDb */
 
 /*! ./diagrams/gantt/ganttRenderer */
 
 /*! ./diagrams/gantt/parser/gantt */
+
+/*! ./diagrams/gantt/styles */
 
 /*! ./diagrams/git/gitGraphAst */
 
@@ -95,11 +97,15 @@
 
 /*! ./diagrams/git/parser/gitGraph */
 
+/*! ./diagrams/git/styles */
+
 /*! ./diagrams/info/infoDb */
 
 /*! ./diagrams/info/infoRenderer */
 
 /*! ./diagrams/info/parser/info */
+
+/*! ./diagrams/info/styles */
 
 /*! ./diagrams/pie/parser/pie */
 
@@ -107,11 +113,15 @@
 
 /*! ./diagrams/pie/pieRenderer */
 
+/*! ./diagrams/pie/styles */
+
 /*! ./diagrams/sequence/parser/sequenceDiagram */
 
 /*! ./diagrams/sequence/sequenceDb */
 
 /*! ./diagrams/sequence/sequenceRenderer */
+
+/*! ./diagrams/sequence/styles */
 
 /*! ./diagrams/state/parser/stateDiagram */
 
@@ -121,11 +131,15 @@
 
 /*! ./diagrams/state/stateRenderer-v2 */
 
+/*! ./diagrams/state/styles */
+
 /*! ./diagrams/user-journey/journeyDb */
 
 /*! ./diagrams/user-journey/journeyRenderer */
 
 /*! ./diagrams/user-journey/parser/journey */
+
+/*! ./diagrams/user-journey/styles */
 
 /*! ./edges */
 
@@ -209,7 +223,23 @@
 
 /*! ./stateDb */
 
+/*! ./styles */
+
 /*! ./svgDraw */
+
+/*! ./theme-base */
+
+/*! ./theme-dark */
+
+/*! ./theme-default */
+
+/*! ./theme-forest */
+
+/*! ./theme-helpers */
+
+/*! ./theme-neutral */
+
+/*! ./themes */
 
 /*! ./util */
 
@@ -218,8 +248,6 @@
 /*! @braintree/sanitize-url */
 
 /*! Check if previously processed */
-
-/*! crypto-random-string */
 
 /*! d3 */
 
@@ -233,27 +261,21 @@
 
 /*! exports provided: LEVELS, logger, setLogLevel */
 
-/*! exports provided: addClass, lookUpDomId, clear, getClass, getClasses, getRelations, addRelation, addAnnotation, addMember, addMembers, cleanupLabel, setCssClass, setLink, setClickEvent, bindFunctions, lineType, relationType, default */
-
-/*! exports provided: addState, clear, getState, getStates, logDocuments, getRelations, addRelation, cleanupLabel, lineType, relationType, default */
+/*! exports provided: addClasses, addRelations, setConf, drawOld, draw, default */
 
 /*! exports provided: addToRender, addToRenderV2, default */
 
-/*! exports provided: addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
-
 /*! exports provided: bounds, drawActors, setConf, draw, default */
 
+/*! exports provided: calcThemeVariables, default */
+
 /*! exports provided: clear, insertEdgeLabel, positionEdgeLabel, intersection, insertEdge */
-
-/*! exports provided: clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
-
-/*! exports provided: clear, setTitle, getTitle, addSection, getSections, getTasks, addTask, addTaskOrg, default */
 
 /*! exports provided: clusterDb, clear, extractDecendants, validate, findNonClusterChild, adjustClustersAndEdges, extractor */
 
 /*! exports provided: default */
 
-/*! exports provided: defaultConfig, setSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, reset, default */
+/*! exports provided: defaultConfig, updateCurrentConfig, setSiteConfig, updateSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, addDirective, reset */
 
 /*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, runFunc, getStylesFromArray, generateId, random, assignWithDepth, getTextObj, drawSimpleText, wrapLabel, calculateTextHeight, calculateTextWidth, calculateTextDimensions, default */
 
@@ -267,7 +289,9 @@
 
 /*! exports provided: encodeEntities, decodeEntities, default */
 
-/*! exports provided: getRows, sanitizeText, lineBreakRegex, hasBreaks, splitBreaks, default */
+/*! exports provided: getRows, removeScript, sanitizeText, lineBreakRegex, hasBreaks, splitBreaks, default */
+
+/*! exports provided: getThemeVariables */
 
 /*! exports provided: insertCluster, getClusterTitleWidth, clear, positionCluster */
 
@@ -275,9 +299,23 @@
 
 /*! exports provided: labelHelper, updateNodeBounds, insertPolygonShape */
 
-/*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, default */
+/*! exports provided: mkBorder */
+
+/*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
 
 /*! exports provided: parseDirective, addActor, addMessage, addSignal, getMessages, getActors, getActor, getActorKeys, getTitle, getTitleWrapped, enableSequenceNumbers, showSequenceNumbers, setWrap, autoWrap, clear, parseMessage, LINETYPE, ARROWTYPE, PLACEMENT, addNote, setTitle, apply, default */
+
+/*! exports provided: parseDirective, addClass, lookUpDomId, clear, getClass, getClasses, getRelations, addRelation, addAnnotation, addMember, addMembers, cleanupLabel, setCssClass, setLink, setClickEvent, bindFunctions, lineType, relationType, default */
+
+/*! exports provided: parseDirective, addState, clear, getState, getStates, logDocuments, getRelations, addRelation, cleanupLabel, lineType, relationType, default */
+
+/*! exports provided: parseDirective, addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
+
+/*! exports provided: parseDirective, clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
+
+/*! exports provided: parseDirective, clear, setTitle, getTitle, addSection, getSections, getTasks, addTask, addTaskOrg, default */
+
+/*! exports provided: parseDirective, default */
 
 /*! exports provided: render */
 
@@ -299,15 +337,17 @@
 
 /*! graphlib */
 
+/*! khroma */
+
 /*! moment-mini */
 
 /*! no static exports found */
 
 /*! path */
 
-/*! scope-css */
-
 /*! sequence config was passed as #1 */
+
+/*! stylis */
 
 /*!*********************!*\
   !*** external "d3" ***!
@@ -329,6 +369,10 @@
   !*** ./src/logger.js ***!
   \***********************/
 
+/*!***********************!*\
+  !*** ./src/styles.js ***!
+  \***********************/
+
 /*!************************!*\
   !*** ./src/mermaid.js ***!
   \************************/
@@ -336,6 +380,14 @@
 /*!************************!*\
   !*** external "dagre" ***!
   \************************/
+
+/*!*************************!*\
+  !*** external "khroma" ***!
+  \*************************/
+
+/*!*************************!*\
+  !*** external "stylis" ***!
+  \*************************/
 
 /*!***************************!*\
   !*** ./src/mermaidAPI.js ***!
@@ -349,9 +401,13 @@
   !*** external "graphlib" ***!
   \***************************/
 
-/*!****************************!*\
-  !*** external "scope-css" ***!
-  \****************************/
+/*!*****************************!*\
+  !*** ./src/themes/index.js ***!
+  \*****************************/
+
+/*!******************************!*\
+  !*** ./src/defaultConfig.js ***!
+  \******************************/
 
 /*!******************************!*\
   !*** ./src/errorRenderer.js ***!
@@ -365,8 +421,20 @@
   !*** ./src/diagrams/er/erDb.js ***!
   \*********************************/
 
+/*!**********************************!*\
+  !*** ./src/themes/theme-base.js ***!
+  \**********************************/
+
+/*!**********************************!*\
+  !*** ./src/themes/theme-dark.js ***!
+  \**********************************/
+
 /*!***********************************!*\
   !*** (webpack)/buildin/module.js ***!
+  \***********************************/
+
+/*!***********************************!*\
+  !*** ./src/diagrams/er/styles.js ***!
   \***********************************/
 
 /*!***********************************!*\
@@ -386,11 +454,35 @@
   \************************************/
 
 /*!************************************!*\
-  !*** ./src/themes/dark/index.scss ***!
+  !*** ./src/diagrams/git/styles.js ***!
+  \************************************/
+
+/*!************************************!*\
+  !*** ./src/diagrams/pie/styles.js ***!
+  \************************************/
+
+/*!************************************!*\
+  !*** ./src/themes/theme-forest.js ***!
   \************************************/
 
 /*!*************************************!*\
   !*** ./src/diagrams/info/infoDb.js ***!
+  \*************************************/
+
+/*!*************************************!*\
+  !*** ./src/diagrams/info/styles.js ***!
+  \*************************************/
+
+/*!*************************************!*\
+  !*** ./src/themes/theme-default.js ***!
+  \*************************************/
+
+/*!*************************************!*\
+  !*** ./src/themes/theme-helpers.js ***!
+  \*************************************/
+
+/*!*************************************!*\
+  !*** ./src/themes/theme-neutral.js ***!
   \*************************************/
 
 /*!**************************************!*\
@@ -398,7 +490,15 @@
   \**************************************/
 
 /*!**************************************!*\
+  !*** ./src/diagrams/class/styles.js ***!
+  \**************************************/
+
+/*!**************************************!*\
   !*** ./src/diagrams/er/erMarkers.js ***!
+  \**************************************/
+
+/*!**************************************!*\
+  !*** ./src/diagrams/gantt/styles.js ***!
   \**************************************/
 
 /*!**************************************!*\
@@ -406,7 +506,7 @@
   \**************************************/
 
 /*!**************************************!*\
-  !*** ./src/themes/forest/index.scss ***!
+  !*** ./src/diagrams/state/styles.js ***!
   \**************************************/
 
 /*!***************************************!*\
@@ -437,18 +537,6 @@
   !*** ./src/diagrams/state/stateDb.js ***!
   \***************************************/
 
-/*!***************************************!*\
-  !*** ./src/themes/default/index.scss ***!
-  \***************************************/
-
-/*!***************************************!*\
-  !*** ./src/themes/neutral/index.scss ***!
-  \***************************************/
-
-/*!***************************************!*\
-  !*** external "crypto-random-string" ***!
-  \***************************************/
-
 /*!****************************************!*\
   !*** ./src/diagrams/state/id-cache.js ***!
   \****************************************/
@@ -469,6 +557,10 @@
   !*** ./src/diagrams/pie/pieRenderer.js ***!
   \*****************************************/
 
+/*!*****************************************!*\
+  !*** ./src/diagrams/sequence/styles.js ***!
+  \*****************************************/
+
 /*!******************************************!*\
   !*** ./src/dagre-wrapper/createLabel.js ***!
   \******************************************/
@@ -483,6 +575,10 @@
 
 /*!******************************************!*\
   !*** ./src/diagrams/flowchart/flowDb.js ***!
+  \******************************************/
+
+/*!******************************************!*\
+  !*** ./src/diagrams/flowchart/styles.js ***!
   \******************************************/
 
 /*!******************************************!*\
@@ -521,6 +617,10 @@
   !*** ./src/diagrams/state/stateRenderer.js ***!
   \*********************************************/
 
+/*!*********************************************!*\
+  !*** ./src/diagrams/user-journey/styles.js ***!
+  \*********************************************/
+
 /*!**********************************************!*\
   !*** ./src/dagre-wrapper/intersect/index.js ***!
   \**********************************************/
@@ -545,9 +645,9 @@
   !*** ./src/diagrams/gantt/parser/gantt.jison ***!
   \***********************************************/
 
-/*!***********************************************!*\
-  !*** ./src/themes sync ^\.\/.*\/index\.scss$ ***!
-  \***********************************************/
+/*!************************************************!*\
+  !*** ./src/diagrams/class/classRenderer-v2.js ***!
+  \************************************************/
 
 /*!************************************************!*\
   !*** ./src/diagrams/er/parser/erDiagram.jison ***!
@@ -584,10 +684,6 @@
 /*!***************************************************!*\
   !*** ./src/diagrams/sequence/sequenceRenderer.js ***!
   \***************************************************/
-
-/*!*****************************************************!*\
-  !*** ./node_modules/css-loader/dist/runtime/api.js ***!
-  \*****************************************************/
 
 /*!******************************************************!*\
   !*** ./node_modules/node-libs-browser/mock/empty.js ***!
@@ -640,22 +736,6 @@
 /*!************************************************************!*\
   !*** ./src/diagrams/sequence/parser/sequenceDiagram.jison ***!
   \************************************************************/
-
-/*!*****************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/dark/index.scss ***!
-  \*****************************************************************************************************************/
-
-/*!*******************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/forest/index.scss ***!
-  \*******************************************************************************************************************/
-
-/*!********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/default/index.scss ***!
-  \********************************************************************************************************************/
-
-/*!********************************************************************************************************************!*\
-  !*** ./node_modules/css-loader/dist/cjs.js!./node_modules/sass-loader/dist/cjs.js!./src/themes/neutral/index.scss ***!
-  \********************************************************************************************************************/
 
 /**
  * @license
