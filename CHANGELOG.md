@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.7.0 - August 12, 2020
+## 1.7.0 - August 17, 2020
 
 - Update to mermaid 8.7.0
 - Resolve [advisory-1548](https://npmjs.com/advisories/1548)
