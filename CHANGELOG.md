@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.8.0 - August 19, 2020
+
+- Support using `:::` style blocks. These are used on the Azure DevOps Wiki.
+
 ## 1.7.0 - August 17, 2020
 
 - Update to mermaid 8.7.0
