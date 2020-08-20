@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.8.1 - August 20, 2020
+
+- Fix `markdown-it-container` listed as a dev dependency instead of a regular one. 
+
 ## 1.8.0 - August 19, 2020
 
 - Support using `:::` style blocks. These are used on the Azure DevOps Wiki.
