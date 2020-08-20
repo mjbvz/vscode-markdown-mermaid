@@ -8,20 +8,19 @@ module.exports.activate = () => {
         extendMarkdownIt(md) {
             md.use(require('markdown-it-container'), pluginKeyword, {
                 anyClass: true,
-                validate: function () { return true; },
+                validate: () => true,
 
-                render: function (tokens, idx) {
-                    var token = tokens[idx];
+                render: (tokens, idx) => {
+                    const token = tokens[idx];
 
                     if (token.info.trim() == pluginKeyword) {
-                        for (let [i, value] of tokens.entries()) {
+                        for (const [i, value] of tokens.entries()) {
                             if (value.tag == 'p') {
                                 value.type = tokenTypeInline
                                 value.tag = ''
                                 value.content = ''
                                 value.children = []
-                            }
-                            else if (value != undefined && value.type == tokenTypeInline) {
+                            } else if (value != undefined && value.type == tokenTypeInline) {
                                 value.content = preProcess(value.content);
                             }
                         }
