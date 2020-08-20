@@ -8,33 +8,33 @@ module.exports.activate = () => {
         extendMarkdownIt(md) {
             md.use(require('markdown-it-container'), pluginKeyword, {
                 anyClass: true,
-                validate: function() { return true; },
-              
+                validate: function () { return true; },
+
                 render: function (tokens, idx) {
-                  var token = tokens[idx];
+                    var token = tokens[idx];
 
-                  if (token.info.trim() == pluginKeyword) {
-                    for(let [i, value] of tokens.entries()) {
-                      if (value.tag == 'p') {
-                        value.type = tokenTypeInline
-                        value.tag = ''
-                        value.content = ''
-                        value.children = []
-                      }
-                      else if (value != undefined && value.type == tokenTypeInline) {
-                        value.content = preProcess(value.content);  
-                      }
+                    if (token.info.trim() == pluginKeyword) {
+                        for (let [i, value] of tokens.entries()) {
+                            if (value.tag == 'p') {
+                                value.type = tokenTypeInline
+                                value.tag = ''
+                                value.content = ''
+                                value.children = []
+                            }
+                            else if (value != undefined && value.type == tokenTypeInline) {
+                                value.content = preProcess(value.content);
+                            }
+                        }
                     }
-                  }
 
-                  if (token.nesting === 1) {
-                    return `<div class="${pluginKeyword}">`;
-                  } else {
-                    return '</div>';
-                  }
+                    if (token.nesting === 1) {
+                        return `<div class="${pluginKeyword}">`;
+                    } else {
+                        return '</div>';
+                    }
                 }
-              });
-              
+            });
+
             const highlight = md.options.highlight;
             md.options.highlight = (code, lang) => {
                 if (lang && lang.match(/\bmermaid\b/i)) {
