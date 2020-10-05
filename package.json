@@ -37,15 +37,15 @@
     "markdown-it-container": "^3.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.0",
+    "@babel/core": "^7.11.6",
     "babel-loader": "^8.0.5",
     "css-loader": "^2.1.1",
-    "mermaid": "^8.7.0",
+    "mermaid": "^8.8.1",
     "mini-css-extract-plugin": "^0.5.0",
     "style-loader": "^0.23.0",
     "terser-webpack-plugin": "^2.3.8",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.7"
+    "webpack": "^4.44.2",
+    "webpack-cli": "^3.3.12"
   },
   "scripts": {
     "prepublish": "npm run build",
