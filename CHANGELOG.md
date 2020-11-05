@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.9.0 - Novermber 5, 2020
+
+- Update to Mermaid 8.8.2
+
 ## 1.8.1 - August 20, 2020
 
 - Fix `markdown-it-container` listed as a dev dependency instead of a regular one. 
