@@ -29,6 +29,8 @@
 
 /*! ../createLabel */
 
+/*! ../diagrams/class/svgDraw */
+
 /*! ../intersect/index.js */
 
 /*! ../logger */
@@ -271,13 +273,13 @@
 
 /*! exports provided: clear, insertEdgeLabel, positionEdgeLabel, intersection, insertEdge */
 
-/*! exports provided: clusterDb, clear, extractDecendants, validate, findNonClusterChild, adjustClustersAndEdges, extractor */
+/*! exports provided: clusterDb, clear, extractDecendants, validate, findNonClusterChild, adjustClustersAndEdges, extractor, sortNodesByHierarchy */
 
 /*! exports provided: default */
 
-/*! exports provided: defaultConfig, updateCurrentConfig, setSiteConfig, updateSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, addDirective, reset */
+/*! exports provided: defaultConfig, updateCurrentConfig, setSiteConfig, setSiteConfigDelta, updateSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, addDirective, reset */
 
-/*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, runFunc, getStylesFromArray, generateId, random, assignWithDepth, getTextObj, drawSimpleText, wrapLabel, calculateTextHeight, calculateTextWidth, calculateTextDimensions, default */
+/*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, runFunc, getStylesFromArray, generateId, random, assignWithDepth, getTextObj, drawSimpleText, wrapLabel, calculateTextHeight, calculateTextWidth, calculateTextDimensions, calculateSvgSizeAttrs, configureSvgSize, default */
 
 /*! exports provided: drawEdge, drawClass, parseMember, default */
 
@@ -309,13 +311,13 @@
 
 /*! exports provided: parseDirective, addState, clear, getState, getStates, logDocuments, getRelations, addRelation, cleanupLabel, lineType, relationType, default */
 
-/*! exports provided: parseDirective, addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
-
 /*! exports provided: parseDirective, clear, setAxisFormat, getAxisFormat, setTodayMarker, getTodayMarker, setDateFormat, enableInclusiveEndDates, endDatesAreInclusive, getDateFormat, setExcludes, getExcludes, setTitle, getTitle, addSection, getSections, getTasks, addTask, findTaskById, addTaskOrg, setLink, setClass, setClickEvent, bindFunctions, default */
 
 /*! exports provided: parseDirective, clear, setTitle, getTitle, addSection, getSections, getTasks, addTask, addTaskOrg, default */
 
 /*! exports provided: parseDirective, default */
+
+/*! exports provided: parseDirective, lookUpDomId, addVertex, addSingleLink, addLink, updateLinkInterpolate, updateLink, addClass, setDirection, setClass, setLink, getTooltip, setClickEvent, bindFunctions, getDirection, getVertices, getEdges, getClasses, clear, setGen, defaultStyle, addSubGraph, getDepthFirstPos, indexNodes, getSubGraphs, firstGraph, default */
 
 /*! exports provided: render */
 
