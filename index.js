@@ -3,6 +3,9 @@
 module.exports.activate = () => {
     const pluginKeyword = 'mermaid';
     const tokenTypeInline = 'inline';
+    const ttContainerOpen = 'container_' + pluginKeyword  + '_open';
+    const ttContainerClose = 'container_' + pluginKeyword  + '_close';
+    const empty = [];
 
     return {
         extendMarkdownIt(md) {
@@ -13,21 +16,27 @@ module.exports.activate = () => {
                 render: (tokens, idx) => {
                     const token = tokens[idx];
 
-                    if (token.info.trim() == pluginKeyword) {
-                        for (const [i, value] of tokens.entries()) {
-                            if (value.tag == 'p') {
-                                value.type = tokenTypeInline
-                                value.tag = ''
-                                value.content = ''
-                                value.children = []
-                            } else if (value != undefined && value.type == tokenTypeInline) {
-                                value.content = preProcess(value.content);
+                    var src = '';
+                    if (token.type === ttContainerOpen) {
+                        for(var i = idx + 1; i < tokens.length; i++) { 
+                            const value = tokens[i]
+                            if (value === undefined || value.type === ttContainerClose) {
+                                break;
                             }
+                            src += value.content;
+                            if (value.block && value.nesting <= 0 ) {
+                                src += '\n';
+                            }
+                            // Clear these out so markdown-it doesn't try to render them
+                            value.tag = '';
+                            value.type = tokenTypeInline;
+                            value.content = '';
+                            value.children = empty;
                         }
                     }
 
                     if (token.nesting === 1) {
-                        return `<div class="${pluginKeyword}">`;
+                        return `<div class="${pluginKeyword}">${preProcess(src)}`;
                     } else {
                         return '</div>';
                     }
