@@ -11,7 +11,9 @@ module.exports.activate = () => {
         extendMarkdownIt(md) {
             md.use(require('markdown-it-container'), pluginKeyword, {
                 anyClass: true,
-                validate: () => true,
+                validate: (info) => {
+                    return info.trim() === pluginKeyword;
+                },
 
                 render: (tokens, idx) => {
                     const token = tokens[idx];
