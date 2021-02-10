@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.9.2 - February 10, 2021
+
+- Update to Mermaid 8.9.0
+- Fixes for `:::` rendering. Thanks @chkohner!
+
 ## 1.9.1 - January 11, 2021
 
 - Update to Mermaid 8.8.4
