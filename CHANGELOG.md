@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.11.0 - February 10, 2021
+
+- Update to Mermaid 8.12.0: #114 Thanks @CoenraadS!
+- Use a transparent background for diagrams: #113. Thanks @CoenraadS!
+
 ## 1.9.2 - February 10, 2021
 
 - Update to Mermaid 8.9.0
