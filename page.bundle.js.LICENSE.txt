@@ -1,14 +1,3 @@
-/*
- *          __        ___
- *    _____/ /___  __/ (_)____
- *   / ___/ __/ / / / / / ___/
- *  (__  ) /_/ /_/ / / (__  )
- * /____/\__/\__, /_/_/____/
- *          /____/
- *
- * light - weight css preprocessor @licence MIT
- */
-
 /*!
    * Wait for document loaded before starting the execution
    */
@@ -267,6 +256,8 @@
 
 /*! @braintree/sanitize-url */
 
+/*! @license DOMPurify 2.3.1 | (c) Cure53 and other contributors | Released under the Apache license 2.0 and Mozilla Public License 2.0 | github.com/cure53/DOMPurify/blob/2.3.1/LICENSE */
+
 /*! Check if previously processed */
 
 /*! d3 */
@@ -277,7 +268,7 @@
 
 /*! dagre-d3/lib/label/add-html-label.js */
 
-/*! entity-decode/browser */
+/*! dompurify */
 
 /*! exports provided: LEVELS, log, setLogLevel */
 
@@ -293,11 +284,13 @@
 
 /*! exports provided: clusterDb, clear, extractDecendants, validate, findNonClusterChild, adjustClustersAndEdges, extractor, sortNodesByHierarchy */
 
+/*! exports provided: configKeys, default */
+
 /*! exports provided: default */
 
 /*! exports provided: defaultConfig, updateCurrentConfig, setSiteConfig, saveConfigFromInitilize, updateSiteConfig, getSiteConfig, setConfig, getConfig, sanitize, addDirective, reset */
 
-/*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, runFunc, getStylesFromArray, generateId, random, assignWithDepth, getTextObj, drawSimpleText, wrapLabel, calculateTextHeight, calculateTextWidth, calculateTextDimensions, calculateSvgSizeAttrs, configureSvgSize, initIdGeneratior, default */
+/*! exports provided: detectInit, detectDirective, detectType, isSubstringInArray, interpolateToCurve, formatUrl, runFunc, getStylesFromArray, generateId, random, assignWithDepth, getTextObj, drawSimpleText, wrapLabel, calculateTextHeight, calculateTextWidth, calculateTextDimensions, calculateSvgSizeAttrs, configureSvgSize, initIdGeneratior, entityDecode, directiveSanitizer, default */
 
 /*! exports provided: draw, default */
 
@@ -323,7 +316,7 @@
 
 /*! exports provided: mkBorder */
 
-/*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, yarn-upgrade-all, sideEffects, husky, default */
+/*! exports provided: name, version, description, main, keywords, scripts, repository, author, license, standard, dependencies, devDependencies, files, sideEffects, husky, default */
 
 /*! exports provided: parseDirective, addActor, addMessage, addSignal, getMessages, getActors, getActor, getActorKeys, getTitle, getTitleWrapped, enableSequenceNumbers, showSequenceNumbers, setWrap, autoWrap, clear, parseMessage, LINETYPE, ARROWTYPE, PLACEMENT, addNote, setTitle, apply, default */
 
@@ -424,6 +417,10 @@
 /*!***************************!*\
   !*** external "graphlib" ***!
   \***************************/
+
+/*!****************************!*\
+  !*** external "dompurify" ***!
+  \****************************/
 
 /*!*****************************!*\
   !*** ./src/themes/index.js ***!
@@ -563,10 +560,6 @@
 
 /*!****************************************!*\
   !*** ./src/diagrams/state/id-cache.js ***!
-  \****************************************/
-
-/*!****************************************!*\
-  !*** external "entity-decode/browser" ***!
   \****************************************/
 
 /*!*****************************************!*\
