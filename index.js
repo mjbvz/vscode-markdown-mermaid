@@ -48,7 +48,7 @@ module.exports.activate = () => {
             const highlight = md.options.highlight;
             md.options.highlight = (code, lang) => {
                 if (lang && lang.match(/\bmermaid\b/i)) {
-                    return `<div class="${pluginKeyword}">${preProcess(code)}</div>`;
+                    return `<pre style="all:unset;"><div class="${pluginKeyword}">${preProcess(code)}</div></pre>`;
                 }
                 return highlight(code, lang);
             };
