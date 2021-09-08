@@ -1,13 +1,15 @@
-export function activate ()  {
+import mdItContainer from 'markdown-it-container';
+
+export function activate() {
     const pluginKeyword = 'mermaid';
     const tokenTypeInline = 'inline';
-    const ttContainerOpen = 'container_' + pluginKeyword  + '_open';
-    const ttContainerClose = 'container_' + pluginKeyword  + '_close';
+    const ttContainerOpen = 'container_' + pluginKeyword + '_open';
+    const ttContainerClose = 'container_' + pluginKeyword + '_close';
     const empty = [];
 
     return {
         extendMarkdownIt(md) {
-            md.use(require('markdown-it-container'), pluginKeyword, {
+            md.use(mdItContainer, pluginKeyword, {
                 anyClass: true,
                 validate: (info) => {
                     return info.trim() === pluginKeyword;
@@ -18,13 +20,13 @@ export function activate ()  {
 
                     var src = '';
                     if (token.type === ttContainerOpen) {
-                        for(var i = idx + 1; i < tokens.length; i++) { 
+                        for (var i = idx + 1; i < tokens.length; i++) {
                             const value = tokens[i]
                             if (value === undefined || value.type === ttContainerClose) {
                                 break;
                             }
                             src += value.content;
-                            if (value.block && value.nesting <= 0 ) {
+                            if (value.block && value.nesting <= 0) {
                                 src += '\n';
                             }
                             // Clear these out so markdown-it doesn't try to render them
