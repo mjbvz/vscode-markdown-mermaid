@@ -1,4 +1,4 @@
-import mdItContainer from 'markdown-it-container';
+import * as mdItContainer from 'markdown-it-container';
 
 export function activate() {
     const pluginKeyword = 'mermaid';
