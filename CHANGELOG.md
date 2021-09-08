@@ -1,48 +1,41 @@
 # Change Log
 
-## 1.11.0 - February 10, 2021
+## 1.12.0 - August 31, 2021
+- Add support for running in browsers.
 
+## 1.11.0 - August 31, 2021
 - Update to Mermaid 8.12.0: #114 Thanks @CoenraadS!
 - Use a transparent background for diagrams: #113. Thanks @CoenraadS!
 
 ## 1.9.2 - February 10, 2021
-
 - Update to Mermaid 8.9.0
 - Fixes for `:::` rendering. Thanks @chkohner!
 
 ## 1.9.1 - January 11, 2021
-
 - Update to Mermaid 8.8.4
 
 ## 1.9.0 - November 5, 2020
-
 - Update to Mermaid 8.8.2
 
 ## 1.8.1 - August 20, 2020
-
 - Fix `markdown-it-container` listed as a dev dependency instead of a regular one. 
 
 ## 1.8.0 - August 19, 2020
-
 - Support using `:::` style blocks. These are used on the Azure DevOps Wiki.
 
 ## 1.7.0 - August 17, 2020
-
 - Update to mermaid 8.7.0
 - Resolve [advisory-1548](https://npmjs.com/advisories/1548)
   - Update webpack to 4.44.1
   - Update terser-webpack-plugin to 2.3.8
 
 ## 1.6.0 - August 7, 2020
-
 - Update to mermaid 8.6.4.
 
 ## 1.5.1 - May 26, 2020
-
 - Update to mermaid 8.5.1.
 
 ## 1.4.2 - February 6, 2020
-
 - Update to mermaid 8.4.6.
 
 ## 1.4.1 - November 8, 2019
