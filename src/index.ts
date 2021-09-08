@@ -1,6 +1,4 @@
-"use strict"
-
-module.exports.activate = () => {
+export function activate ()  {
     const pluginKeyword = 'mermaid';
     const tokenTypeInline = 'inline';
     const ttContainerOpen = 'container_' + pluginKeyword  + '_open';

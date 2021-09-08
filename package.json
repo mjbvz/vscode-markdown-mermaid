@@ -23,7 +23,8 @@
     "vscode": "^1.15.0"
   },
   "activationEvents": [],
-  "main": "./index.js",
+  "main": "./dist/index.js",
+  "browser": "./dist/web/index.js",
   "categories": [
     "Other"
   ],
@@ -37,18 +38,25 @@
     "markdown-it-container": "^3.0.0"
   },
   "devDependencies": {
-    "@babel/core": "^7.4.0",
-    "babel-loader": "^8.0.5",
+    "@babel/core": "^7.15.0",
+    "babel-loader": "^8.2.2",
     "css-loader": "^2.1.1",
     "mermaid": "^8.12.0",
-    "mini-css-extract-plugin": "^0.5.0",
-    "style-loader": "^0.23.0",
+    "mini-css-extract-plugin": "^2.2.2",
+    "style-loader": "^3.2.1",
     "terser-webpack-plugin": "^2.3.8",
-    "webpack": "^4.44.1",
-    "webpack-cli": "^3.3.7"
+    "ts-loader": "^9.2.5",
+    "typescript": "^4.4.2",
+    "webpack": "^5.52.0",
+    "webpack-cli": "^4.8.0"
   },
   "scripts": {
-    "prepublish": "npm run build",
-    "build": "webpack-cli --mode=production"
+    "build-mermaid": "webpack --mode=production --config ./build/mermaid.webpack.config.js",
+    "watch": "webpack --watch --config ./build/webpack.config.js",
+    "package": "webpack --mode production --config ./build/webpack.config.js",
+    "lint": "eslint -c .eslintrc.js --ext .ts src",
+    "vscode:prepublish": "npm run package ; npm run package-web ; npm run build-mermaid",
+    "watch-web": "webpack --watch --config ./build/web-extension.webpack.config.js",
+    "package-web": "webpack --mode production --devtool hidden-source-map --config ./build/web-extension.webpack.config.js"
   }
 }

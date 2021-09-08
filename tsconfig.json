@@ -1,0 +1,18 @@
+{
+    "compilerOptions": {
+        "module": "commonjs",
+        "moduleResolution": "node",
+        "target": "es2018",
+        "lib": [
+            "es2018"
+        ],
+        "allowSyntheticDefaultImports": true
+    },
+    "exclude": [
+        "node_modules",
+        ".vscode-test"
+    ],
+    "files": [
+        "./src/index.ts"
+    ]
+}

@@ -1,5 +1,7 @@
 // From https://github.com/mermaidjs/mermaid-webpack-demo/
 
+const path = require('path');
+
 const MiniCssExtractPlugin = require("mini-css-extract-plugin");
 const TerserPlugin = require('terser-webpack-plugin');
 
@@ -10,7 +12,7 @@ const config = {
   },
   externals: 'fs', // in order to make mermaid work
   output: {
-    path: __dirname,
+    path: path.join(__dirname, '..'),
     filename: '[name].bundle.js'
   },
   module: {
