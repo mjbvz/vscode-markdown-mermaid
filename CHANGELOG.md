@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.13.0 - November 1, 2021
+- Pick up mermaid 8.13.
+
 ## 1.12.0 - August 31, 2021
 - Add support for running in browsers.
 
