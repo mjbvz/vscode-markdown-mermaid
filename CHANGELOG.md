@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.13.1 - January 3, 2022
+- Pick up mermaid 8.13.8. Thanks @wuhkuh!
+
 ## 1.13.0 - November 1, 2021
 - Pick up mermaid 8.13.
 
