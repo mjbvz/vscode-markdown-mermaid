@@ -32,7 +32,8 @@ export function activate() {
                             // Clear these out so markdown-it doesn't try to render them
                             value.tag = '';
                             value.type = tokenTypeInline;
-                            value.content = '';
+                            // Code can be triggered multiple times, even if tokens are not updated (eg. on editor losing and regaining focus). Content must be preserved, so src can be realculated in such instances.
+                            //value.content = ''; 
                             value.children = empty;
                         }
                     }
