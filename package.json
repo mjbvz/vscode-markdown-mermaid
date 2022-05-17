@@ -1,6 +1,6 @@
 {
   "name": "markdown-mermaid",
-  "version": "1.13.2",
+  "version": "1.13.3",
   "displayName": "Markdown Preview Mermaid Support",
   "description": "Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview",
   "icon": "resources/logo.png",
@@ -41,7 +41,7 @@
     "@babel/core": "^7.15.0",
     "babel-loader": "^8.2.2",
     "css-loader": "^2.1.1",
-    "mermaid": "^8.13.10",
+    "mermaid": "^9.1.1",
     "mini-css-extract-plugin": "^2.2.2",
     "style-loader": "^3.2.1",
     "terser-webpack-plugin": "^2.3.8",
