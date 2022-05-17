@@ -28,7 +28,6 @@ function init() {
         mermaidContainer.appendChild(out);
 
         mermaid.render(id, source, (out) => {
-            console.log(out);
             mermaidContainer.innerHTML = out;
         });
     }
