@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.14.2 - June 22, 2022
+- Republish with updated lockfile for new mermaid version.
+
 ## 1.14.1 - June 22, 2022
 - Pick up mermaid 9.1.2. Thanks @k-pypin!
 
