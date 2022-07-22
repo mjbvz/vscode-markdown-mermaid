@@ -9,13 +9,19 @@ function init() {
             : 'default'
     });
 
-    // Delete existing mermaid outputs
-    for (const possibleMermaidErrorOut of document.getElementsByTagName('svg')) {
-        const parent = possibleMermaidErrorOut.parentElement;
-        if (parent && parent.id.startsWith('dmermaid')) {
-            parent.remove();
+    function processMermaidErrorOuts(processCallback) {
+        for (const possibleMermaidErrorOut of document.getElementsByTagName('svg')) {
+            const parent = possibleMermaidErrorOut.parentElement;
+            if (parent && parent.id.startsWith('dmermaid')) {
+                processCallback(parent);
+            }
         }
     }
+
+    // Delete existing mermaid outputs
+    processMermaidErrorOuts((mermaidErrorOut) => {
+        mermaidErrorOut.remove();
+    });
 
     let i = 0;
     for (const mermaidContainer of document.getElementsByClassName('mermaid')) {
@@ -27,9 +33,22 @@ function init() {
         mermaidContainer.innerHTML = '';
         mermaidContainer.appendChild(out);
 
-        mermaid.render(id, source, (out) => {
-            mermaidContainer.innerHTML = out;
-        });
+        try {
+            mermaid.render(id, source, (out) => {
+                mermaidContainer.innerHTML = out;
+            });
+        } catch (error) {
+            const errorMessageNode = document.createElement('pre');
+
+            errorMessageNode.innerText = error.message;
+
+            processMermaidErrorOuts((mermaidErrorOut) => {
+                mermaidErrorOut.appendChild(errorMessageNode);
+            });
+
+            // don't break standart mermaid flow
+            throw error;
+        }
     }
 }
 
