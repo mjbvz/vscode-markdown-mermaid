@@ -32,6 +32,9 @@
     "markdown.previewScripts": [
       "./page.bundle.js"
     ],
+    "markdown.previewStyles": [
+      "./page.css"
+    ],
     "markdown.markdownItPlugins": true
   },
   "dependencies": {
