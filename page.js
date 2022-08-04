@@ -2,11 +2,15 @@
 import mermaid from 'mermaid';
 
 function init() {
+    const configSpan = document.getElementById('markdown-mermaid');
+    const darkModeTheme = configSpan?.getAttribute('darkModeTheme');
+    const lightModeTheme = configSpan?.getAttribute('lightModeTheme');
+    
     mermaid.initialize({
         startOnLoad: false,
         theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
-            ? 'dark'
-            : 'default'
+            ? darkModeTheme ?? 'dark'
+            : lightModeTheme ?? 'default'
     });
 
     // Delete existing mermaid outputs

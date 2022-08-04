@@ -1,11 +1,20 @@
 import * as mdItContainer from 'markdown-it-container';
+import vscode from 'vscode';
 
-export function activate() {
+const configSection = 'markdown-mermaid';
+
+export function activate(ctx: vscode.ExtensionContext) {
     const pluginKeyword = 'mermaid';
     const tokenTypeInline = 'inline';
     const ttContainerOpen = 'container_' + pluginKeyword + '_open';
     const ttContainerClose = 'container_' + pluginKeyword + '_close';
     const empty = [];
+
+    ctx.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e  => {
+        if (e.affectsConfiguration(configSection)) {
+            vscode.commands.executeCommand('markdown.preview.refresh');
+        }
+    }));
 
     return {
         extendMarkdownIt(md) {
@@ -46,6 +55,8 @@ export function activate() {
                 }
             });
 
+            md.use(injectMermaidTheme);
+
             const highlight = md.options.highlight;
             md.options.highlight = (code, lang) => {
                 if (lang && lang.match(/\bmermaid\b/i)) {
@@ -62,3 +73,14 @@ const preProcess = (/** @type {string} */source) =>
     source
         .replace(/\</g, '&lt;')
         .replace(/\>/g, '&gt;');
+
+function injectMermaidTheme(md) {
+    const render = md.renderer.render;
+    md.renderer.render = function() {
+        return `<span id="${configSection}"
+                    darkModeTheme="${vscode.workspace.getConfiguration(configSection).get('darkModeTheme')}"
+                    lightModeTheme="${vscode.workspace.getConfiguration(configSection).get('lightModeTheme')}"/>
+                ${render.apply(md.renderer, arguments)}`;
+    };
+    return md;
+}
