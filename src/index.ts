@@ -93,7 +93,7 @@ function injectMermaidTheme(md) {
         const lightModeTheme = sanitizeMermaidTheme(vscode.workspace.getConfiguration(configSection).get('lightModeTheme'));
         return `<span id="${configSection}" aria-hidden="true"
                     data-dark-mode-theme="${darkModeTheme}"
-                    data-light-mode-theme="${lightModeTheme}"/>
+                    data-light-mode-theme="${lightModeTheme}"></span>
                 ${render.apply(md.renderer, arguments)}`;
     };
     return md;
