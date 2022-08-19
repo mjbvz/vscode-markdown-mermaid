@@ -74,12 +74,26 @@ const preProcess = (/** @type {string} */source) =>
         .replace(/\</g, '&lt;')
         .replace(/\>/g, '&gt;');
 
+function sanitizeMermaidTheme(theme) {
+    const validMermaidThemes = [
+        "base",
+        "forest",
+        "dark",
+        "default",
+        "neutral"
+    ];
+    const defaultMermaidTheme = "default";
+    return validMermaidThemes.includes(theme) ? theme : defaultMermaidTheme;
+}
+
 function injectMermaidTheme(md) {
     const render = md.renderer.render;
     md.renderer.render = function() {
-        return `<span id="${configSection}"
-                    darkModeTheme="${vscode.workspace.getConfiguration(configSection).get('darkModeTheme')}"
-                    lightModeTheme="${vscode.workspace.getConfiguration(configSection).get('lightModeTheme')}"/>
+        const darkModeTheme = sanitizeMermaidTheme(vscode.workspace.getConfiguration(configSection).get('darkModeTheme'));
+        const lightModeTheme = sanitizeMermaidTheme(vscode.workspace.getConfiguration(configSection).get('lightModeTheme'));
+        return `<span id="${configSection}" aria-hidden="true"
+                    data-dark-mode-theme="${darkModeTheme}"
+                    data-light-mode-theme="${lightModeTheme}"/>
                 ${render.apply(md.renderer, arguments)}`;
     };
     return md;

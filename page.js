@@ -3,8 +3,8 @@ import mermaid from 'mermaid';
 
 function init() {
     const configSpan = document.getElementById('markdown-mermaid');
-    const darkModeTheme = configSpan?.getAttribute('darkModeTheme');
-    const lightModeTheme = configSpan?.getAttribute('lightModeTheme');
+    const darkModeTheme = configSpan?.dataset.darkModeTheme;
+    const lightModeTheme = configSpan?.dataset.lightModeTheme;
     
     mermaid.initialize({
         startOnLoad: false,
