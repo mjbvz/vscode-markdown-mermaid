@@ -35,9 +35,9 @@ graph TD;
 
 ## Mermaid
 
-Currently supports Mermaid version 9.1.3.
+Currently supports Mermaid version 9.1.6.
 
-## Add custom CSS support
+## Using custom CSS support
 
 You can use the built-in functionality to add custom CSS. More info can be found in the [markdown.styles documentation](https://code.visualstudio.com/Docs/languages/markdown#_using-your-own-css)
 
