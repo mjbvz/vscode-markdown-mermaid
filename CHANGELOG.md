@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.15.1 - August 23, 2022
+- Rebuild
+
 ## 1.15.0 - August 23, 2022
 - Added settings to control Mermaid themes. Thanks @Reisse!
 - Improved syntax error reporting (https://github.com/mjbvz/vscode-markdown-mermaid/pull/140). Thanks @msafronov!
