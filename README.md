@@ -6,6 +6,7 @@ Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview
 
 ![A mermaid diagram in VS Code's built-in markdown preview](https://github.com/mjbvz/vscode-markdown-mermaid/raw/master/docs/example.png)
 
+Currently supports Mermaid version 9.1.6.
 
 ## Usage
 
@@ -33,11 +34,14 @@ graph TD;
 :::
 ```
 
-## Mermaid
 
-Currently supports Mermaid version 9.1.6.
+## Configuration
 
-## Using custom CSS support
+- `markdown-mermaid.lightModeTheme` — Configures the Mermaid theme used when VS Code is using a light color theme. Supported values are: `"base"`, `"forest"`, `"dark"`, `"default"`, `"neutral"`.
+
+- `markdown-mermaid.darkModeTheme` — Configures the Mermaid theme used when VS Code is using a dark color theme. Supported values are: `"base"`, `"forest"`, `"dark"`, `"default"`, `"neutral"`.
+
+### Using custom CSS
 
 You can use the built-in functionality to add custom CSS. More info can be found in the [markdown.styles documentation](https://code.visualstudio.com/Docs/languages/markdown#_using-your-own-css)
 
