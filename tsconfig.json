@@ -3,6 +3,7 @@
         "module": "commonjs",
         "moduleResolution": "node",
         "target": "es2018",
+        "strict": true,
         "lib": [
             "es2018"
         ],
@@ -13,6 +14,7 @@
         ".vscode-test"
     ],
     "files": [
-        "./src/index.ts"
+        "./src/index.ts",
+        "./src/types.d.ts"
     ]
 }

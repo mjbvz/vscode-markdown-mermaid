@@ -3,28 +3,27 @@ import vscode from 'vscode';
 
 const configSection = 'markdown-mermaid';
 
-export function activate(ctx: vscode.ExtensionContext) {
-    const pluginKeyword = 'mermaid';
-    const tokenTypeInline = 'inline';
-    const ttContainerOpen = 'container_' + pluginKeyword + '_open';
-    const ttContainerClose = 'container_' + pluginKeyword + '_close';
-    const empty = [];
+const pluginKeyword = 'mermaid';
+const tokenTypeInline = 'inline';
+const ttContainerOpen = 'container_' + pluginKeyword + '_open';
+const ttContainerClose = 'container_' + pluginKeyword + '_close';
 
-    ctx.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e  => {
+export function activate(ctx: vscode.ExtensionContext) {
+    ctx.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
         if (e.affectsConfiguration(configSection)) {
             vscode.commands.executeCommand('markdown.preview.refresh');
         }
     }));
 
     return {
-        extendMarkdownIt(md) {
+        extendMarkdownIt(md: any) {
             md.use(mdItContainer, pluginKeyword, {
                 anyClass: true,
-                validate: (info) => {
+                validate: (info: string) => {
                     return info.trim() === pluginKeyword;
                 },
 
-                render: (tokens, idx) => {
+                render: (tokens: any[], idx: number) => {
                     const token = tokens[idx];
 
                     var src = '';
@@ -43,7 +42,7 @@ export function activate(ctx: vscode.ExtensionContext) {
                             value.type = tokenTypeInline;
                             // Code can be triggered multiple times, even if tokens are not updated (eg. on editor losing and regaining focus). Content must be preserved, so src can be realculated in such instances.
                             //value.content = ''; 
-                            value.children = empty;
+                            value.children = [];
                         }
                     }
 
@@ -58,7 +57,7 @@ export function activate(ctx: vscode.ExtensionContext) {
             md.use(injectMermaidTheme);
 
             const highlight = md.options.highlight;
-            md.options.highlight = (code, lang) => {
+            md.options.highlight = (code: string, lang: string) => {
                 if (lang && lang.match(/\bmermaid\b/i)) {
                     return `<pre style="all:unset;"><div class="${pluginKeyword}">${preProcess(code)}</div></pre>`;
                 }
@@ -69,26 +68,29 @@ export function activate(ctx: vscode.ExtensionContext) {
     }
 }
 
-const preProcess = (/** @type {string} */source) =>
+const preProcess = (source: string) =>
     source
         .replace(/\</g, '&lt;')
         .replace(/\>/g, '&gt;');
 
-function sanitizeMermaidTheme(theme) {
-    const validMermaidThemes = [
-        "base",
-        "forest",
-        "dark",
-        "default",
-        "neutral"
-    ];
-    const defaultMermaidTheme = "default";
+const defaultMermaidTheme = 'default';
+const validMermaidThemes = [
+    'base',
+    'forest',
+    'dark',
+    'default',
+    'neutral',
+];
+function sanitizeMermaidTheme(theme: string | undefined) {
+    if (typeof theme !== 'string') {
+        return defaultMermaidTheme;
+    }
     return validMermaidThemes.includes(theme) ? theme : defaultMermaidTheme;
 }
 
-function injectMermaidTheme(md) {
+function injectMermaidTheme(md: any) {
     const render = md.renderer.render;
-    md.renderer.render = function() {
+    md.renderer.render = function () {
         const darkModeTheme = sanitizeMermaidTheme(vscode.workspace.getConfiguration(configSection).get('darkModeTheme'));
         const lightModeTheme = sanitizeMermaidTheme(vscode.workspace.getConfiguration(configSection).get('lightModeTheme'));
         return `<span id="${configSection}" aria-hidden="true"
