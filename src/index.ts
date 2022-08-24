@@ -10,7 +10,7 @@ const ttContainerClose = 'container_' + pluginKeyword + '_close';
 
 export function activate(ctx: vscode.ExtensionContext) {
     ctx.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
-        if (e.affectsConfiguration(configSection)) {
+        if (e.affectsConfiguration(configSection) || e.affectsConfiguration('workbench.colorTheme')) {
             vscode.commands.executeCommand('markdown.preview.refresh');
         }
     }));
