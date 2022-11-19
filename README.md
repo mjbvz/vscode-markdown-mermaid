@@ -41,6 +41,8 @@ graph TD;
 
 - `markdown-mermaid.darkModeTheme` — Configures the Mermaid theme used when VS Code is using a dark color theme. Supported values are: `"base"`, `"forest"`, `"dark"`, `"default"`, `"neutral"`.
 
+- `markdown-mermaid.languages` — Configures supported languares which default is`["mermaid"]`.
+
 ### Using custom CSS
 
 You can use the built-in functionality to add custom CSS. More info can be found in the [markdown.styles documentation](https://code.visualstudio.com/Docs/languages/markdown#_using-your-own-css)

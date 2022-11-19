@@ -61,6 +61,12 @@
           ],
           "default": "dark",
           "description": "Default Mermaid theme for dark mode."
+        },
+        "markdown-mermaid.languages": {
+          "order": 2,
+          "type": "array",
+          "default": ["mermaid"],
+          "description": "Default languages in markdown."
         }
       }
     }

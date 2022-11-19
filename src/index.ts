@@ -58,7 +58,9 @@ export function activate(ctx: vscode.ExtensionContext) {
 
             const highlight = md.options.highlight;
             md.options.highlight = (code: string, lang: string) => {
-                if (lang && lang.match(/\bmermaid\b/i)) {
+                const languages = vscode.workspace.getConfiguration(configSection).get<string[]>('languages', ['mermaid']);
+                const reg = new RegExp('\\b(' + languages.join('|') + ')\\b', 'i');
+                if (lang && lang.match(reg)) {
                     return `<pre style="all:unset;"><div class="${pluginKeyword}">${preProcess(code)}</div></pre>`;
                 }
                 return highlight(code, lang);
