@@ -1,9 +1,9 @@
 // @ts-check
 import type * as MarkdownIt from 'markdown-it';
-import type { RendererContext } from 'vscode-notebook-renderer';
-import { extendMarkdownItWithMermaid } from '../src/mermaid';
-import { renderMermaidBlocksInElement } from '../markdownPreview/mermaid';
 import mermaid from 'mermaid';
+import type { RendererContext } from 'vscode-notebook-renderer';
+import { renderMermaidBlocksInElement } from '../markdownPreview/mermaid';
+import { extendMarkdownItWithMermaid } from '../src/mermaid';
 
 interface MarkdownItRenderer {
     extendMarkdownIt(fn: (md: MarkdownIt) => void): void;
@@ -22,7 +22,7 @@ export async function activate(ctx: RendererContext<void>) {
     mermaid.initialize(config);
 
     markdownItRenderer.extendMarkdownIt((md: MarkdownIt) => {
-        extendMarkdownItWithMermaid(md);
+        extendMarkdownItWithMermaid(md, { languageIds: () => ['mermaid'] });
 
         const render = md.renderer.render;
 
