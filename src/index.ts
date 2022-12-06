@@ -71,7 +71,8 @@ export function activate(ctx: vscode.ExtensionContext) {
 const preProcess = (source: string) =>
     source
         .replace(/\</g, '&lt;')
-        .replace(/\>/g, '&gt;');
+        .replace(/\>/g, '&gt;')
+        .trim();
 
 const defaultMermaidTheme = 'default';
 const validMermaidThemes = [
