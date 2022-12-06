@@ -2,5 +2,4 @@ out
 node_modules
 *.log
 .DS_Store
-dist
-page.bundle.*
+dist*

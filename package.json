@@ -3,7 +3,7 @@
   "version": "1.15.3",
   "displayName": "Markdown Preview Mermaid Support",
   "description": "Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview",
-  "icon": "resources/logo.png",
+  "icon": "docs/logo.png",
   "keywords": [
     "mermaid",
     "markdown",
@@ -20,7 +20,7 @@
     "url": "https://github.com/mjbvz/vscode-markdown-mermaid/issues"
   },
   "engines": {
-    "vscode": "^1.42.0"
+    "vscode": "^1.72.0"
   },
   "activationEvents": [],
   "main": "./dist/index.js",
@@ -30,7 +30,17 @@
   ],
   "contributes": {
     "markdown.previewScripts": [
-      "./page.bundle.js"
+      "./dist-preview/index.bundle.js"
+    ],
+    "notebookRenderer": [
+      {
+        "id": "bierner.markdown-it.mermaid-extension",
+        "displayName": "Markdown it Mermaid renderer",
+        "entrypoint": {
+          "extends": "vscode.markdown-it-renderer",
+          "path": "./dist-notebook/index.bundle.js"
+        }
+      }
     ],
     "markdown.markdownItPlugins": true,
     "configuration": {
@@ -69,8 +79,10 @@
     "markdown-it-container": "^3.0.0"
   },
   "devDependencies": {
+    "@types/markdown-it": "^12.2.3",
     "@babel/core": "^7.15.0",
-    "@types/vscode": "^1.42.0",
+    "@types/vscode": "^1.72.0",
+    "@types/vscode-notebook-renderer": "^1.72.0",
     "babel-loader": "^8.2.2",
     "css-loader": "^2.1.1",
     "mermaid": "^9.2.2",
@@ -83,12 +95,13 @@
     "webpack-cli": "^5.0.1"
   },
   "scripts": {
-    "build-mermaid": "webpack --mode=production --config ./build/mermaid.webpack.config.js",
+    "build-preview": "webpack --mode=production --config ./build/markdownPreview.webpack.config.js",
+    "build-notebook": "webpack --mode=production --config ./build/notebook.webpack.config.js",
     "compile-ext": "webpack --config ./build/webpack.config.js",
     "watch-ext": "webpack --watch --config ./build/webpack.config.js",
     "watch-ext-web": "webpack --watch --config ./build/web-extension.webpack.config.js",
     "package-ext": "webpack --mode production --config ./build/webpack.config.js",
     "package-ext-web": "webpack --mode production --devtool hidden-source-map --config ./build/web-extension.webpack.config.js",
-    "vscode:prepublish": "npm run package-ext ; npm run package-ext-web ; npm run build-mermaid"
+    "vscode:prepublish": "npm run package-ext ; npm run package-ext-web ; npm run build-preview ; npm run build-notebook"
   }
 }

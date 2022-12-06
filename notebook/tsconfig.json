@@ -1,0 +1,13 @@
+{
+    "extends": "../tsconfig.base.json",
+    "compilerOptions": {
+        "lib": [
+            "es2020",
+            "DOM",
+            "DOM.Iterable"
+        ]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}

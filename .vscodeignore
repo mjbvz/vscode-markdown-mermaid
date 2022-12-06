@@ -1,9 +1,10 @@
 .vscode/**
 .vscode-test/**
 out/test/**
-test/**
-src/**
+build/
+markdownPreview/
+notebook/
+src/
 **/*.map
 .gitignore
-tsconfig.json
-vsc-extension-quickstart.md
+tsconfig*.json

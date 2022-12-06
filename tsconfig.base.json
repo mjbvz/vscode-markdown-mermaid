@@ -1,0 +1,13 @@
+{
+    "compilerOptions": {
+        "strict": true,
+        "moduleResolution": "node",
+        "target": "es2020",
+        "lib": [
+            "es2020"
+        ]
+    },
+    "exclude": [
+        "node_modules"
+    ]
+}
