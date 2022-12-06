@@ -6,7 +6,7 @@ Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview
 
 ![A mermaid diagram in VS Code's built-in markdown preview](https://github.com/mjbvz/vscode-markdown-mermaid/raw/master/docs/example.png)
 
-Currently supports Mermaid version 9.1.6.
+Currently supports Mermaid version 9.2.2.
 
 ## Usage
 
