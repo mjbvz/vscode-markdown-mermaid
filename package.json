@@ -1,6 +1,6 @@
 {
   "name": "markdown-mermaid",
-  "version": "1.15.2",
+  "version": "1.15.3",
   "displayName": "Markdown Preview Mermaid Support",
   "description": "Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview",
   "icon": "resources/logo.png",
