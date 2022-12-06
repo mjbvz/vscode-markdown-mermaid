@@ -1,5 +1,5 @@
 import * as mdItContainer from 'markdown-it-container';
-import vscode from 'vscode';
+import * as vscode from 'vscode';
 
 const configSection = 'markdown-mermaid';
 

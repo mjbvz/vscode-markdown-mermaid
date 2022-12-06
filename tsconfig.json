@@ -6,8 +6,7 @@
         "strict": true,
         "lib": [
             "es2018"
-        ],
-        "allowSyntheticDefaultImports": true
+        ]
     },
     "exclude": [
         "node_modules",
