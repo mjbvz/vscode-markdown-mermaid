@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.16.0 - December 6, 2022
+- Add support for markdown cells inside of notebooks.
+
 ## 1.15.3 - December 5, 2022
 - Pick up mermaid 9.2.2.
 
