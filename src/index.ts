@@ -13,7 +13,11 @@ export function activate(ctx: vscode.ExtensionContext) {
 
     return {
         extendMarkdownIt(md: any) {
-            extendMarkdownItWithMermaid(md);
+            extendMarkdownItWithMermaid(md, {
+                languageIds: () => {
+                    return vscode.workspace.getConfiguration(configSection).get<string[]>('languages', ['mermaid']);
+                }
+            });
             md.use(injectMermaidTheme);
             return md;
         }

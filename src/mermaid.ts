@@ -5,7 +5,7 @@ const tokenTypeInline = 'inline';
 const ttContainerOpen = 'container_' + pluginKeyword + '_open';
 const ttContainerClose = 'container_' + pluginKeyword + '_close';
 
-export function extendMarkdownItWithMermaid(md: any) {
+export function extendMarkdownItWithMermaid(md: any, config: { languageIds(): readonly string[] }) {
     md.use(mdItContainer, pluginKeyword, {
         anyClass: true,
         validate: (info: string) => {
@@ -45,7 +45,8 @@ export function extendMarkdownItWithMermaid(md: any) {
 
     const highlight = md.options.highlight;
     md.options.highlight = (code: string, lang: string) => {
-        if (lang && lang.match(/\bmermaid\b/i)) {
+        const reg = new RegExp('\\b(' + config.languageIds().map(escapeRegExp).join('|') + ')\\b', 'i');
+        if (lang && reg.test(lang)) {
             return `<pre style="all:unset;"><div class="${pluginKeyword}">${preProcess(code)}</div></pre>`;
         }
         return highlight(code, lang);
@@ -53,8 +54,13 @@ export function extendMarkdownItWithMermaid(md: any) {
     return md;
 }
 
-const preProcess = (source: string) =>
-    source
+function preProcess(source: string): string {
+    return source
         .replace(/\</g, '&lt;')
         .replace(/\>/g, '&gt;')
         .trim();
+}
+
+function escapeRegExp(string: string): string {
+    return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
