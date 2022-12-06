@@ -1,11 +1,11 @@
-//@ts-check
+// @ts-check
 import mermaid from 'mermaid';
 
 function init() {
     const configSpan = document.getElementById('markdown-mermaid');
     const darkModeTheme = configSpan?.dataset.darkModeTheme;
     const lightModeTheme = configSpan?.dataset.lightModeTheme;
-    
+
     mermaid.initialize({
         startOnLoad: false,
         theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
@@ -16,7 +16,7 @@ function init() {
     function processMermaidErrorOuts(processCallback) {
         for (const possibleMermaidErrorOut of document.getElementsByTagName('svg')) {
             const parent = possibleMermaidErrorOut.parentElement;
-            if (parent && parent.id.startsWith('dmermaid')) {
+            if (parent?.classList.contains('mermaid')) {
                 processCallback(parent);
             }
         }
