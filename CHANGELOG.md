@@ -1,10 +1,13 @@
 # Change Log
 
+## 1.17.0 - December 19, 2022
+- Pick up Mermaid 9.3.0. Thanks @apeacock1991!
+
 ## 1.16.0 - December 6, 2022
 - Add support for markdown cells inside of notebooks.
 
 ## 1.15.3 - December 5, 2022
-- Pick up mermaid 9.2.2.
+- Pick up Mermaid 9.2.2.
 
 ## 1.15.2 - August 24, 2022
 - Re-render diagrams when the color theme changes. This fixes colors not updating when between light and dark color themes.
