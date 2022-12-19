@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.17.1-1.17.3 - December 19, 2022
+- Version bump for failed marketplace publish due to badge in readme.
+
 ## 1.17.0 - December 19, 2022
 - Pick up Mermaid 9.3.0. Thanks @apeacock1991!
 
