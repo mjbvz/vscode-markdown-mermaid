@@ -1,4 +1,3 @@
-// @ts-check
 import type * as MarkdownIt from 'markdown-it';
 import mermaid from 'mermaid';
 import type { RendererContext } from 'vscode-notebook-renderer';
