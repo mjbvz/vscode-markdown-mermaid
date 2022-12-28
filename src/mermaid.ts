@@ -58,7 +58,8 @@ function preProcess(source: string): string {
     return source
         .replace(/\</g, '&lt;')
         .replace(/\>/g, '&gt;')
-        .trim();
+        .replace(/\n+$/,'')
+        .trimStart();
 }
 
 function escapeRegExp(string: string): string {
