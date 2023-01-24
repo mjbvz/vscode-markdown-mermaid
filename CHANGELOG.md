@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.17.4 - January 23, 2023
+- Fix parse failures caused by trimming. Thanks @swalterd!
+
 ## 1.17.1-1.17.3 - December 19, 2022
 - Version bump for failed marketplace publish due to badge in readme.
 
