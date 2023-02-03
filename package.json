@@ -75,7 +75,9 @@
         "markdown-mermaid.languages": {
           "order": 2,
           "type": "array",
-          "default": ["mermaid"],
+          "default": [
+            "mermaid"
+          ],
           "description": "Default languages in markdown."
         }
       }
@@ -85,8 +87,9 @@
     "markdown-it-container": "^3.0.0"
   },
   "devDependencies": {
-    "@types/markdown-it": "^12.2.3",
     "@babel/core": "^7.15.0",
+    "@mermaid-js/mermaid-mindmap": "^9.3.0",
+    "@types/markdown-it": "^12.2.3",
     "@types/vscode": "^1.72.0",
     "@types/vscode-notebook-renderer": "^1.72.0",
     "babel-loader": "^8.2.2",

@@ -3,6 +3,7 @@ import mermaid from 'mermaid';
 import type { RendererContext } from 'vscode-notebook-renderer';
 import { renderMermaidBlocksInElement } from '../markdownPreview/mermaid';
 import { extendMarkdownItWithMermaid } from '../src/mermaid';
+import mindmap from '@mermaid-js/mermaid-mindmap'
 
 interface MarkdownItRenderer {
     extendMarkdownIt(fn: (md: MarkdownIt) => void): void;
@@ -19,6 +20,7 @@ export async function activate(ctx: RendererContext<void>) {
         theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast') ? 'dark' : 'default'
     };
     mermaid.initialize(config);
+    await mermaid.registerExternalDiagrams([mindmap]);
 
     markdownItRenderer.extendMarkdownIt((md: MarkdownIt) => {
         extendMarkdownItWithMermaid(md, { languageIds: () => ['mermaid'] });
