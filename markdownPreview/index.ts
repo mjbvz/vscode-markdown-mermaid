@@ -14,7 +14,7 @@ function init() {
             : lightModeTheme ?? 'default'
     };
     mermaid.initialize(config);
-    mermaid.registerExternalDiagrams([mindmap], {lazyLoad: false});
+    mermaid.registerExternalDiagrams([mindmap]);
 
     renderMermaidBlocksInElement(document.body);
 }
