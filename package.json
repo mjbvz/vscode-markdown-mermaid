@@ -75,7 +75,9 @@
         "markdown-mermaid.languages": {
           "order": 2,
           "type": "array",
-          "default": ["mermaid"],
+          "default": [
+            "mermaid"
+          ],
           "description": "Default languages in markdown."
         }
       }
@@ -85,14 +87,15 @@
     "markdown-it-container": "^3.0.0"
   },
   "devDependencies": {
-    "@types/markdown-it": "^12.2.3",
     "@babel/core": "^7.15.0",
+    "@types/markdown-it": "^12.2.3",
     "@types/vscode": "^1.72.0",
     "@types/vscode-notebook-renderer": "^1.72.0",
     "babel-loader": "^8.2.2",
-    "css-loader": "^2.1.1",
-    "mermaid": "^9.3.0",
+    "css-loader": "^6.7.3",
+    "mermaid": "^10.0.0",
     "mini-css-extract-plugin": "^2.2.2",
+    "npm-run-all": "^4.1.5",
     "style-loader": "^3.2.1",
     "terser-webpack-plugin": "^5.3.6",
     "ts-loader": "^9.4.2",
@@ -108,6 +111,6 @@
     "watch-ext-web": "webpack --watch --config ./build/web-extension.webpack.config.js",
     "package-ext": "webpack --mode production --config ./build/webpack.config.js",
     "package-ext-web": "webpack --mode production --devtool hidden-source-map --config ./build/web-extension.webpack.config.js",
-    "vscode:prepublish": "npm run package-ext ; npm run package-ext-web ; npm run build-preview ; npm run build-notebook"
+    "vscode:prepublish": "npm-run-all package-ext package-ext-web build-preview build-notebook"
   }
 }
