@@ -4,7 +4,8 @@
         "module": "commonjs",
         "lib": [
             "es2020"
-        ]
+        ],
+        "sourceMap": true
     },
     "exclude": [
         "node_modules"
