@@ -93,6 +93,7 @@
     "css-loader": "^2.1.1",
     "mermaid": "^9.3.0",
     "mini-css-extract-plugin": "^2.2.2",
+    "npm-run-all": "^4.1.5",
     "style-loader": "^3.2.1",
     "terser-webpack-plugin": "^5.3.6",
     "ts-loader": "^9.4.2",
@@ -108,6 +109,6 @@
     "watch-ext-web": "webpack --watch --config ./build/web-extension.webpack.config.js",
     "package-ext": "webpack --mode production --config ./build/webpack.config.js",
     "package-ext-web": "webpack --mode production --devtool hidden-source-map --config ./build/web-extension.webpack.config.js",
-    "vscode:prepublish": "npm run package-ext ; npm run package-ext-web ; npm run build-preview ; npm run build-notebook"
+    "vscode:prepublish": "npm-run-all package-ext package-ext-web build-preview build-notebook"
   }
 }
