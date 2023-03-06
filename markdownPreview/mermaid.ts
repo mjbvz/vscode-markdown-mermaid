@@ -20,7 +20,7 @@ export function renderMermaidBlocksInElement(root: HTMLElement) {
         renderMermaidElement(mermaidContainer);
     }
 
-    function renderMermaidElement(mermaidContainer: Element) {
+    async function renderMermaidElement(mermaidContainer: Element) {
         const id = `mermaid-${crypto.randomUUID()}`;
         const source = mermaidContainer.textContent ?? '';
 
@@ -31,7 +31,7 @@ export function renderMermaidBlocksInElement(root: HTMLElement) {
 
         try {
             mermaid.mermaidAPI.reset();
-            mermaid.render(id, source, (out) => {
+            await mermaid.renderAsync(id, source, (out) => {
                 mermaidContainer.innerHTML = out;
             });
         } catch (error) {
