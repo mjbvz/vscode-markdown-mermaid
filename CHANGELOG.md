@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.17.5 - March 06, 2023
+- bump mermaid version to `9.4.0`
+
 ## 1.17.4 - January 23, 2023
 - Fix parse failures caused by trimming. Thanks @swalterd!
 
@@ -65,7 +68,7 @@
 - Update to Mermaid 8.8.2
 
 ## 1.8.1 - August 20, 2020
-- Fix `markdown-it-container` listed as a dev dependency instead of a regular one. 
+- Fix `markdown-it-container` listed as a dev dependency instead of a regular one.
 
 ## 1.8.0 - August 19, 2020
 - Support using `:::` style blocks. These are used on the Azure DevOps Wiki.
