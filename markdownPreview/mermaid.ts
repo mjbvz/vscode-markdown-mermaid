@@ -9,7 +9,7 @@ function processMermaidErrorOuts(processCallback: (element: HTMLElement) => void
     }
 }
 
-export function renderMermaidBlocksInElement(root: HTMLElement) {
+export async function renderMermaidBlocksInElement(root: HTMLElement) {
 
     // Delete existing mermaid outputs
     processMermaidErrorOuts((mermaidErrorOut) => {
@@ -17,10 +17,10 @@ export function renderMermaidBlocksInElement(root: HTMLElement) {
     });
 
     for (const mermaidContainer of root.getElementsByClassName('mermaid') ?? []) {
-        renderMermaidElement(mermaidContainer);
+        await renderMermaidElement(mermaidContainer);
     }
 
-    function renderMermaidElement(mermaidContainer: Element) {
+    async function renderMermaidElement(mermaidContainer: Element) {
         const id = `mermaid-${crypto.randomUUID()}`;
         const source = mermaidContainer.textContent ?? '';
 
@@ -31,9 +31,9 @@ export function renderMermaidBlocksInElement(root: HTMLElement) {
 
         try {
             mermaid.mermaidAPI.reset();
-            mermaid.render(id, source, (out) => {
-                mermaidContainer.innerHTML = out;
-            });
+            const {svg, bindFunctions} = await mermaid.render(id, source, mermaidContainer);
+            mermaidContainer.innerHTML = svg;
+            bindFunctions?.(mermaidContainer);
         } catch (error) {
             if (error instanceof Error) {
                 const errorMessageNode = document.createElement('pre');
