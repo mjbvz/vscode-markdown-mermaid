@@ -1,7 +1,7 @@
 # Change Log
 
 ## 1.17.5 - March 06, 2023
-- bump mermaid version to `9.4.0`
+- Bump mermaid version to `9.4.0`.
 
 ## 1.17.4 - January 23, 2023
 - Fix parse failures caused by trimming. Thanks @swalterd!
