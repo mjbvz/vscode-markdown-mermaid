@@ -1,6 +1,9 @@
 # Change Log
 
-## 1.17.5 - March 06, 2023
+## 1.17.6 - March 7, 2023
+- Fix rendering and removal of errors appended to body. Thanks @JoshStern!
+
+## 1.17.5 - March 6, 2023
 - Bump mermaid version to `9.4.0`.
 
 ## 1.17.4 - January 23, 2023
