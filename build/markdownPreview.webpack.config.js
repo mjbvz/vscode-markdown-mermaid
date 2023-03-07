@@ -1,6 +1,7 @@
 
 const path = require('path');
 const shared = require('./shared.mermaid.webpack.config');
+const webpack = require('webpack');
 
 module.exports = {
     ...shared,
@@ -12,4 +13,9 @@ module.exports = {
         path: path.join(__dirname, '..', 'dist-preview'),
         filename: '[name].bundle.js'
     },
+    plugins: [
+        new webpack.optimize.LimitChunkCountPlugin({
+            maxChunks: 1,
+        }),
+    ],
 };
