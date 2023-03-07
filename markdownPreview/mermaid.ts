@@ -23,11 +23,7 @@ export function renderMermaidBlocksInElement(root: HTMLElement) {
     async function renderMermaidElement(mermaidContainer: Element) {
         const id = `mermaid-${crypto.randomUUID()}`;
         const source = mermaidContainer.textContent ?? '';
-
-        const out = document.createElement('div');
-        out.id = id;
         mermaidContainer.innerHTML = '';
-        mermaidContainer.appendChild(out);
 
         try {
             mermaid.mermaidAPI.reset();
@@ -37,6 +33,13 @@ export function renderMermaidBlocksInElement(root: HTMLElement) {
         } catch (error) {
             if (error instanceof Error) {
                 const errorMessageNode = document.createElement('pre');
+
+                // If error svg was appended to the body move it to the container and clean up wrapper element
+                const errSvg = document.querySelector(`svg#${id}`);
+                if (errSvg && errSvg.parentElement?.id === `d${id}`) {
+                    errSvg.parentElement.remove();
+                    mermaidContainer.prepend(errSvg);
+                }
 
                 errorMessageNode.innerText = error.message;
 
