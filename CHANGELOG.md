@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.17.7 - March 7, 2023
+- Fix loading mindmap support.
+- Fix rendering in notebooks after switch to `renderAsync`.
+
 ## 1.17.6 - March 7, 2023
 - Fix rendering and removal of errors appended to body. Thanks @JoshStern!
 
