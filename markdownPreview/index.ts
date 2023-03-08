@@ -14,7 +14,9 @@ function init() {
     };
     mermaid.initialize(config);
 
-    renderMermaidBlocksInElement(document.body);
+    renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
+        mermaidContainer.innerHTML = content;
+    });
 }
 
 

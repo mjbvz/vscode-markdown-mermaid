@@ -25,12 +25,20 @@ export async function activate(ctx: RendererContext<void>) {
 
         const render = md.renderer.render;
 
-        md.renderer.render = function (...args) {
-            const result = render.apply(this, args);
+        md.renderer.render = function (tokens, options, env) {
+            const result = render.call(this, tokens, options, env);
+
+            const shadowRoot = document.getElementById(env?.outputItem.id)?.shadowRoot;
 
             const temp = document.createElement('div');
             temp.innerHTML = result;
-            renderMermaidBlocksInElement(temp);
+            renderMermaidBlocksInElement(temp, (mermaidContainer, content) => {
+                // The original element we are rendering to has been disconnected.
+                const liveEl = shadowRoot?.getElementById(mermaidContainer.id);
+                if (liveEl) {
+                    liveEl.innerHTML = content;
+                }
+            });
             return temp.innerHTML;
         }
         return md;
