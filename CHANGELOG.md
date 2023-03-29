@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.18.0 - March 29, 2023
+- Pick up Mermaid 10.0.2.
+
 ## 1.17.7 - March 7, 2023
 - Fix loading mindmap support.
 - Fix rendering in notebooks after switch to `renderAsync`.
