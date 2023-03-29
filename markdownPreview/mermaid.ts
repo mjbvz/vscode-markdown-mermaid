@@ -1,57 +1,42 @@
 import mermaid from 'mermaid';
 
-function processMermaidErrorOuts(processCallback: (element: HTMLElement) => void) {
-    for (const possibleMermaidErrorOut of document.getElementsByTagName('svg')) {
-        const parent = possibleMermaidErrorOut.parentElement;
-        if (parent?.classList.contains('mermaid')) {
-            processCallback(parent);
+async function renderMermaidElement(mermaidContainer: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void) {
+    const containerId = `mermaid-container-${crypto.randomUUID()}`;
+    mermaidContainer.id = containerId;
+
+    const id = `mermaid-${crypto.randomUUID()}`;
+    const source = mermaidContainer.textContent ?? '';
+    mermaidContainer.innerHTML = '';
+
+    try {
+        mermaid.mermaidAPI.reset();
+
+        // Catch any parsing errors
+        await mermaid.parse(source);
+
+        //  Render the diagram
+        const renderResult = await mermaid.render(id, source);
+        writeOut(mermaidContainer, renderResult.svg);
+        renderResult.bindFunctions?.(mermaidContainer);
+    } catch (error) {
+        if (error instanceof Error) {
+            const errorMessageNode = document.createElement('pre');
+            errorMessageNode.className = 'mermaid-error';
+            errorMessageNode.innerText = error.message;            
+            writeOut(mermaidContainer, errorMessageNode.outerHTML);
         }
+
+        throw error;
     }
 }
 
 export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void): Promise<void> {
     // Delete existing mermaid outputs
-    processMermaidErrorOuts((mermaidErrorOut) => {
-        mermaidErrorOut.remove();
-    });
-
-    for (const mermaidContainer of root.getElementsByClassName('mermaid') ?? []) {
-        renderMermaidElement(mermaidContainer as HTMLElement);
+    for (const el of document.querySelectorAll('.mermaid > svg')) {
+        el.remove();
     }
 
-    async function renderMermaidElement(mermaidContainer: HTMLElement) {
-        const containerId = `mermaid-container-${crypto.randomUUID()}`;
-        mermaidContainer.id = containerId;
-
-        const id = `mermaid-${crypto.randomUUID()}`;
-        const source = mermaidContainer.textContent ?? '';
-        mermaidContainer.innerHTML = '';
-
-        try {
-            mermaid.mermaidAPI.reset();
-            await mermaid.renderAsync(id, source, (content) => {
-                writeOut(mermaidContainer, content);
-            });
-        } catch (error) {
-            if (error instanceof Error) {
-                const errorMessageNode = document.createElement('pre');
-
-                // If error svg was appended to the body move it to the container and clean up wrapper element
-                const errSvg = document.querySelector(`svg#${id}`);
-                if (errSvg && errSvg.parentElement?.id === `d${id}`) {
-                    errSvg.parentElement.remove();
-                    mermaidContainer.prepend(errSvg);
-                }
-
-                errorMessageNode.innerText = error.message;
-
-                processMermaidErrorOuts((mermaidErrorOut) => {
-                    mermaidErrorOut.appendChild(errorMessageNode);
-                });
-            }
-
-            // don't break standard mermaid flow
-            throw error;
-        }
+    for (const mermaidContainer of root.getElementsByClassName('mermaid')) {
+        await renderMermaidElement(mermaidContainer as HTMLElement, writeOut);
     }
 }
