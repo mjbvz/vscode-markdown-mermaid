@@ -22,7 +22,7 @@ async function renderMermaidElement(mermaidContainer: HTMLElement, writeOut: (me
         if (error instanceof Error) {
             const errorMessageNode = document.createElement('pre');
             errorMessageNode.className = 'mermaid-error';
-            errorMessageNode.innerText = error.message;            
+            errorMessageNode.innerText = error.message;
             writeOut(mermaidContainer, errorMessageNode.outerHTML);
         }
 
@@ -34,6 +34,11 @@ export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: 
     // Delete existing mermaid outputs
     for (const el of document.querySelectorAll('.mermaid > svg')) {
         el.remove();
+    }
+    for (const svg of document.querySelectorAll('svg')) {
+        if (svg.parentElement?.id.startsWith('dmermaid')) {
+            svg.parentElement.remove();
+        }
     }
 
     for (const mermaidContainer of root.getElementsByClassName('mermaid')) {
