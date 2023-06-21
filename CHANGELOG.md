@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.19.0 - June 21, 2023
+- Pick up Mermaid 110.2.3.
+
 ## 1.18.1 - April 10, 2023
 - Pick up Mermaid 10.1.0.
 - Clear errors on re-render.
