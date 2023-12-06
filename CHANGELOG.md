@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.21.0 - December 6, 2023
+- Pick up Mermaid 10.6.1. Thanks @jalmeter and @ebjornset!
+
 ## 1.20.0 - September 25, 2023
 - Pick up Mermaid 10.4.0.
 
