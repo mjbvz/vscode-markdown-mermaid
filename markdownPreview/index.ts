@@ -1,5 +1,6 @@
 import mermaid from 'mermaid';
 import { renderMermaidBlocksInElement } from './mermaid';
+import * as svgPanZoom from 'svg-pan-zoom';
 
 function init() {
     const configSpan = document.getElementById('markdown-mermaid');
@@ -16,7 +17,17 @@ function init() {
 
     renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
         mermaidContainer.innerHTML = content;
-    });
+        mermaidContainer.style.height = "30rem";
+        const svgEl = mermaidContainer.querySelector("svg");
+        
+        if (svgEl) {
+          svgEl.style.height = "100%";
+          svgPanZoom(svgEl, {
+            center: true,
+            minZoom: 0.1,
+          });
+        }
+  });
 }
 
 
