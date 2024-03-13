@@ -84,7 +84,8 @@
     }
   },
   "dependencies": {
-    "markdown-it-container": "^3.0.0"
+    "markdown-it-container": "^3.0.0",
+    "svg-pan-zoom": "^3.6.1"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
