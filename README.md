@@ -6,7 +6,11 @@ Adds [Mermaid](https://mermaid-js.github.io/mermaid/#/) diagram and flowchart su
 
 ![A mermaid diagram in VS Code's built-in markdown preview](https://github.com/mjbvz/vscode-markdown-mermaid/raw/master/docs/example.png)
 
-Currently supports Mermaid version 10.8.0.
+Currently supports Mermaid version 10.9.0.
+
+include extensions:
+
+* zenUML
 
 ## Usage
 
@@ -34,14 +38,13 @@ graph TD;
 :::
 ```
 
-
 ## Configuration
 
-- `markdown-mermaid.lightModeTheme` — Configures the Mermaid theme used when VS Code is using a light color theme. Supported values are: `"base"`, `"forest"`, `"dark"`, `"default"`, `"neutral"`. Currently not supported in notebooks.
+* `markdown-mermaid.lightModeTheme` — Configures the Mermaid theme used when VS Code is using a light color theme. Supported values are: `"base"`, `"forest"`, `"dark"`, `"default"`, `"neutral"`. Currently not supported in notebooks.
 
-- `markdown-mermaid.darkModeTheme` — Configures the Mermaid theme used when VS Code is using a dark color theme. Supported values are: `"base"`, `"forest"`, `"dark"`, `"default"`, `"neutral"`. Currently not supported in notebooks.
+* `markdown-mermaid.darkModeTheme` — Configures the Mermaid theme used when VS Code is using a dark color theme. Supported values are: `"base"`, `"forest"`, `"dark"`, `"default"`, `"neutral"`. Currently not supported in notebooks.
 
-- `markdown-mermaid.languages` — Configures language ids for Mermaid code blocks. The default is `["mermaid"]`.
+* `markdown-mermaid.languages` — Configures language ids for Mermaid code blocks. The default is `["mermaid"]`.
 
 ### Using custom CSS in the Markdown Preview
 

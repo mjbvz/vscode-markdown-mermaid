@@ -84,17 +84,17 @@
     }
   },
   "dependencies": {
-    "@mermaid-js/mermaid-zenuml": "^0.2.0",
     "markdown-it-container": "^3.0.0"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
+    "@mermaid-js/mermaid-zenuml": "^0.2.0",
     "@types/markdown-it": "^12.2.3",
     "@types/vscode": "^1.72.0",
     "@types/vscode-notebook-renderer": "^1.72.0",
     "babel-loader": "^8.2.2",
     "css-loader": "^6.7.3",
-    "mermaid": "^10.8.0",
+    "mermaid": "^10.9.0",
     "mini-css-extract-plugin": "^2.2.2",
     "npm-run-all": "^4.1.5",
     "style-loader": "^3.2.1",

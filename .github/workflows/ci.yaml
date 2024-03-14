@@ -1,0 +1,32 @@
+# on commit to master
+on:
+  push:
+    tags:
+      - "*"
+
+name: Build vsix file
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20.x'
+      - run: npm install
+      - run: npm install -g vsce
+      - run: |
+          version=$(node -p "require('./package.json').version")
+          echo "VERSION=${version}" >> $GITHUB_ENV
+      - run: vsce package
+      - name: Get Changelog
+        id: get-changelog
+        run: |
+          awk 'BEGIN{block=""; lastBlock=""} /^##/{if(block!=""){lastBlock=block; block=""}} {block=block?block ORS $0:$0} END{print lastBlock}' CHANGELOG.md  > .changelog.md
+      - name: create release by gh
+        id: create_release
+        run: |
+          gh release create v${{ env.VERSION }} -t v${{ env.VERSION }} -F .changelog.md ./*.vsix 
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+ 
