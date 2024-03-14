@@ -1,6 +1,8 @@
 import mermaid from 'mermaid';
+import zenuml from "@mermaid-js/mermaid-zenuml";
 
 async function renderMermaidElement(mermaidContainer: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void) {
+    await mermaid.registerExternalDiagrams([zenuml]);
     const containerId = `mermaid-container-${crypto.randomUUID()}`;
     mermaidContainer.id = containerId;
 
@@ -35,6 +37,7 @@ export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: 
     for (const el of document.querySelectorAll('.mermaid > svg')) {
         el.remove();
     }
+    await mermaid.registerExternalDiagrams([zenuml]);
     for (const svg of document.querySelectorAll('svg')) {
         if (svg.parentElement?.id.startsWith('dmermaid')) {
             svg.parentElement.remove();
