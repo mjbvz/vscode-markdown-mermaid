@@ -88,6 +88,7 @@
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
+    "@mermaid-js/mermaid-zenuml": "^0.2.0",
     "@types/markdown-it": "^12.2.3",
     "@types/vscode": "^1.72.0",
     "@types/vscode-notebook-renderer": "^1.72.0",

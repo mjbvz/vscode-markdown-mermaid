@@ -1,5 +1,6 @@
 import mermaid from 'mermaid';
 import { renderMermaidBlocksInElement } from './mermaid';
+import zenuml from "@mermaid-js/mermaid-zenuml";
 
 function init() {
     const configSpan = document.getElementById('markdown-mermaid');
@@ -13,6 +14,7 @@ function init() {
             : lightModeTheme ?? 'default'
     };
     mermaid.initialize(config);
+    mermaid.registerExternalDiagrams([zenuml]);
 
     renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
         mermaidContainer.innerHTML = content;
