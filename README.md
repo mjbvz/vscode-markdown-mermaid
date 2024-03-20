@@ -63,3 +63,7 @@ graph LR
     fa:fa-check-->fa:fa-coffee
 ```
 ~~~
+
+### ExternalDiagrams Support
+
+- zenUML: `zenuml` language id is supported. You can use `zenuml` language id for zenUML diagrams.
