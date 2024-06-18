@@ -5,7 +5,6 @@
         "lib": [
             "es2020"
         ],
-        "esModuleInterop": true,
         "sourceMap": true
     },
     "exclude": [
