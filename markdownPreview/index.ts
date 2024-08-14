@@ -16,40 +16,50 @@ function init() {
     mermaid.initialize(config);
 
     renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
-        mermaidContainer.innerHTML = content;
+        // Setup container styles
         mermaidContainer.style.display = "flex"
         mermaidContainer.style.flexDirection = "column"
         
+        // Create button, setup style and add click listener
         const button = document.createElement("BUTTON")
-        button.innerText = "Enable Zoom"
         button.style.width = "10rem"
         button.onclick = () => {onClickZoom(button, mermaidContainer, content)}
-        mermaidContainer.prepend(button);
+
+        resetView(button, mermaidContainer, content)
     });
 }
 
 function onClickZoom(button: HTMLElement, mermaidContainer: HTMLElement, svgContent: string) {
     if (button.innerText == "Enable Zoom") {
-        const svgEl = mermaidContainer.querySelector("svg");
-        if (!svgEl) return
-    
-        const svgSize = svgEl.getBoundingClientRect()
-        svgEl.style.width = svgSize.width+"px";
-        svgEl.style.height = svgSize.height+"px";
-        svgPanZoom(svgEl, {
-            zoomEnabled: true,
-            controlIconsEnabled: true,
-            fit: true,
-            center: true
-        }); 
-        button.innerText = "Disable Zoom"
+        enableZoom(button, mermaidContainer)
     }
     else {
-        mermaidContainer.innerHTML = svgContent;
-        mermaidContainer.prepend(button);
-        button.innerText = "Enable Zoom"
+        resetView(button, mermaidContainer, svgContent)
     }
 } 
+
+function enableZoom(button: HTMLElement, mermaidContainer: HTMLElement): SvgPanZoom.Instance | null {
+    const svgEl = mermaidContainer.querySelector("svg");
+    if (!svgEl) return null
+
+    const svgSize = svgEl.getBoundingClientRect()
+    svgEl.style.width = svgSize.width+"px";
+    svgEl.style.height = svgSize.height+"px";
+    const panZoomInstance = svgPanZoom(svgEl, {
+        zoomEnabled: true,
+        controlIconsEnabled: true,
+        fit: true,
+        center: true
+    }); 
+    button.innerText = "Disable Zoom"
+    return panZoomInstance
+}
+
+function resetView(button: HTMLElement, mermaidContainer: HTMLElement, svgContent: string) {
+    mermaidContainer.innerHTML = svgContent;
+    mermaidContainer.prepend(button);
+    button.innerText = "Enable Zoom"
+}
 
 window.addEventListener('vscode.markdown.updateContent', init);
 
