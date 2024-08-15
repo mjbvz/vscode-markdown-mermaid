@@ -1,6 +1,8 @@
 import mermaid from 'mermaid';
 
-async function renderMermaidElement(mermaidContainer: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void) {
+type WriteOutFN = (mermaidContainer: HTMLElement, content: string, index: number) => void
+
+async function renderMermaidElement(mermaidContainer: HTMLElement, index: number, writeOut: WriteOutFN) {
     const containerId = `mermaid-container-${crypto.randomUUID()}`;
     mermaidContainer.id = containerId;
 
@@ -16,21 +18,21 @@ async function renderMermaidElement(mermaidContainer: HTMLElement, writeOut: (me
 
         //  Render the diagram
         const renderResult = await mermaid.render(id, source);
-        writeOut(mermaidContainer, renderResult.svg);
+        writeOut(mermaidContainer, renderResult.svg, index);
         renderResult.bindFunctions?.(mermaidContainer);
     } catch (error) {
         if (error instanceof Error) {
             const errorMessageNode = document.createElement('pre');
             errorMessageNode.className = 'mermaid-error';
             errorMessageNode.innerText = error.message;
-            writeOut(mermaidContainer, errorMessageNode.outerHTML);
+            writeOut(mermaidContainer, errorMessageNode.outerHTML, index);
         }
 
         throw error;
     }
 }
 
-export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void): Promise<void> {
+export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: WriteOutFN): Promise<void> {
     // Delete existing mermaid outputs
     for (const el of document.querySelectorAll('.mermaid > svg')) {
         el.remove();
@@ -41,7 +43,8 @@ export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: 
         }
     }
 
-    for (const mermaidContainer of root.getElementsByClassName('mermaid')) {
-        await renderMermaidElement(mermaidContainer as HTMLElement, writeOut);
+    const mermaidElements = root.getElementsByClassName('mermaid')
+    for (let i=0; i<mermaidElements.length; i++) {
+        await renderMermaidElement(mermaidElements[i] as HTMLElement, i, writeOut);
     }
 }

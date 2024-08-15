@@ -1,6 +1,6 @@
 import mermaid from 'mermaid';
 import { renderMermaidBlocksInElement } from './mermaid';
-import { createZoomButton, resetView } from './zoom';
+import { renderZoomableMermaidBlock } from './zoom';
 
 function init() {
     const configSpan = document.getElementById('markdown-mermaid');
@@ -15,14 +15,12 @@ function init() {
     };
     mermaid.initialize(config);
 
-    renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
+    renderMermaidBlocksInElement(document.body, (mermaidContainer, content, index) => {
         // Setup container styles
         mermaidContainer.style.display = "flex"
         mermaidContainer.style.flexDirection = "column"
         
-        // Set the view to be normal svg diagram
-        const zoomButton = createZoomButton(mermaidContainer, content)
-        resetView(zoomButton, mermaidContainer, content)
+        renderZoomableMermaidBlock(mermaidContainer, content, index)
     });
 }
 
