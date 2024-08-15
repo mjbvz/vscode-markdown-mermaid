@@ -30,7 +30,7 @@ async function renderMermaidElement(mermaidContainer: HTMLElement, index: number
     }
 }
 
-export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: WriteOutFN): Promise<void> {
+export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: WriteOutFN): Promise<number> {
     // Delete existing mermaid outputs
     for (const el of document.querySelectorAll('.mermaid > svg')) {
         el.remove();
@@ -45,4 +45,5 @@ export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: 
     for (let i=0; i<mermaidElements.length; i++) {
         await renderMermaidElement(mermaidElements[i] as HTMLElement, i, writeOut);
     }
+    return mermaidElements.length
 }
