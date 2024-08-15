@@ -1,15 +1,61 @@
 import svgPanZoom from 'svg-pan-zoom';
 
-export function createZoomButton(mermaidContainer: HTMLElement, svgContent: string): HTMLElement {
-    const button = document.createElement("BUTTON")
-    button.style.width = "10rem"
-    button.onclick = () => {onClickZoom(button, mermaidContainer, svgContent)}
-    return button
+type ZoomState = {
+    enabled: Boolean
+    panX: number
+    panY: number
+    scale: number
 }
 
-export function enableZoom(button: HTMLElement, mermaidContainer: HTMLElement): SvgPanZoom.Instance | null {
+export const zoomStates: {[index: number]: ZoomState} = {}
+
+export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, svgContent: string, index: number) {
+    const button = createZoomButton()
+    resetToDefaultDiagram(mermaidContainer, svgContent, button)
+
+    // Load zoom state if exist
+    let zoomState = zoomStates[index]
+    if (zoomState == null) {
+        zoomState = {
+            enabled: false,
+            panX: 0,
+            panY: 0,
+            scale: 0
+        }
+        zoomStates[index] = zoomState
+    }
+
+    // If preivously zoom was enabled, enable zoom and sync back the pan and zoom scale
+    if (zoomState.enabled) {
+        const panZoomInstance = enableZoom(mermaidContainer, zoomState, button)
+        panZoomInstance?.zoom(zoomState.scale)
+        panZoomInstance?.pan({
+            x: zoomState.panX,
+            y: zoomState.panY,
+        })
+    }
+
+    button.onclick = () => {
+        if (!zoomState.enabled) {
+            enableZoom(mermaidContainer, zoomState, button)
+            zoomState.enabled = true;
+        }
+        else {
+            resetToDefaultDiagram(mermaidContainer, svgContent, button)
+            zoomState.enabled = false;
+        }
+    }
+}
+
+function createZoomButton(): HTMLElement {
+    const button = document.createElement("BUTTON");
+    button.style.width = "10rem";
+    return button;
+}
+
+function enableZoom(mermaidContainer: HTMLElement, zoomState: ZoomState, button: HTMLElement): SvgPanZoom.Instance | null {
     const svgEl = mermaidContainer.querySelector("svg");
-    if (!svgEl) return null
+    if (!svgEl) return null;
 
     // After svgPanZoom is applied the auto sizing of svg will not
     // work, so we need to define the size to exactly what it is currently
@@ -20,24 +66,21 @@ export function enableZoom(button: HTMLElement, mermaidContainer: HTMLElement): 
         zoomEnabled: true,
         controlIconsEnabled: true,
         fit: true,
-        center: true
     });
-    button.innerText = "Disable Zoom"
-    return panZoomInstance
+
+    // Update pan and zoom on any changes
+    panZoomInstance.setOnUpdatedCTM(_ => {
+        zoomState.panX = panZoomInstance.getPan().x;
+        zoomState.panY = panZoomInstance.getPan().y;
+        zoomState.scale = panZoomInstance.getZoom();
+    })
+
+    button.innerText = "Disable Zoom";
+    return panZoomInstance;
 }
 
-export function resetView(button: HTMLElement, mermaidContainer: HTMLElement, svgContent: string) {
+function resetToDefaultDiagram(mermaidContainer: HTMLElement, svgContent: string, button: HTMLElement) {
     mermaidContainer.innerHTML = svgContent;
     mermaidContainer.prepend(button);
-    button.innerText = "Enable Zoom"
+    button.innerText = "Enable Zoom";
 }
-
-function onClickZoom(button: HTMLElement, mermaidContainer: HTMLElement, svgContent: string) {
-    if (button.innerText == "Enable Zoom") {
-        enableZoom(button, mermaidContainer)
-    }
-    else {
-        resetView(button, mermaidContainer, svgContent)
-    }
-} 
-
