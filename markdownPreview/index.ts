@@ -2,6 +2,8 @@ import mermaid from 'mermaid';
 import { renderMermaidBlocksInElement } from './mermaid';
 import { newZoomStates, removeOldZoomStates, renderZoomableMermaidBlock } from './zoom';
 
+const zoomStates = newZoomStates()
+
 async function init() {
     const configSpan = document.getElementById('markdown-mermaid');
     const darkModeTheme = configSpan?.dataset.darkModeTheme;
@@ -15,7 +17,6 @@ async function init() {
     };
     mermaid.initialize(config);
 
-    const zoomStates = newZoomStates()
     const numElements = await renderMermaidBlocksInElement(document.body, (mermaidContainer, content, index) => {
         // Setup container styles
         mermaidContainer.style.display = "flex"
