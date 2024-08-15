@@ -19,6 +19,19 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
     mermaidContainer.prepend(button);
     button.innerText = "Enable Zoom";
 
+    button.onclick = () => {
+        if (!zoomState.enabled) {
+            enableZoom(mermaidContainer, zoomState, button)
+            zoomState.enabled = true;
+        }
+        else {
+            mermaidContainer.innerHTML = content;
+            mermaidContainer.prepend(button);
+            button.innerText = "Enable Zoom";
+            zoomState.enabled = false;
+        }
+    }
+
     // Load zoom state if exist
     let zoomState = zoomStates[index]
     if (zoomState == null) {
@@ -39,19 +52,6 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
             x: zoomState.panX,
             y: zoomState.panY,
         })
-    }
-
-    button.onclick = () => {
-        if (!zoomState.enabled) {
-            enableZoom(mermaidContainer, zoomState, button)
-            zoomState.enabled = true;
-        }
-        else {
-            mermaidContainer.innerHTML = content;
-            mermaidContainer.prepend(button);
-            button.innerText = "Enable Zoom";
-            zoomState.enabled = false;
-        }
     }
 }
 
