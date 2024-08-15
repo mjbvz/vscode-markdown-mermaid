@@ -27,8 +27,6 @@ async function renderMermaidElement(mermaidContainer: HTMLElement, index: number
             errorMessageNode.innerText = error.message;
             writeOut(mermaidContainer, errorMessageNode.outerHTML, index);
         }
-
-        throw error;
     }
 }
 
