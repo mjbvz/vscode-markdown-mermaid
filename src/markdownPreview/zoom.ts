@@ -63,6 +63,18 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
     }
 }
 
+// removeOldZoomStates will remove all zoom states where their index is
+// larger than the current amount of rendered elements. The usecase is 
+// if the user creates many diagrams then removes them, we don't want 
+// to keep zoom states for diagrams that don't exist
+export function removeOldZoomStates(zoomStates: ZoomStates, numElements: number) {
+    for (const index in zoomStates) {
+        if (Number(index) >= numElements) {
+            delete zoomStates[index]
+        }
+    }
+}
+
 function createZoomButton(): HTMLElement {
     const button = document.createElement("BUTTON");
     button.style.width = "10rem";
