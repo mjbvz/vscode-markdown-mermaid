@@ -10,8 +10,14 @@ type ZoomState = {
 export const zoomStates: {[index: number]: ZoomState} = {}
 
 export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, content: string, index: number) {
+    mermaidContainer.innerHTML = content;
+
+    // The content isn't svg so no zoom functionality can be setup
+    if (!mermaidContainer.querySelector("svg")) return;
+    
     const button = createZoomButton()
-    resetToDefaultDiagram(mermaidContainer, content, button)
+    mermaidContainer.prepend(button);
+    button.innerText = "Enable Zoom";
 
     // Load zoom state if exist
     let zoomState = zoomStates[index]
@@ -41,7 +47,9 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
             zoomState.enabled = true;
         }
         else {
-            resetToDefaultDiagram(mermaidContainer, content, button)
+            mermaidContainer.innerHTML = content;
+            mermaidContainer.prepend(button);
+            button.innerText = "Enable Zoom";
             zoomState.enabled = false;
         }
     }
@@ -54,6 +62,8 @@ function createZoomButton(): HTMLElement {
 }
 
 function enableZoom(mermaidContainer: HTMLElement, zoomState: ZoomState, button: HTMLElement): SvgPanZoom.Instance | null {
+    
+    // Only enable zoom if container has svg
     const svgEl = mermaidContainer.querySelector("svg");
     if (!svgEl) return null;
 
@@ -77,10 +87,4 @@ function enableZoom(mermaidContainer: HTMLElement, zoomState: ZoomState, button:
 
     button.innerText = "Disable Zoom";
     return panZoomInstance;
-}
-
-function resetToDefaultDiagram(mermaidContainer: HTMLElement, content: string, button: HTMLElement) {
-    mermaidContainer.innerHTML = content;
-    mermaidContainer.prepend(button);
-    button.innerText = "Enable Zoom";
 }
