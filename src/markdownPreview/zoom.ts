@@ -11,9 +11,13 @@ type ZoomState = {
 // value is it's zoom state so when we reconstruct the diagrams we know
 // which zoom states is for which. There's limitations where if diagrams
 // switches places we won't be able to tell.
-export const zoomStates: {[index: number]: ZoomState} = {}
+type ZoomStates = {[index: number]: ZoomState}
 
-export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, content: string, index: number) {
+export function newZoomStates(): ZoomStates {
+    return {}
+}
+
+export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, content: string, zoomStates: ZoomStates, index: number) {
     mermaidContainer.innerHTML = content;
 
     // The content isn't svg so no zoom functionality can be setup
