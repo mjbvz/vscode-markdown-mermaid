@@ -1,6 +1,6 @@
 import mermaid from 'mermaid';
 import { renderMermaidBlocksInElement } from './mermaid';
-import { renderZoomableMermaidBlock } from './zoom';
+import { newZoomStates, renderZoomableMermaidBlock } from './zoom';
 
 function init() {
     const configSpan = document.getElementById('markdown-mermaid');
@@ -15,12 +15,13 @@ function init() {
     };
     mermaid.initialize(config);
 
+    const zoomStates = newZoomStates()
     renderMermaidBlocksInElement(document.body, (mermaidContainer, content, index) => {
         // Setup container styles
         mermaidContainer.style.display = "flex"
         mermaidContainer.style.flexDirection = "column"
         
-        renderZoomableMermaidBlock(mermaidContainer, content, index)
+        renderZoomableMermaidBlock(mermaidContainer, content, zoomStates, index)
     });
 }
 
