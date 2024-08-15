@@ -5,9 +5,11 @@
  */
 import mermaid, { MermaidConfig } from 'mermaid';
 import { registerMermaidAddons, renderMermaidBlocksInElement } from '../shared-mermaid';
-import { newZoomStates, renderZoomableMermaidBlock } from './zoom';
+import { newZoomStates, removeOldZoomStates, renderZoomableMermaidBlock } from './zoom';
 
-function init() { 
+const zoomStates = newZoomStates();
+
+async function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
     const darkModeTheme = configSpan?.dataset.darkModeTheme;
     const lightModeTheme = configSpan?.dataset.lightModeTheme;
@@ -24,15 +26,17 @@ function init() {
     mermaid.initialize(config);
     registerMermaidAddons();
     
-    const zoomStates = newZoomStates();
     let mermaidIndex = 0;
-    renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
+    await renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
         // Setup container styles
         mermaidContainer.style.display = "flex"
         mermaidContainer.style.flexDirection = "column"
         
         renderZoomableMermaidBlock(mermaidContainer, content, zoomStates, mermaidIndex++)
     });
+    
+    const numElements = mermaidIndex;
+    removeOldZoomStates(zoomStates, numElements);
 }
 
 window.addEventListener('vscode.markdown.updateContent', init);
