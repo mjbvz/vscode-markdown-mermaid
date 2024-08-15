@@ -7,6 +7,10 @@ type ZoomState = {
     scale: number
 }
 
+// This is a map where key is the index of the diagram element and the
+// value is it's zoom state so when we reconstruct the diagrams we know
+// which zoom states is for which. There's limitations where if diagrams
+// switches places we won't be able to tell.
 export const zoomStates: {[index: number]: ZoomState} = {}
 
 export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, content: string, index: number) {
