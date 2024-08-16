@@ -1,6 +1,7 @@
 import svgPanZoom from 'svg-pan-zoom';
 
 type PanZoomState = {
+    requireInit: boolean
     enabled: boolean
     panX: number
     panY: number
@@ -29,34 +30,30 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
     // Create an empty pan zoom state if a previous one isn't found
     // mark this state as required for initialization which can only
     // be set when we enable pan and zoom and know what those values are
-    let requireStateInit = false
     let panZoomState: PanZoomState = panZoomStates[index]
     if (!panZoomState) {
         panZoomState = {
+            requireInit: true,
             enabled: false,
             panX: 0,
             panY: 0,
             scale: 0
         }
         panZoomStates[index] = panZoomState
-        requireStateInit = true
     }
 
     // If previously pan & zoom was enabled then re-enable it
     if (panZoomState.enabled) {
         input.checked = true
-        enablePanZoom(svgEl, panZoomState, false)
+        enablePanZoom(svgEl, panZoomState)
     }
 
-    input.onchange = (ev) => {
+    input.onchange = () => {
         if (!svgEl) throw Error("svg element should be defined")
 
         if (!panZoomState.enabled) {
-            enablePanZoom(svgEl, panZoomState, requireStateInit)
+            enablePanZoom(svgEl, panZoomState)
             panZoomState.enabled = true
-
-            // Once enabled then state should be initialzied
-            if (requireStateInit) requireStateInit = false
         }
         else {
             svgEl.remove()
@@ -83,7 +80,7 @@ export function removeOldPanZoomStates(panZoomStates: PanZoomStates, numElements
 // if the provided pan zoom state is new then it will be populated with
 // default pan zoom values when the library is initiated. If the pan zoom 
 // state is not new then it will resync against the pan zoom state
-function enablePanZoom(svgEl: SVGElement, panZoomState: PanZoomState, requireStateInit: boolean) {
+function enablePanZoom(svgEl: SVGElement, panZoomState: PanZoomState) {
 
     // After svgPanZoom is applied the auto sizing of svg will not
     // work, so we need to define the size to exactly what it is currently
@@ -98,10 +95,11 @@ function enablePanZoom(svgEl: SVGElement, panZoomState: PanZoomState, requireSta
     
     // The provided pan zoom state is new and needs to be intialized
     // with values once svg-pan-zoom has been started
-    if (requireStateInit) {
+    if (panZoomState.requireInit) {
         panZoomState.panX = panZoomInstance.getPan().x
         panZoomState.panY = panZoomInstance.getPan().y
         panZoomState.scale = panZoomInstance.getZoom()
+        panZoomState.requireInit = false
         
     // Otherwise create initial pan zoom state from the default pan and zoom values
     } else {
