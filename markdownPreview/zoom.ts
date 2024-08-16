@@ -1,7 +1,7 @@
 import svgPanZoom from 'svg-pan-zoom';
 
 type PanZoomState = {
-    enabled: Boolean
+    enabled: boolean
     panX: number
     panY: number
     scale: number
@@ -24,27 +24,14 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
     let svgEl = mermaidContainer.querySelector("svg")
     if (!svgEl) return;
     
-    const { toggle, input } = createPanZoomToggle()
-    mermaidContainer.prepend(toggle);
+    const input = createPanZoomToggle(mermaidContainer)
 
-    input.onchange = () => {
-        if (!svgEl) throw Error("svg element should be defined")
-
-        if (!panZoomState.enabled) {
-            enablePanZoom(svgEl, panZoomState)
-            panZoomState.enabled = true;
-        }
-        else {
-            svgEl.remove()
-            mermaidContainer.insertAdjacentHTML("beforeend", content)
-            svgEl = mermaidContainer.querySelector("svg")
-            panZoomState.enabled = false;
-        }
-    }
-
-    // Load pan zoom state if exist
-    let panZoomState = panZoomStates[index]
-    if (panZoomState == null) {
+    // Create an empty pan zoom state if a previous one isn't found
+    // mark this state as required for initialization which can only
+    // be set when we enable pan and zoom and know what those values are
+    let requireStateInit = false
+    let panZoomState: PanZoomState = panZoomStates[index]
+    if (!panZoomState) {
         panZoomState = {
             enabled: false,
             panX: 0,
@@ -52,16 +39,31 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
             scale: 0
         }
         panZoomStates[index] = panZoomState
+        requireStateInit = true
     }
 
-    // If previously pan & zoom was enabled, re-enable and sync back the previous state
+    // If previously pan & zoom was enabled then re-enable it
     if (panZoomState.enabled) {
-        const panZoomInstance = enablePanZoom(svgEl, panZoomState)
-        panZoomInstance?.zoom(panZoomState.scale)
-        panZoomInstance?.pan({
-            x: panZoomState.panX,
-            y: panZoomState.panY,
-        })
+        input.checked = true
+        enablePanZoom(svgEl, panZoomState, false)
+    }
+
+    input.onchange = (ev) => {
+        if (!svgEl) throw Error("svg element should be defined")
+
+        if (!panZoomState.enabled) {
+            enablePanZoom(svgEl, panZoomState, requireStateInit)
+            panZoomState.enabled = true
+
+            // Once enabled then state should be initialzied
+            if (requireStateInit) requireStateInit = false
+        }
+        else {
+            svgEl.remove()
+            mermaidContainer.insertAdjacentHTML("beforeend", content)
+            svgEl = mermaidContainer.querySelector("svg")
+            panZoomState.enabled = false
+        }
     }
 }
 
@@ -77,7 +79,11 @@ export function removeOldPanZoomStates(panZoomStates: PanZoomStates, numElements
     }
 }
 
-function enablePanZoom(svgEl: SVGElement, panZoomState: PanZoomState, ): SvgPanZoom.Instance | null {
+// enablePanZoom will modify the provided svgEl with svg-pan-zoom library
+// if the provided pan zoom state is new then it will be populated with
+// default pan zoom values when the library is initiated. If the pan zoom 
+// state is not new then it will resync against the pan zoom state
+function enablePanZoom(svgEl: SVGElement, panZoomState: PanZoomState, requireStateInit: boolean) {
 
     // After svgPanZoom is applied the auto sizing of svg will not
     // work, so we need to define the size to exactly what it is currently
@@ -89,6 +95,22 @@ function enablePanZoom(svgEl: SVGElement, panZoomState: PanZoomState, ): SvgPanZ
         controlIconsEnabled: true,
         fit: true,
     });
+    
+    // The provided pan zoom state is new and needs to be intialized
+    // with values once svg-pan-zoom has been started
+    if (requireStateInit) {
+        panZoomState.panX = panZoomInstance.getPan().x
+        panZoomState.panY = panZoomInstance.getPan().y
+        panZoomState.scale = panZoomInstance.getZoom()
+        
+    // Otherwise create initial pan zoom state from the default pan and zoom values
+    } else {
+        panZoomInstance?.zoom(panZoomState.scale)
+        panZoomInstance?.pan({
+            x: panZoomState.panX,
+            y: panZoomState.panY,
+        })
+    }
 
     // Update pan and zoom on any changes
     panZoomInstance.setOnUpdatedCTM(_ => {
@@ -96,40 +118,24 @@ function enablePanZoom(svgEl: SVGElement, panZoomState: PanZoomState, ): SvgPanZ
         panZoomState.panY = panZoomInstance.getPan().y;
         panZoomState.scale = panZoomInstance.getZoom();
     })
-
-    // toggle.innerText = "Disable Zoom";
-    return panZoomInstance;
 }
 
-function createPanZoomToggle(): {
-    toggle: HTMLElement,
-    input: HTMLElement,
-} {
-    const toggle = document.createElement("DIV");
-    toggle.setAttribute("class", "toggle-container")
+function createPanZoomToggle(mermaidContainer: HTMLElement): HTMLInputElement {
+    const inputID = `checkbox-${crypto.randomUUID()}`;
+    mermaidContainer.insertAdjacentHTML("afterbegin", `
+    <div class="toggle-container">
+        <input id="${inputID}" class="checkbox" type="checkbox" />
+        <label class="label" for="${inputID}">
+            <span class="ball" />
+        </label>
+        <div class="text">Pan & Zoom</div>
+    </div>
+    `)
 
-    const input = document.createElement("INPUT");
-    const id = `checkbox-${crypto.randomUUID()}`;
-    input.setAttribute("type", "checkbox");
-    input.setAttribute("class", "checkbox")
-    input.setAttribute("id", id);
-    toggle.appendChild(input)
+    const input = mermaidContainer.querySelector("input")
+    if (!input) throw Error("toggle input should be defined")
 
-    const label = document.createElement("LABEL");
-    label.setAttribute("class", "label")
-    label.setAttribute("for", id)
-    toggle.appendChild(label)
-
-    const ball = document.createElement("SPAN");
-    ball.setAttribute("class", "ball")
-    label.appendChild(ball)
-
-    const text = document.createElement("DIV");
-    text.setAttribute("class", "text")
-    text.textContent = "Pan & Zoom"
-    toggle.appendChild(text)
-
-    return { toggle, input };
+    return input;
 }
 
 export function getToggleButtonStyles(): HTMLStyleElement {
