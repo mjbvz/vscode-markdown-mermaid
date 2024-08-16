@@ -1,6 +1,6 @@
 import svgPanZoom from 'svg-pan-zoom';
 
-type ZoomState = {
+type PanZoomState = {
     enabled: Boolean
     panX: number
     panY: number
@@ -8,76 +8,76 @@ type ZoomState = {
 }
 
 // This is a map where key is the index of the diagram element and the
-// value is it's zoom state so when we reconstruct the diagrams we know
-// which zoom states is for which. There's limitations where if diagrams
+// value is it's pan zoom state so when we reconstruct the diagrams we know
+// which pan zoom states is for which. There's limitations where if diagrams
 // switches places we won't be able to tell.
-type ZoomStates = {[index: number]: ZoomState}
+type PanZoomStates = {[index: number]: PanZoomState}
 
-export function newZoomStates(): ZoomStates {
+export function newPanZoomStates(): PanZoomStates {
     return {}
 }
 
-export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, content: string, zoomStates: ZoomStates, index: number) {
+export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, content: string, panZoomStates: PanZoomStates, index: number) {
     mermaidContainer.innerHTML = content;
 
     // The content isn't svg so no zoom functionality can be setup
     let svgEl = mermaidContainer.querySelector("svg")
     if (!svgEl) return;
     
-    const { toggle, input } = createZoomToggle()
+    const { toggle, input } = createPanZoomToggle()
     mermaidContainer.prepend(toggle);
 
     input.onchange = () => {
         if (!svgEl) throw Error("svg element should be defined")
 
-        if (!zoomState.enabled) {
-            enableZoom(svgEl, zoomState)
-            zoomState.enabled = true;
+        if (!panZoomState.enabled) {
+            enablePanZoom(svgEl, panZoomState)
+            panZoomState.enabled = true;
         }
         else {
             svgEl.remove()
             mermaidContainer.insertAdjacentHTML("beforeend", content)
             svgEl = mermaidContainer.querySelector("svg")
-            zoomState.enabled = false;
+            panZoomState.enabled = false;
         }
     }
 
-    // Load zoom state if exist
-    let zoomState = zoomStates[index]
-    if (zoomState == null) {
-        zoomState = {
+    // Load pan zoom state if exist
+    let panZoomState = panZoomStates[index]
+    if (panZoomState == null) {
+        panZoomState = {
             enabled: false,
             panX: 0,
             panY: 0,
             scale: 0
         }
-        zoomStates[index] = zoomState
+        panZoomStates[index] = panZoomState
     }
 
-    // If preivously zoom was enabled, enable zoom and sync back the pan and zoom scale
-    if (zoomState.enabled) {
-        const panZoomInstance = enableZoom(svgEl, zoomState)
-        panZoomInstance?.zoom(zoomState.scale)
+    // If previously pan & zoom was enabled, re-enable and sync back the previous state
+    if (panZoomState.enabled) {
+        const panZoomInstance = enablePanZoom(svgEl, panZoomState)
+        panZoomInstance?.zoom(panZoomState.scale)
         panZoomInstance?.pan({
-            x: zoomState.panX,
-            y: zoomState.panY,
+            x: panZoomState.panX,
+            y: panZoomState.panY,
         })
     }
 }
 
-// removeOldZoomStates will remove all zoom states where their index is
-// larger than the current amount of rendered elements. The usecase is 
-// if the user creates many diagrams then removes them, we don't want 
-// to keep zoom states for diagrams that don't exist
-export function removeOldZoomStates(zoomStates: ZoomStates, numElements: number) {
-    for (const index in zoomStates) {
+// removeOldPanZoomStates will remove all pan zoom states where their index
+// is larger than the current amount of rendered elements. The usecase is 
+// if the user creates many diagrams then removes them, we don't want to
+// keep pan zoom states for diagrams that don't exist
+export function removeOldPanZoomStates(panZoomStates: PanZoomStates, numElements: number) {
+    for (const index in panZoomStates) {
         if (Number(index) >= numElements) {
-            delete zoomStates[index]
+            delete panZoomStates[index]
         }
     }
 }
 
-function enableZoom(svgEl: SVGElement, zoomState: ZoomState, ): SvgPanZoom.Instance | null {
+function enablePanZoom(svgEl: SVGElement, panZoomState: PanZoomState, ): SvgPanZoom.Instance | null {
 
     // After svgPanZoom is applied the auto sizing of svg will not
     // work, so we need to define the size to exactly what it is currently
@@ -92,21 +92,26 @@ function enableZoom(svgEl: SVGElement, zoomState: ZoomState, ): SvgPanZoom.Insta
 
     // Update pan and zoom on any changes
     panZoomInstance.setOnUpdatedCTM(_ => {
-        zoomState.panX = panZoomInstance.getPan().x;
-        zoomState.panY = panZoomInstance.getPan().y;
-        zoomState.scale = panZoomInstance.getZoom();
+        panZoomState.panX = panZoomInstance.getPan().x;
+        panZoomState.panY = panZoomInstance.getPan().y;
+        panZoomState.scale = panZoomInstance.getZoom();
     })
 
     // toggle.innerText = "Disable Zoom";
     return panZoomInstance;
 }
 
-function createZoomToggle(): {
+function createPanZoomToggle(): {
     toggle: HTMLElement,
     input: HTMLElement,
 } {
     const toggle = document.createElement("DIV");
     toggle.setAttribute("class", "toggle-container")
+
+    const text = document.createElement("DIV");
+    text.setAttribute("class", "text")
+    text.textContent = "Pan & Zoom"
+    toggle.appendChild(text)
 
     const input = document.createElement("INPUT");
     const id = `checkbox-${crypto.randomUUID()}`;
@@ -130,7 +135,15 @@ function createZoomToggle(): {
 export function getToggleButtonStyles(): HTMLStyleElement {
     const styles = `
     .toggle-container {
-        display: flex
+        display: flex;
+        margin-left: auto;
+        align-items: center;
+        margin-bottom: 6px;
+        font-size: 12px;
+    }
+
+    .toggle-container .text {
+        margin-right: 6px;
     }
 
     .toggle-container .checkbox {
@@ -140,12 +153,11 @@ export function getToggleButtonStyles(): HTMLStyleElement {
       
     .toggle-container .label {
         background-color: #111;
-        width: 50px;
-        height: 26px;
+        width: 33px;
+        height: 19px;
         border-radius: 50px;
         position: relative;
         padding: 5px;
-        margin: 0 5px 5px;
         cursor: pointer;
         display: flex;
         justify-content: space-between;
@@ -155,8 +167,8 @@ export function getToggleButtonStyles(): HTMLStyleElement {
 
     .toggle-container .label .ball {
         background-color: #fff;
-        width: 22px;
-        height: 22px;
+        width: 15px;
+        height: 15px;
         position: absolute;
         left: 2px;
         top: 2px;
@@ -165,7 +177,7 @@ export function getToggleButtonStyles(): HTMLStyleElement {
     }
 
     .toggle-container .checkbox:checked + .label .ball {
-        transform: translateX(24px);
+        transform: translateX(14px);
     }
     `
 

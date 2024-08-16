@@ -1,8 +1,8 @@
 import mermaid from 'mermaid';
 import { renderMermaidBlocksInElement } from './mermaid';
-import { getToggleButtonStyles, newZoomStates, removeOldZoomStates, renderZoomableMermaidBlock } from './zoom';
+import { getToggleButtonStyles, newPanZoomStates, removeOldPanZoomStates, renderZoomableMermaidBlock } from './zoom';
 
-const zoomStates = newZoomStates()
+const panZoomStates = newPanZoomStates()
 
 async function init() {
     const configSpan = document.getElementById('markdown-mermaid');
@@ -23,9 +23,9 @@ async function init() {
         mermaidContainer.style.display = "flex"
         mermaidContainer.style.flexDirection = "column"
         
-        renderZoomableMermaidBlock(mermaidContainer, content, zoomStates, index)
+        renderZoomableMermaidBlock(mermaidContainer, content, panZoomStates, index)
     });
-    removeOldZoomStates(zoomStates, numElements)
+    removeOldPanZoomStates(panZoomStates, numElements)
 }
 
 window.addEventListener('vscode.markdown.updateContent', init);
