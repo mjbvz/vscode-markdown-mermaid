@@ -108,11 +108,6 @@ function createPanZoomToggle(): {
     const toggle = document.createElement("DIV");
     toggle.setAttribute("class", "toggle-container")
 
-    const text = document.createElement("DIV");
-    text.setAttribute("class", "text")
-    text.textContent = "Pan & Zoom"
-    toggle.appendChild(text)
-
     const input = document.createElement("INPUT");
     const id = `checkbox-${crypto.randomUUID()}`;
     input.setAttribute("type", "checkbox");
@@ -129,6 +124,11 @@ function createPanZoomToggle(): {
     ball.setAttribute("class", "ball")
     label.appendChild(ball)
 
+    const text = document.createElement("DIV");
+    text.setAttribute("class", "text")
+    text.textContent = "Pan & Zoom"
+    toggle.appendChild(text)
+
     return { toggle, input };
 }
 
@@ -136,14 +136,13 @@ export function getToggleButtonStyles(): HTMLStyleElement {
     const styles = `
     .toggle-container {
         display: flex;
-        margin-left: auto;
         align-items: center;
         margin-bottom: 6px;
-        font-size: 12px;
     }
 
     .toggle-container .text {
-        margin-right: 6px;
+        margin-left: 6px;
+        font-size: 12px;
     }
 
     .toggle-container .checkbox {
