@@ -5,7 +5,7 @@
  */
 import mermaid, { MermaidConfig } from 'mermaid';
 import { registerMermaidAddons, renderMermaidBlocksInElement } from '../shared-mermaid';
-import { newZoomStates, removeOldZoomStates, renderZoomableMermaidBlock } from './zoom';
+import { getToggleButtonStyles, newZoomStates, removeOldZoomStates, renderZoomableMermaidBlock } from './zoom';
 
 const zoomStates = newZoomStates();
 
@@ -25,6 +25,8 @@ async function init() {
 
     mermaid.initialize(config);
     registerMermaidAddons();
+    
+    document.head.appendChild(getToggleButtonStyles());
     
     let mermaidIndex = 0;
     await renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
