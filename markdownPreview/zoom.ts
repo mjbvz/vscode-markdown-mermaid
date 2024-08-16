@@ -21,21 +21,23 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
     mermaidContainer.innerHTML = content;
 
     // The content isn't svg so no zoom functionality can be setup
-    if (!mermaidContainer.querySelector("svg")) return;
+    let svgEl = mermaidContainer.querySelector("svg")
+    if (!svgEl) return;
     
-    const button = createZoomButton()
-    mermaidContainer.prepend(button);
-    button.innerText = "Enable Zoom";
+    const { toggle, input } = createZoomToggle()
+    mermaidContainer.prepend(toggle);
 
-    button.onclick = () => {
+    input.onchange = () => {
+        if (!svgEl) throw Error("svg element should be defined")
+
         if (!zoomState.enabled) {
-            enableZoom(mermaidContainer, zoomState, button)
+            enableZoom(svgEl, zoomState)
             zoomState.enabled = true;
         }
         else {
-            mermaidContainer.innerHTML = content;
-            mermaidContainer.prepend(button);
-            button.innerText = "Enable Zoom";
+            svgEl.remove()
+            mermaidContainer.insertAdjacentHTML("beforeend", content)
+            svgEl = mermaidContainer.querySelector("svg")
             zoomState.enabled = false;
         }
     }
@@ -54,7 +56,7 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
 
     // If preivously zoom was enabled, enable zoom and sync back the pan and zoom scale
     if (zoomState.enabled) {
-        const panZoomInstance = enableZoom(mermaidContainer, zoomState, button)
+        const panZoomInstance = enableZoom(svgEl, zoomState)
         panZoomInstance?.zoom(zoomState.scale)
         panZoomInstance?.pan({
             x: zoomState.panX,
@@ -75,17 +77,7 @@ export function removeOldZoomStates(zoomStates: ZoomStates, numElements: number)
     }
 }
 
-function createZoomButton(): HTMLElement {
-    const button = document.createElement("BUTTON");
-    button.style.width = "10rem";
-    return button;
-}
-
-function enableZoom(mermaidContainer: HTMLElement, zoomState: ZoomState, button: HTMLElement): SvgPanZoom.Instance | null {
-    
-    // Only enable zoom if container has svg
-    const svgEl = mermaidContainer.querySelector("svg");
-    if (!svgEl) return null;
+function enableZoom(svgEl: SVGElement, zoomState: ZoomState, ): SvgPanZoom.Instance | null {
 
     // After svgPanZoom is applied the auto sizing of svg will not
     // work, so we need to define the size to exactly what it is currently
@@ -105,6 +97,79 @@ function enableZoom(mermaidContainer: HTMLElement, zoomState: ZoomState, button:
         zoomState.scale = panZoomInstance.getZoom();
     })
 
-    button.innerText = "Disable Zoom";
+    // toggle.innerText = "Disable Zoom";
     return panZoomInstance;
+}
+
+function createZoomToggle(): {
+    toggle: HTMLElement,
+    input: HTMLElement,
+} {
+    const toggle = document.createElement("DIV");
+    toggle.setAttribute("class", "toggle-container")
+
+    const input = document.createElement("INPUT");
+    const id = `checkbox-${crypto.randomUUID()}`;
+    input.setAttribute("type", "checkbox");
+    input.setAttribute("class", "checkbox")
+    input.setAttribute("id", id);
+    toggle.appendChild(input)
+
+    const label = document.createElement("LABEL");
+    label.setAttribute("class", "label")
+    label.setAttribute("for", id)
+    toggle.appendChild(label)
+
+    const ball = document.createElement("SPAN");
+    ball.setAttribute("class", "ball")
+    label.appendChild(ball)
+
+    return { toggle, input };
+}
+
+export function getToggleButtonStyles(): HTMLStyleElement {
+    const styles = `
+    .toggle-container {
+        display: flex
+    }
+
+    .toggle-container .checkbox {
+        opacity: 0;
+        position: absolute;
+    }
+      
+    .toggle-container .label {
+        background-color: #111;
+        width: 50px;
+        height: 26px;
+        border-radius: 50px;
+        position: relative;
+        padding: 5px;
+        margin: 0 5px 5px;
+        cursor: pointer;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        box-sizing: border-box;
+    }
+
+    .toggle-container .label .ball {
+        background-color: #fff;
+        width: 22px;
+        height: 22px;
+        position: absolute;
+        left: 2px;
+        top: 2px;
+        border-radius: 50%;
+        transition: transform 0.2s linear;
+    }
+
+    .toggle-container .checkbox:checked + .label .ball {
+        transform: translateX(24px);
+    }
+    `
+
+    const styleSheet = document.createElement("style")
+    styleSheet.textContent = styles
+    return styleSheet
 }
