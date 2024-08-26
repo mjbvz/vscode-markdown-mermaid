@@ -182,6 +182,10 @@ export function getToggleButtonStyles(): HTMLStyleElement {
     .toggle-container .checkbox:checked + .label .ball {
         transform: translateX(14px);
     }
+    
+    .toggle-container .checkbox:checked + .label {
+        background-color: #28a745;
+    }
     `
 
     const styleSheet = document.createElement("style")
