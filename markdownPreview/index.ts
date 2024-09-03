@@ -1,4 +1,4 @@
-import mermaid from 'mermaid';
+import mermaid, { MermaidConfig } from 'mermaid';
 import { renderMermaidBlocksInElement } from './mermaid';
 
 function init() {
@@ -8,9 +8,9 @@ function init() {
 
     const config = {
         startOnLoad: false,
-        theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+        theme: (document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
             ? darkModeTheme ?? 'dark'
-            : lightModeTheme ?? 'default'
+            : lightModeTheme ?? 'default' ) as MermaidConfig['theme'],
     };
     mermaid.initialize(config);
 
