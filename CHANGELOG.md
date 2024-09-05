@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.24.0 - September 5, 2024
+- Pick up Mermaid 11.1.0. Thanks @AdrieanKhisbe!
+- Fix some parsing of potential html characters in diagrams. Thanks @Bunker-D!
+
 ## 1.23.1 - June 18, 2024
 - Fix some issues with parsing `:::` blocks.
 
