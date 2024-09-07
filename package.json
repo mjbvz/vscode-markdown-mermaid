@@ -83,7 +83,9 @@
       }
     }
   },
-  "dependencies": {},
+  "dependencies": {
+    "@iconify-json/logos": "^1.2.0"
+  },
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@types/markdown-it": "^14.1.0",
