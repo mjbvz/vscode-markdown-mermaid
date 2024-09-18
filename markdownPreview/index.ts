@@ -1,18 +1,11 @@
 import mermaid, { MermaidConfig } from 'mermaid';
 import { renderMermaidBlocksInElement } from './mermaid';
-import * as logos from '@iconify-json/logos';
+import { registerIconPacks } from '../src/mermaid';
 
 function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
     const darkModeTheme = configSpan?.dataset.darkModeTheme;
     const lightModeTheme = configSpan?.dataset.lightModeTheme;
-  
-    mermaid.registerIconPacks([
-      {
-        name: 'logos',
-        loader: () => Promise.resolve(logos.icons),
-      },
-    ]);
 
     const config = {
         startOnLoad: false,
@@ -20,6 +13,8 @@ function init() {
             ? darkModeTheme ?? 'dark'
             : lightModeTheme ?? 'default' ) as MermaidConfig['theme'],
     };
+
+    registerIconPacks();
     mermaid.initialize(config);
 
     renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {

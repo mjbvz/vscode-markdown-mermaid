@@ -1,4 +1,5 @@
 import type MarkdownIt from 'markdown-it';
+import mermaid from 'mermaid';
 
 const mermaidLanguageId = 'mermaid';
 const containerTokenName = 'mermaidContainer';
@@ -150,4 +151,15 @@ function preProcess(source: string): string {
 
 function escapeRegExp(string: string): string {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
+}
+
+
+export function registerIconPacks() {
+    mermaid.registerIconPacks([
+        {
+            name: 'logos',
+            loader: () => import('@iconify-json/logos').then((module) => module.icons),
+          },
+    ]);
+
 }
