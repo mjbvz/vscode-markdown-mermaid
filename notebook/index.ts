@@ -1,5 +1,5 @@
 import type * as MarkdownIt from 'markdown-it';
-import mermaid from 'mermaid';
+import mermaid, { MermaidConfig } from 'mermaid';
 import { registerIconPacks } from '../src/mermaid';
 import type { RendererContext } from 'vscode-notebook-renderer';
 import { renderMermaidBlocksInElement } from '../markdownPreview/mermaid';
@@ -15,7 +15,7 @@ export async function activate(ctx: RendererContext<void>) {
         throw new Error(`Could not load 'vscode.markdown-it-renderer'`);
     }
 
-    const config = {
+    const config: MermaidConfig = {
         startOnLoad: false,
         theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast') ? 'dark' : 'default'
     };
