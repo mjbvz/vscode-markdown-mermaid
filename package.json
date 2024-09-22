@@ -86,6 +86,7 @@
   "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.15.0",
+    "@mermaid-js/layout-elk": "^0.1.4",
     "@types/markdown-it": "^14.1.0",
     "@types/vscode": "^1.72.0",
     "@types/vscode-notebook-renderer": "^1.72.0",

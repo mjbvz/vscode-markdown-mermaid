@@ -1,5 +1,6 @@
 import mermaid, { MermaidConfig } from 'mermaid';
 import { renderMermaidBlocksInElement } from './mermaid';
+import elkLayouts from '@mermaid-js/layout-elk';
 
 function init() {
     const configSpan = document.getElementById('markdown-mermaid');
@@ -12,6 +13,7 @@ function init() {
             ? darkModeTheme ?? 'dark'
             : lightModeTheme ?? 'default' ) as MermaidConfig['theme'],
     };
+    mermaid.registerLayoutLoaders(elkLayouts);
     mermaid.initialize(config);
 
     renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
