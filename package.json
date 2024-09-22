@@ -83,9 +83,9 @@
       }
     }
   },
-  "dependencies": {},
   "devDependencies": {
     "@babel/core": "^7.15.0",
+    "@mermaid-js/layout-elk": "^0.1.4",
     "@types/markdown-it": "^14.1.0",
     "@types/vscode": "^1.72.0",
     "@types/vscode-notebook-renderer": "^1.72.0",
@@ -102,6 +102,7 @@
     "webpack-cli": "^5.0.1"
   },
   "scripts": {
+    "vsix": "vsce package",
     "build-preview": "webpack --mode=production --config ./build/markdownPreview.webpack.config.js",
     "build-notebook": "webpack --mode=production --config ./build/notebook.webpack.config.js",
     "compile-ext": "webpack --config ./build/webpack.config.js",
