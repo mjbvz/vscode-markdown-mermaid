@@ -1,5 +1,6 @@
 import type MarkdownIt from 'markdown-it';
 import mermaid from 'mermaid';
+import { requireIconPack } from './iconPackConfig';
 
 const mermaidLanguageId = 'mermaid';
 const containerTokenName = 'mermaidContainer';
@@ -153,13 +154,19 @@ function escapeRegExp(string: string): string {
     return string.replace(/[.*+?^${}()|[\]\\]/g, '\\$&');
 }
 
+export function registerIconPacks(config: Array<{ prefix?: string; pack: string }>) {
+    const iconPacks = config.map((iconPack) => ({
+        name: iconPack.prefix || '',
+        loader: () => {
+        try {
+            const module = requireIconPack(`./${iconPack.pack.replace('@iconify-json/', '')}`);
+            return module.icons || {}; 
+        } catch (error) {
+            console.error(`Failed to load icon pack: ${iconPack.pack}`, error);
+            return {}; 
+        }
+        },
+    }));
 
-export function registerIconPacks() {
-    mermaid.registerIconPacks([
-        {
-            name: 'logos',
-            loader: () => import('@iconify-json/logos').then((module) => module.icons),
-          },
-    ]);
-
+    mermaid.registerIconPacks(iconPacks);
 }

@@ -4,6 +4,7 @@ import { registerIconPacks } from '../src/mermaid';
 import type { RendererContext } from 'vscode-notebook-renderer';
 import { renderMermaidBlocksInElement } from '../markdownPreview/mermaid';
 import { extendMarkdownItWithMermaid } from '../src/mermaid';
+import { iconPackConfig } from '../src/iconPackConfig';
 
 interface MarkdownItRenderer {
     extendMarkdownIt(fn: (md: MarkdownIt) => void): void;
@@ -17,10 +18,10 @@ export async function activate(ctx: RendererContext<void>) {
 
     const config = {
         startOnLoad: false,
-        theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast') ? 'dark' : 'default'
+        theme: (document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast') ? 'dark' : 'default') as 'default' | 'dark',
     };
     
-    registerIconPacks();
+    registerIconPacks(iconPackConfig);
     mermaid.initialize(config);
 
     markdownItRenderer.extendMarkdownIt((md: MarkdownIt) => {

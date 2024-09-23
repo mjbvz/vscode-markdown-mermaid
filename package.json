@@ -84,13 +84,15 @@
     }
   },
   "dependencies": {
-    "@iconify-json/logos": "^1.2.0"
+    "@iconify-json/logos": "^1.2.0",
+    "@iconify-json/mdi": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
     "@types/markdown-it": "^14.1.0",
     "@types/vscode": "^1.72.0",
     "@types/vscode-notebook-renderer": "^1.72.0",
+    "@types/webpack-env": "^1.18.5",
     "babel-loader": "^8.2.2",
     "css-loader": "^6.7.3",
     "mermaid": "^11.1.0",

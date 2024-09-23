@@ -1,6 +1,7 @@
 import mermaid, { MermaidConfig } from 'mermaid';
 import { renderMermaidBlocksInElement } from './mermaid';
 import { registerIconPacks } from '../src/mermaid';
+import { iconPackConfig } from '../src/iconPackConfig';
 
 function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
@@ -14,7 +15,7 @@ function init() {
             : lightModeTheme ?? 'default' ) as MermaidConfig['theme'],
     };
 
-    registerIconPacks();
+    registerIconPacks(iconPackConfig);
     mermaid.initialize(config);
 
     renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
