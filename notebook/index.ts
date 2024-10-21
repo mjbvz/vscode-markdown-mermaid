@@ -3,6 +3,7 @@ import mermaid, { MermaidConfig } from 'mermaid';
 import type { RendererContext } from 'vscode-notebook-renderer';
 import { renderMermaidBlocksInElement } from '../markdownPreview/mermaid';
 import { extendMarkdownItWithMermaid } from '../src/mermaid';
+import elkLayouts from '@mermaid-js/layout-elk';
 
 interface MarkdownItRenderer {
     extendMarkdownIt(fn: (md: MarkdownIt) => void): void;
@@ -19,6 +20,7 @@ export async function activate(ctx: RendererContext<void>) {
         theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast') ? 'dark' : 'default'
     };
     mermaid.initialize(config);
+    mermaid.registerLayoutLoaders(elkLayouts);
 
     markdownItRenderer.extendMarkdownIt((md: MarkdownIt) => {
         extendMarkdownItWithMermaid(md, { languageIds: () => ['mermaid'] });
