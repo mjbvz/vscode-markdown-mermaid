@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.26.0 - TBD
+- Pick up Mermaid 11.3.0. Thanks @RickHermansDSA!
+- Add ELK layout support. Thanks @worbunkel!
+
 ## 1.25.0 - September 16, 2024
 - Pick up Mermaid 11.2.0. Thanks @StuartFyfe!
 
