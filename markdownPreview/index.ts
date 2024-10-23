@@ -13,8 +13,8 @@ function init() {
             ? darkModeTheme ?? 'dark'
             : lightModeTheme ?? 'default' ) as MermaidConfig['theme'],
     };
-    mermaid.registerLayoutLoaders(elkLayouts);
     mermaid.initialize(config);
+    mermaid.registerLayoutLoaders(elkLayouts);
 
     renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
         mermaidContainer.innerHTML = content;

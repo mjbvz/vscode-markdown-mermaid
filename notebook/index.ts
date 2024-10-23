@@ -19,8 +19,8 @@ export async function activate(ctx: RendererContext<void>) {
         startOnLoad: false,
         theme: document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast') ? 'dark' : 'default'
     };
-    mermaid.registerLayoutLoaders(elkLayouts);
     mermaid.initialize(config);
+    mermaid.registerLayoutLoaders(elkLayouts);
 
     markdownItRenderer.extendMarkdownIt((md: MarkdownIt) => {
         extendMarkdownItWithMermaid(md, { languageIds: () => ['mermaid'] });
