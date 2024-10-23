@@ -85,7 +85,8 @@
   },
   "dependencies": {
     "@iconify-json/logos": "^1.2.0",
-    "@iconify-json/mdi": "^1.2.0"
+    "@iconify-json/mdi": "^1.2.0",
+    "@mermaid-js/mermaid-zenuml": "^0.2.0"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",

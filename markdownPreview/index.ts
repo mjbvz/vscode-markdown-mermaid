@@ -1,8 +1,5 @@
-import elkLayouts from '@mermaid-js/layout-elk';
 import mermaid, { MermaidConfig } from 'mermaid';
-import { iconPackConfig } from '../src/iconPackConfig';
-import { registerIconPacks } from '../src/mermaid';
-import { renderMermaidBlocksInElement } from './mermaid';
+import { registerMermaidAddons, renderMermaidBlocksInElement } from './mermaid';
 
 function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
@@ -16,16 +13,13 @@ function init() {
             : lightModeTheme ?? 'default' ) as MermaidConfig['theme'],
     };
 
-    registerIconPacks(iconPackConfig);
     mermaid.initialize(config);
-    mermaid.registerLayoutLoaders(elkLayouts);
-
+    registerMermaidAddons();
+    
     renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
         mermaidContainer.innerHTML = content;
     });
 }
 
-
 window.addEventListener('vscode.markdown.updateContent', init);
-
 init();

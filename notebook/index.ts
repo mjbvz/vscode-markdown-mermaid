@@ -1,10 +1,11 @@
 import elkLayouts from '@mermaid-js/layout-elk';
+import zenuml from '@mermaid-js/mermaid-zenuml';
 import type * as MarkdownIt from 'markdown-it';
 import mermaid, { MermaidConfig } from 'mermaid';
 import type { RendererContext } from 'vscode-notebook-renderer';
-import { renderMermaidBlocksInElement } from '../markdownPreview/mermaid';
-import { iconPackConfig } from '../src/iconPackConfig';
-import { extendMarkdownItWithMermaid, registerIconPacks } from '../src/mermaid';
+import { registerMermaidAddons, renderMermaidBlocksInElement } from '../markdownPreview/mermaid';
+import { iconPackConfig } from '../markdownPreview/iconPackConfig';
+import { extendMarkdownItWithMermaid } from '../src/mermaid';
 
 interface MarkdownItRenderer {
     extendMarkdownIt(fn: (md: MarkdownIt) => void): void;
@@ -20,10 +21,9 @@ export async function activate(ctx: RendererContext<void>) {
         startOnLoad: false,
         theme: (document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast') ? 'dark' : 'default') as 'default' | 'dark',
     };
-    
-    registerIconPacks(iconPackConfig);
+
     mermaid.initialize(config);
-    mermaid.registerLayoutLoaders(elkLayouts);
+    await registerMermaidAddons();
 
     markdownItRenderer.extendMarkdownIt((md: MarkdownIt) => {
         extendMarkdownItWithMermaid(md, { languageIds: () => ['mermaid'] });

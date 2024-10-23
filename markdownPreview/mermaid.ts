@@ -1,4 +1,7 @@
+import elkLayouts from '@mermaid-js/layout-elk';
+import zenuml from '@mermaid-js/mermaid-zenuml';
 import mermaid from 'mermaid';
+import { iconPackConfig, requireIconPack } from './iconPackConfig';
 
 async function renderMermaidElement(mermaidContainer: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void) {
     const containerId = `mermaid-container-${crypto.randomUUID()}`;
@@ -44,4 +47,27 @@ export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: 
     for (const mermaidContainer of root.getElementsByClassName('mermaid')) {
         await renderMermaidElement(mermaidContainer as HTMLElement, writeOut);
     }
+}
+
+function registerIconPacks(config: Array<{ prefix?: string; pack: string }>) {
+    const iconPacks = config.map((iconPack) => ({
+        name: iconPack.prefix || '',
+        loader: () => {
+        try {
+            const module = requireIconPack(`./${iconPack.pack.replace('@iconify-json/', '')}`);
+            return module.icons || {}; 
+        } catch (error) {
+            console.error(`Failed to load icon pack: ${iconPack.pack}`, error);
+            return {}; 
+        }
+        },
+    }));
+
+    mermaid.registerIconPacks(iconPacks);
+}
+
+export async function registerMermaidAddons() {
+    registerIconPacks(iconPackConfig);
+    mermaid.registerLayoutLoaders(elkLayouts);
+    await mermaid.registerExternalDiagrams([zenuml]);
 }
