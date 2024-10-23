@@ -1,5 +1,43 @@
 # Change Log
 
+## 1.26.0 - TBD
+- Pick up Mermaid 11.3.0. Thanks @RickHermansDSA!
+- Add ELK layout support. Thanks @worbunkel!
+- Added ZenUML support.
+- Added iconify logos. Thanks @hiroto1220!
+
+## 1.25.0 - September 16, 2024
+- Pick up Mermaid 11.2.0. Thanks @StuartFyfe!
+
+## 1.24.0 - September 5, 2024
+- Pick up Mermaid 11.1.0. Thanks @AdrieanKhisbe!
+- Fix some parsing of potential html characters in diagrams. Thanks @Bunker-D!
+
+## 1.23.1 - June 18, 2024
+- Fix some issues with parsing `:::` blocks.
+
+## 1.23.0 - April 30, 2024
+- Pick up Mermaid 10.9.0. Thanks @Caleb-Wishart!
+
+## 1.22.0 - February 5, 2024
+- Pick up Mermaid 10.8.0. Thanks @noppej!
+
+## 1.21.0 - December 6, 2023
+- Pick up Mermaid 10.6.1. Thanks @jalmeter and @ebjornset!
+
+## 1.20.0 - September 25, 2023
+- Pick up Mermaid 10.4.0.
+
+## 1.19.0 - June 21, 2023
+- Pick up Mermaid 10.2.3.
+
+## 1.18.1 - April 10, 2023
+- Pick up Mermaid 10.1.0.
+- Clear errors on re-render.
+
+## 1.18.0 - March 29, 2023
+- Pick up Mermaid 10.0.2.
+
 ## 1.17.7 - March 7, 2023
 - Fix loading mindmap support.
 - Fix rendering in notebooks after switch to `renderAsync`.
