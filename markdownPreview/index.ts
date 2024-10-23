@@ -1,8 +1,10 @@
-import mermaid, { MermaidConfig } from 'mermaid';
-import { renderMermaidBlocksInElement } from './mermaid';
 import elkLayouts from '@mermaid-js/layout-elk';
+import mermaid, { MermaidConfig } from 'mermaid';
+import { iconPackConfig } from '../src/iconPackConfig';
+import { registerIconPacks } from '../src/mermaid';
+import { renderMermaidBlocksInElement } from './mermaid';
 
-function init() {
+function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
     const darkModeTheme = configSpan?.dataset.darkModeTheme;
     const lightModeTheme = configSpan?.dataset.lightModeTheme;
@@ -13,6 +15,8 @@ function init() {
             ? darkModeTheme ?? 'dark'
             : lightModeTheme ?? 'default' ) as MermaidConfig['theme'],
     };
+
+    registerIconPacks(iconPackConfig);
     mermaid.initialize(config);
     mermaid.registerLayoutLoaders(elkLayouts);
 
