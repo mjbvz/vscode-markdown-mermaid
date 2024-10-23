@@ -1,11 +1,15 @@
-import elkLayouts from '@mermaid-js/layout-elk';
-import zenuml from '@mermaid-js/mermaid-zenuml';
+/**
+ * Main entrypoint for rendering notebooks.
+ * 
+ * Unlike the markdown preview where the Mermaid syntax support and rendering are split between the extension and the webview,
+ * for notebooks everything happens inside of the notebook's webview.
+ * 
+ */
 import type * as MarkdownIt from 'markdown-it';
-import mermaid, { MermaidConfig } from 'mermaid';
+import mermaid from 'mermaid';
 import type { RendererContext } from 'vscode-notebook-renderer';
-import { registerMermaidAddons, renderMermaidBlocksInElement } from '../markdownPreview/mermaid';
-import { iconPackConfig } from '../markdownPreview/iconPackConfig';
-import { extendMarkdownItWithMermaid } from '../src/mermaid';
+import { extendMarkdownItWithMermaid } from '../shared-md-mermaid';
+import { loadMermaidConfig, registerMermaidAddons, renderMermaidBlocksInElement } from '../shared-mermaid';
 
 interface MarkdownItRenderer {
     extendMarkdownIt(fn: (md: MarkdownIt) => void): void;
@@ -17,19 +21,14 @@ export async function activate(ctx: RendererContext<void>) {
         throw new Error(`Could not load 'vscode.markdown-it-renderer'`);
     }
 
-    const config: MermaidConfig = {
-        startOnLoad: false,
-        theme: (document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast') ? 'dark' : 'default') as 'default' | 'dark',
-    };
-
-    mermaid.initialize(config);
+    mermaid.initialize(loadMermaidConfig());
     await registerMermaidAddons();
 
     markdownItRenderer.extendMarkdownIt((md: MarkdownIt) => {
         extendMarkdownItWithMermaid(md, { languageIds: () => ['mermaid'] });
 
         const render = md.renderer.render;
-
+        debugger;
         md.renderer.render = function (tokens, options, env) {
             const result = render.call(this, tokens, options, env);
 
@@ -37,6 +36,7 @@ export async function activate(ctx: RendererContext<void>) {
 
             const temp = document.createElement('div');
             temp.innerHTML = result;
+            debugger;
             renderMermaidBlocksInElement(temp, (mermaidContainer, content) => {
                 // The original element we are rendering to has been disconnected.
                 const liveEl = shadowRoot?.getElementById(mermaidContainer.id);

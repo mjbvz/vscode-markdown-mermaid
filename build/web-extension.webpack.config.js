@@ -7,7 +7,7 @@ module.exports = /** @type {webview.WebpackConfig} */ {
     mode: 'none', // this leaves the source code as close as possible to the original (when packaging we set this to 'production')
     target: 'webworker', // extensions run in a webworker context
     entry: {
-        'index': './src/index.ts', // source of the web extension main file
+        'index': './src/vscode-extension/index.ts', // source of the web extension main file
     },
     output: {
         filename: '[name].js',

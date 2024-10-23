@@ -6,7 +6,7 @@ module.exports = {
     ...shared,
     target: 'web',
     entry: {
-        'index': path.join(__dirname, '..', 'notebook', 'index.ts'),
+        'index': path.join(__dirname, '..', 'src', 'notebook', 'index.ts'),
     },
     experiments: {
         outputModule: true,

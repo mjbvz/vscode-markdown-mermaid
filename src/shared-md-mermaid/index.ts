@@ -8,6 +8,13 @@ const marker_str = ':'
 const marker_char = marker_str.charCodeAt(0)
 const marker_len = marker_str.length
 
+/**
+ * Extends markdown-it so that it can render mermaid diagrams.
+ * 
+ * This does not actually implement rendering of mermaid diagrams. Instead we just make sure that mermaid 
+ * block syntax is properly parsed by markdown-it. All actual mermaid rendering happens in the webview
+ * where the markdown is rendered.
+ */
 export function extendMarkdownItWithMermaid(md: MarkdownIt, config: { languageIds(): readonly string[] }) {
     // Code forked from markdown-it-container
     // Fork was done as we want to get the raw text inside container instead of treating it as markdown

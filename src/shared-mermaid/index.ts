@@ -1,6 +1,6 @@
 import elkLayouts from '@mermaid-js/layout-elk';
 import zenuml from '@mermaid-js/mermaid-zenuml';
-import mermaid from 'mermaid';
+import mermaid, { MermaidConfig } from 'mermaid';
 import { iconPackConfig, requireIconPack } from './iconPackConfig';
 
 async function renderMermaidElement(mermaidContainer: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void) {
@@ -53,13 +53,13 @@ function registerIconPacks(config: Array<{ prefix?: string; pack: string }>) {
     const iconPacks = config.map((iconPack) => ({
         name: iconPack.prefix || '',
         loader: () => {
-        try {
-            const module = requireIconPack(`./${iconPack.pack.replace('@iconify-json/', '')}`);
-            return module.icons || {}; 
-        } catch (error) {
-            console.error(`Failed to load icon pack: ${iconPack.pack}`, error);
-            return {}; 
-        }
+            try {
+                const module = requireIconPack(`./${iconPack.pack.replace('@iconify-json/', '')}`);
+                return module.icons || {};
+            } catch (error) {
+                console.error(`Failed to load icon pack: ${iconPack.pack}`, error);
+                return {};
+            }
         },
     }));
 
@@ -70,4 +70,17 @@ export async function registerMermaidAddons() {
     registerIconPacks(iconPackConfig);
     mermaid.registerLayoutLoaders(elkLayouts);
     await mermaid.registerExternalDiagrams([zenuml]);
+}
+
+export function loadMermaidConfig(): MermaidConfig {
+    const configSpan = document.getElementById('markdown-mermaid');
+    const darkModeTheme = configSpan?.dataset.darkModeTheme;
+    const lightModeTheme = configSpan?.dataset.lightModeTheme;
+
+    return {
+        startOnLoad: false,
+        theme: (document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
+            ? darkModeTheme ?? 'dark'
+            : lightModeTheme ?? 'default') as MermaidConfig['theme'],
+    };
 }
