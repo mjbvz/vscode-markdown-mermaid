@@ -1,16 +1,16 @@
 export const iconPackConfig = [
     {
-      prefix: 'logos',
-      pack: '@iconify-json/logos', 
+        prefix: 'logos',
+        pack: '@iconify-json/logos',
     },
     {
-      prefix: 'mdi',
-      pack: '@iconify-json/mdi',
+        prefix: 'mdi',
+        pack: '@iconify-json/mdi',
     }
-  ];
-  
-  export const requireIconPack = require.context(
-    '@iconify-json', 
-    true,            
-    /^\.\/(logos|mdi)$/, 
-  );
+];
+
+export const requireIconPack = require.context(
+    '@iconify-json',
+    true,
+    /^\.\/(logos|mdi)$/,
+);

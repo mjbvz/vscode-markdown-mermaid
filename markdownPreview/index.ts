@@ -1,7 +1,8 @@
+import elkLayouts from '@mermaid-js/layout-elk';
 import mermaid, { MermaidConfig } from 'mermaid';
-import { renderMermaidBlocksInElement } from './mermaid';
-import { registerIconPacks } from '../src/mermaid';
 import { iconPackConfig } from '../src/iconPackConfig';
+import { registerIconPacks } from '../src/mermaid';
+import { renderMermaidBlocksInElement } from './mermaid';
 
 function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
@@ -17,6 +18,7 @@ function init() {
 
     registerIconPacks(iconPackConfig);
     mermaid.initialize(config);
+    mermaid.registerLayoutLoaders(elkLayouts);
 
     renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
         mermaidContainer.innerHTML = content;
