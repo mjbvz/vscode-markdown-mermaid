@@ -3,49 +3,64 @@ import zenuml from '@mermaid-js/mermaid-zenuml';
 import mermaid, { MermaidConfig } from 'mermaid';
 import { iconPackConfig, requireIconPack } from './iconPackConfig';
 
-async function renderMermaidElement(mermaidContainer: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void) {
+function renderMermaidElement(
+    mermaidContainer: HTMLElement,
+    writeOut: (mermaidContainer: HTMLElement, content: string) => void,
+): {
+    containerId: string;
+    p: Promise<void>;
+} {
     const containerId = `mermaid-container-${crypto.randomUUID()}`;
-    mermaidContainer.id = containerId;
+    const diagramId = `mermaid-${crypto.randomUUID()}`;
 
-    const id = `mermaid-${crypto.randomUUID()}`;
     const source = mermaidContainer.textContent ?? '';
+    mermaidContainer.id = containerId;
     mermaidContainer.innerHTML = '';
 
-    try {
-        mermaid.mermaidAPI.reset();
+    return {
+        containerId,
+        p: (async () => {
+            try {
+                // Catch any parsing errors
+                await mermaid.parse(source);
 
-        // Catch any parsing errors
-        await mermaid.parse(source);
+                //  Render the diagram
+                const renderResult = await mermaid.render(diagramId, source);
+                writeOut(mermaidContainer, renderResult.svg);
+                renderResult.bindFunctions?.(mermaidContainer);
+            } catch (error) {
+                if (error instanceof Error) {
+                    const errorMessageNode = document.createElement('pre');
+                    errorMessageNode.className = 'mermaid-error';
+                    errorMessageNode.innerText = error.message;
+                    writeOut(mermaidContainer, errorMessageNode.outerHTML);
+                }
 
-        //  Render the diagram
-        const renderResult = await mermaid.render(id, source);
-        writeOut(mermaidContainer, renderResult.svg);
-        renderResult.bindFunctions?.(mermaidContainer);
-    } catch (error) {
-        if (error instanceof Error) {
-            const errorMessageNode = document.createElement('pre');
-            errorMessageNode.className = 'mermaid-error';
-            errorMessageNode.innerText = error.message;
-            writeOut(mermaidContainer, errorMessageNode.outerHTML);
-        }
-
-        throw error;
-    }
+                throw error;
+            }
+        })()
+    };
 }
 
 export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void): Promise<void> {
     // Delete existing mermaid outputs
-    for (const el of document.querySelectorAll('.mermaid > svg')) {
+    for (const el of root.querySelectorAll('.mermaid > svg')) {
         el.remove();
     }
-    for (const svg of document.querySelectorAll('svg')) {
+    for (const svg of root.querySelectorAll('svg')) {
         if (svg.parentElement?.id.startsWith('dmermaid')) {
             svg.parentElement.remove();
         }
     }
 
-    for (const mermaidContainer of root.getElementsByClassName('mermaid')) {
-        await renderMermaidElement(mermaidContainer as HTMLElement, writeOut);
+    // We need to generate all the container ids sync, but then do the actual rendering async
+    const renderPromises: Array<Promise<void>> = [];
+    for (const mermaidContainer of root.querySelectorAll<HTMLElement>('.mermaid')) {
+        renderPromises.push(renderMermaidElement(mermaidContainer, writeOut).p);
+    }
+
+    for (const p of renderPromises) {
+        await p;
     }
 }
 

@@ -30,7 +30,6 @@ export async function activate(ctx: RendererContext<void>) {
         const render = md.renderer.render;
         md.renderer.render = function (tokens, options, env) {
             const result = render.call(this, tokens, options, env);
-
             const shadowRoot = document.getElementById(env?.outputItem.id)?.shadowRoot;
 
             const temp = document.createElement('div');
@@ -40,6 +39,8 @@ export async function activate(ctx: RendererContext<void>) {
                 const liveEl = shadowRoot?.getElementById(mermaidContainer.id);
                 if (liveEl) {
                     liveEl.innerHTML = content;
+                } else {
+                    console.warn('Could not find live element to render mermaid to');
                 }
             });
             return temp.innerHTML;

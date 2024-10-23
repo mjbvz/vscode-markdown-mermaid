@@ -114,7 +114,7 @@
   },
   "scripts": {
     "build-preview": "webpack --mode=production --config ./build/markdownPreview.webpack.config.js",
-    "build-notebook": "webpack --mode=production --config ./build/notebook.webpack.config.js",
+    "build-notebook": "webpack --config ./build/notebook.webpack.config.js",
     "compile-ext": "webpack --config ./build/webpack.config.js",
     "watch-ext": "webpack --watch --config ./build/webpack.config.js",
     "watch-ext-web": "webpack --watch --config ./build/web-extension.webpack.config.js",
