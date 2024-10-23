@@ -1,6 +1,7 @@
-
+// @ts-check
 const path = require('path');
 const shared = require('./shared.mermaid.webpack.config');
+const webpack = require('webpack');
 
 module.exports = {
     ...shared,
@@ -18,4 +19,9 @@ module.exports = {
             type: "module",
         },
     },
+    plugins: [
+        new webpack.optimize.LimitChunkCountPlugin({
+            maxChunks: 1,
+        }),
+    ],
 };

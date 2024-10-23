@@ -1,4 +1,4 @@
-
+// @ts-check
 const path = require('path');
 const shared = require('./shared.mermaid.webpack.config');
 const webpack = require('webpack');

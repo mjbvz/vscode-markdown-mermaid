@@ -1,6 +1,5 @@
 // @ts-check
 const path = require('path');
-const webpack = require('webpack');
 
 module.exports = /** @type {webview.WebpackConfig} */ {
     context: path.dirname(__dirname),

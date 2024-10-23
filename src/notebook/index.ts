@@ -28,7 +28,6 @@ export async function activate(ctx: RendererContext<void>) {
         extendMarkdownItWithMermaid(md, { languageIds: () => ['mermaid'] });
 
         const render = md.renderer.render;
-        debugger;
         md.renderer.render = function (tokens, options, env) {
             const result = render.call(this, tokens, options, env);
 
@@ -36,7 +35,6 @@ export async function activate(ctx: RendererContext<void>) {
 
             const temp = document.createElement('div');
             temp.innerHTML = result;
-            debugger;
             renderMermaidBlocksInElement(temp, (mermaidContainer, content) => {
                 // The original element we are rendering to has been disconnected.
                 const liveEl = shadowRoot?.getElementById(mermaidContainer.id);
