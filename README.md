@@ -43,6 +43,32 @@ graph TD;
 
 - `markdown-mermaid.languages` — Configures language ids for Mermaid code blocks. The default is `["mermaid"]`.
 
+- `markdown-mermaid.directives` — Configures directives and `themeVariables`. 
+(See [directives](https://mermaid.js.org/config/directives.html), [themeVariables](https://mermaid.js.org/config/theming.html)).
+Use `"debug": true` to display directives being sent to `mermaid.initialize()`.  When `themeVariables` is set, any theme is overridden with `"theme": "base"`.
+
+Example (add to `setttings.json`):
+```json
+{
+    "markdown-mermaid.directives": {
+        "sequence": {
+            "mirrorActors": false,
+        },
+        "themeVariables": {
+            "primaryColor": "#BB2528",
+            "primaryTextColor": "#fff",
+            "primaryBorderColor": "#7C0000",
+            "lineColor": "#F8B229",
+            "secondaryColor": "#006100",
+            "tertiaryColor": "#fff"
+        },
+        "debug": true,
+    }
+}
+```
+
+![A mermaid diagram with directives and themeVariables](https://github.com/frankieliu/vscode-markdown-mermaid/blob/adding-mermaid-config/docs/sequenceDiagramWithDirectives.png?raw=true)
+
 ### Using custom CSS in the Markdown Preview
 
 You can use the built-in functionality to add custom CSS. More info can be found in the [markdown.styles documentation](https://code.visualstudio.com/Docs/languages/markdown#_using-your-own-css)
