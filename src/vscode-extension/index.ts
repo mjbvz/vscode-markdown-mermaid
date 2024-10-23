@@ -1,3 +1,4 @@
+import type MarkdownIt from 'markdown-it';
 import * as vscode from 'vscode';
 import { extendMarkdownItWithMermaid } from '../shared-md-mermaid';
 import { configSection } from './config';
@@ -11,7 +12,7 @@ export function activate(ctx: vscode.ExtensionContext) {
     }));
 
     return {
-        extendMarkdownIt(md: any) {
+        extendMarkdownIt(md: MarkdownIt) {
             extendMarkdownItWithMermaid(md, {
                 languageIds: () => {
                     return vscode.workspace.getConfiguration(configSection).get<string[]>('languages', ['mermaid']);
@@ -20,5 +21,5 @@ export function activate(ctx: vscode.ExtensionContext) {
             md.use(injectMermaidTheme);
             return md;
         }
-    }
+    };
 }

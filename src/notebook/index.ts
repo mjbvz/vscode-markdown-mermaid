@@ -43,7 +43,7 @@ export async function activate(ctx: RendererContext<void>) {
                 }
             });
             return temp.innerHTML;
-        }
+        };
         return md;
     });
 };
