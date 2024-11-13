@@ -1,5 +1,18 @@
 # Change Log
 
+## 1.26.0 - TBD
+- Pick up Mermaid 11.3.0. Thanks @RickHermansDSA!
+- Add ELK layout support. Thanks @worbunkel!
+- Added ZenUML support.
+- Added iconify logos. Thanks @hiroto1220!
+
+## 1.25.0 - September 16, 2024
+- Pick up Mermaid 11.2.0. Thanks @StuartFyfe!
+
+## 1.24.0 - September 5, 2024
+- Pick up Mermaid 11.1.0. Thanks @AdrieanKhisbe!
+- Fix some parsing of potential html characters in diagrams. Thanks @Bunker-D!
+
 ## 1.23.1 - June 18, 2024
 - Fix some issues with parsing `:::` blocks.
 
