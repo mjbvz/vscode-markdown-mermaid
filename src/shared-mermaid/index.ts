@@ -92,10 +92,14 @@ export function loadMermaidConfig(): MermaidConfig {
     const darkModeTheme = configSpan?.dataset.darkModeTheme;
     const lightModeTheme = configSpan?.dataset.lightModeTheme;
 
+    const directives = JSON.parse(configSpan?.dataset.directives ?? '');
+
     return {
         startOnLoad: false,
         theme: (document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
             ? darkModeTheme ?? 'dark'
             : lightModeTheme ?? 'default') as MermaidConfig['theme'],
+
+        ...directives,
     };
 }
