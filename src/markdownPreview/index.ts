@@ -5,15 +5,17 @@
  */
 import mermaid, { MermaidConfig } from 'mermaid';
 import { registerMermaidAddons, renderMermaidBlocksInElement } from '../shared-mermaid';
-import { getToggleButtonStyles, newZoomStates, removeOldZoomStates, renderZoomableMermaidBlock } from './zoom';
+import { getToggleButtonStyles, newPanZoomStates, removeOldPanZoomStates, renderZoomableMermaidBlock } from './zoom';
 
-const zoomStates = newZoomStates();
+let panZoomStates = newPanZoomStates();
 
 async function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
     const darkModeTheme = configSpan?.dataset.darkModeTheme;
     const lightModeTheme = configSpan?.dataset.lightModeTheme;
     const maxTextSize = configSpan?.dataset.maxTextSize;
+    const enablePanZoom = configSpan?.dataset.enablePanZoom;
+    const initPanZoom = enablePanZoom ? enablePanZoom == "true" : false;
 
     const config: MermaidConfig = {
         startOnLoad: false,
@@ -30,15 +32,26 @@ async function init() {
     
     let mermaidIndex = 0;
     await renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
-        // Setup container styles
-        mermaidContainer.style.display = "flex"
-        mermaidContainer.style.flexDirection = "column"
-        
-        renderZoomableMermaidBlock(mermaidContainer, content, zoomStates, mermaidIndex++)
+        if (initPanZoom) {
+            // Setup container styles
+            mermaidContainer.style.display = "flex";
+            mermaidContainer.style.flexDirection = "column";
+            renderZoomableMermaidBlock(mermaidContainer, content, panZoomStates, mermaidIndex);
+        } else {
+            mermaidContainer.innerHTML = content;
+        }
+        mermaidIndex++;
     });
     
     const numElements = mermaidIndex;
-    removeOldZoomStates(zoomStates, numElements);
+    if (initPanZoom) {
+        // Some diagrams maybe removed during edits and if we have states
+        // for more diagrams than there are then we should also remove them
+        removeOldPanZoomStates(panZoomStates, numElements);
+    } else {
+        // If pan & zoom has been disabled the clear the states completely
+        panZoomStates = newPanZoomStates();
+    }
 }
 
 window.addEventListener('vscode.markdown.updateContent', init);
