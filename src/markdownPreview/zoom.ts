@@ -45,14 +45,14 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
     // If previously pan & zoom was enabled then re-enable it
     if (panZoomState.enabled) {
         input.checked = true
-        enablePanZoom(svgEl, panZoomState)
+        enablePanZoom(mermaidContainer, svgEl, panZoomState)
     }
 
     input.onchange = () => {
         if (!svgEl) throw Error("svg element should be defined")
 
         if (!panZoomState.enabled) {
-            enablePanZoom(svgEl, panZoomState)
+            enablePanZoom(mermaidContainer, svgEl, panZoomState)
             panZoomState.enabled = true
         }
         else {
@@ -80,7 +80,7 @@ export function removeOldPanZoomStates(panZoomStates: PanZoomStates, numElements
 // if the provided pan zoom state is new then it will be populated with
 // default pan zoom values when the library is initiated. If the pan zoom 
 // state is not new then it will resync against the pan zoom state
-function enablePanZoom(svgEl: SVGElement, panZoomState: PanZoomState) {
+function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGElement, panZoomState: PanZoomState) {
 
     // After svgPanZoom is applied the auto sizing of svg will not
     // work, so we need to define the size to exactly what it is currently
@@ -109,6 +109,14 @@ function enablePanZoom(svgEl: SVGElement, panZoomState: PanZoomState) {
             y: panZoomState.panY,
         })
     }
+
+    // Show pan zoom control incons only when mouse hovers over the diagram 
+    mermaidContainer.onmouseenter = (_ => {
+        panZoomInstance.enableControlIcons()
+    })
+    mermaidContainer.onmouseleave = (_ => {
+        panZoomInstance.disableControlIcons()
+    })
 
     // Update pan and zoom on any changes
     panZoomInstance.setOnUpdatedCTM(_ => {
