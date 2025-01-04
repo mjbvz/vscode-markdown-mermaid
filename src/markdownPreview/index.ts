@@ -33,9 +33,6 @@ async function init() {
     let mermaidIndex = 0;
     await renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
         if (initPanZoom) {
-            // Setup container styles
-            mermaidContainer.style.display = "flex";
-            mermaidContainer.style.flexDirection = "column";
             renderZoomableMermaidBlock(mermaidContainer, content, panZoomStates, mermaidIndex);
         } else {
             mermaidContainer.innerHTML = content;
