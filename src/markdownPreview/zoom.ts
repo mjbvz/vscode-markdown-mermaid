@@ -138,15 +138,22 @@ function createPanZoomToggle(mermaidContainer: HTMLElement): HTMLInputElement {
 
 export function getToggleButtonStyles(): HTMLStyleElement {
     const styles = `
+    .mermaid:hover .toggle-container {
+        opacity: 1;
+    }
+
     .toggle-container {
+        opacity: 0;
         display: flex;
         align-items: center;
         margin-bottom: 6px;
+        transition: opacity 0.2s ease-in-out;
     }
 
     .toggle-container .text {
         margin-left: 6px;
         font-size: 12px;
+        cursor: default;
     }
 
     .toggle-container .checkbox {
