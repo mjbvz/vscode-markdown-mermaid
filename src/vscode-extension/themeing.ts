@@ -20,9 +20,11 @@ export function injectMermaidTheme(md: MarkdownIt) {
     md.renderer.render = function (...args) {
         const darkModeTheme = sanitizeMermaidTheme(vscode.workspace.getConfiguration(configSection).get('darkModeTheme'));
         const lightModeTheme = sanitizeMermaidTheme(vscode.workspace.getConfiguration(configSection).get('lightModeTheme'));
+        const enablePanZoom = vscode.workspace.getConfiguration(configSection).get('enablePanZoom') as Boolean;
         return `<span id="${configSection}" aria-hidden="true"
                     data-dark-mode-theme="${darkModeTheme}"
-                    data-light-mode-theme="${lightModeTheme}"></span>
+                    data-light-mode-theme="${lightModeTheme}"
+                    data-enable-pan-zoom=${enablePanZoom}></span>
                 ${render.apply(md.renderer, args)}`;
     };
     return md;
