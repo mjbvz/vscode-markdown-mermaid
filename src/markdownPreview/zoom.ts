@@ -18,20 +18,13 @@ export function newPanZoomStates(): PanZoomStates {
     return {}
 }
 
-
-
 export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, content: string, panZoomStates: PanZoomStates, index: number) {
+
     // Setup container styles
     mermaidContainer.style.display = "flex";
     mermaidContainer.style.flexDirection = "column";
 
-    // Place svg content in container
-    mermaidContainer.innerHTML = content;
-
-    // The content isn't svg so no zoom functionality can be setup
-    let svgEl = mermaidContainer.querySelector("svg")
-    if (!svgEl) return;
-    
+    let svgEl = addSvgEl(mermaidContainer, content)
     const input = createPanZoomToggle(mermaidContainer)
 
     // Create an empty pan zoom state if a previous one isn't found
@@ -56,16 +49,13 @@ export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, conten
     }
 
     input.onchange = () => {
-        if (!svgEl) throw Error("svg element should be defined")
-
         if (!panZoomState.enabled) {
             enablePanZoom(mermaidContainer, svgEl, panZoomState)
             panZoomState.enabled = true
         }
         else {
             svgEl.remove()
-            mermaidContainer.insertAdjacentHTML("beforeend", content)
-            svgEl = mermaidContainer.querySelector("svg")
+            svgEl = addSvgEl(mermaidContainer, content)
             panZoomState.enabled = false
         }
     }
@@ -83,17 +73,29 @@ export function removeOldPanZoomStates(panZoomStates: PanZoomStates, numElements
     }
 }
 
+function addSvgEl(mermaidContainer:HTMLElement, content: string): SVGSVGElement {
+
+    // Add svg string content
+    mermaidContainer.insertAdjacentHTML("beforeend", content)
+    
+    // Svg element should be found in container
+    const svgEl = mermaidContainer.querySelector("svg")
+    if (!svgEl) throw("svg element not found");
+
+    return svgEl
+}
+
 // enablePanZoom will modify the provided svgEl with svg-pan-zoom library
 // if the provided pan zoom state is new then it will be populated with
 // default pan zoom values when the library is initiated. If the pan zoom 
 // state is not new then it will resync against the pan zoom state
 function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGElement, panZoomState: PanZoomState) {
 
-    // After svgPanZoom is applied the auto sizing of svg will not
-    // work, so we need to define the size to exactly what it is currently
+    // Svg element doesn't have width and height set after svg has been
+    // rendered, so we need to clearly define it so svg-pan-zoom will work
     const svgSize = svgEl.getBoundingClientRect()
-    svgEl.style.width = svgSize.width+"px";
     svgEl.style.height = svgSize.height+"px";
+
     const panZoomInstance = svgPanZoom(svgEl, {
         zoomEnabled: true,
         controlIconsEnabled: true,
