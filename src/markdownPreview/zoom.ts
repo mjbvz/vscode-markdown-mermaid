@@ -18,7 +18,14 @@ export function newPanZoomStates(): PanZoomStates {
     return {}
 }
 
+
+
 export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, content: string, panZoomStates: PanZoomStates, index: number) {
+    // Setup container styles
+    mermaidContainer.style.display = "flex";
+    mermaidContainer.style.flexDirection = "column";
+
+    // Place svg content in container
     mermaidContainer.innerHTML = content;
 
     // The content isn't svg so no zoom functionality can be setup

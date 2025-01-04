@@ -29,9 +29,6 @@ async function init() {
     document.head.appendChild(getToggleButtonStyles())
     const numElements = await renderMermaidBlocksInElement(document.body, (mermaidContainer, content, index) => {
         if (initPanZoom) {
-            // Setup container styles
-            mermaidContainer.style.display = "flex";
-            mermaidContainer.style.flexDirection = "column";
             renderZoomableMermaidBlock(mermaidContainer, content, panZoomStates, index);
         } else {
             mermaidContainer.innerHTML = content;
