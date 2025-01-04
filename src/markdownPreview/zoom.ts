@@ -177,7 +177,7 @@ export function getToggleButtonStyles(): HTMLStyleElement {
     }
       
     .toggle-container .label {
-        background-color: #111;
+        background-color: var(--vscode-editorWidget-background);
         width: 33px;
         height: 19px;
         border-radius: 50px;
@@ -191,12 +191,12 @@ export function getToggleButtonStyles(): HTMLStyleElement {
     }
 
     .toggle-container .label .ball {
-        background-color: #fff;
+        background-color: var(--vscode-editorWidget-foreground);
         width: 15px;
         height: 15px;
         position: absolute;
         left: 2px;
-        top: 2px;
+        top: 1px;
         border-radius: 50%;
         transition: transform 0.2s linear;
     }
@@ -206,7 +206,7 @@ export function getToggleButtonStyles(): HTMLStyleElement {
     }
     
     .toggle-container .checkbox:checked + .label {
-        background-color: #28a745;
+        background-color: var(--vscode-textLink-activeForeground);
     }
     `
 
