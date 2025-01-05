@@ -91,8 +91,9 @@ function addSvgEl(mermaidContainer:HTMLElement, content: string): SVGSVGElement 
 // state is not new then it will resync against the pan zoom state
 function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGElement, panZoomState: PanZoomState) {
 
-    // Svg element doesn't have width and height set after svg has been
-    // rendered, so we need to clearly define it so svg-pan-zoom will work
+    // Svg element doesn't have any width and height defined but relies on auto sizing.
+    // For svg-pan-zoom to work we need to define atleast the height so we should
+    // take the current height of the svg
     const svgSize = svgEl.getBoundingClientRect()
     svgEl.style.height = svgSize.height+"px";
 
