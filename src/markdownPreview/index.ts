@@ -5,17 +5,15 @@
  */
 import mermaid, { MermaidConfig } from 'mermaid';
 import { registerMermaidAddons, renderMermaidBlocksInElement } from '../shared-mermaid';
-import { getToggleButtonStyles, newPanZoomStates, removeOldPanZoomStates, renderZoomableMermaidBlock } from './zoom';
-
-let panZoomStates = newPanZoomStates();
+import { renderMermaidBlocksWithPanZoom } from './zoom';
 
 async function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
     const darkModeTheme = configSpan?.dataset.darkModeTheme;
     const lightModeTheme = configSpan?.dataset.lightModeTheme;
     const maxTextSize = configSpan?.dataset.maxTextSize;
-    const enablePanZoom = configSpan?.dataset.enablePanZoom;
-    const initPanZoom = enablePanZoom ? enablePanZoom == "true" : false;
+    const enablePanZoomStr = configSpan?.dataset.enablePanZoom;
+    const enablePanZoom = enablePanZoomStr ? enablePanZoomStr == "true" : false;
 
     const config: MermaidConfig = {
         startOnLoad: false,
@@ -27,27 +25,13 @@ async function init() {
 
     mermaid.initialize(config);
     registerMermaidAddons();
-    
-    document.head.appendChild(getToggleButtonStyles());
-    
-    let mermaidIndex = 0;
-    await renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
-        if (initPanZoom) {
-            renderZoomableMermaidBlock(mermaidContainer, content, panZoomStates, mermaidIndex);
-        } else {
-            mermaidContainer.innerHTML = content;
-        }
-        mermaidIndex++;
-    });
-    
-    const numElements = mermaidIndex;
-    if (initPanZoom) {
-        // Some diagrams maybe removed during edits and if we have states
-        // for more diagrams than there are then we should also remove them
-        removeOldPanZoomStates(panZoomStates, numElements);
+
+    if (enablePanZoom) {
+        await renderMermaidBlocksWithPanZoom();
     } else {
-        // If pan & zoom has been disabled the clear the states completely
-        panZoomStates = newPanZoomStates();
+        await renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
+            mermaidContainer.innerHTML = content;
+        });
     }
 }
 

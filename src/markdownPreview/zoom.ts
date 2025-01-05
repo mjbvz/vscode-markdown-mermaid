@@ -1,4 +1,5 @@
 import svgPanZoom from 'svg-pan-zoom';
+import { renderMermaidBlocksInElement } from '../shared-mermaid';
 
 type PanZoomState = {
     requireInit: boolean
@@ -12,60 +13,67 @@ type PanZoomState = {
 // value is it's pan zoom state so when we reconstruct the diagrams we know
 // which pan zoom states is for which. There's limitations where if diagrams
 // switches places we won't be able to tell.
-type PanZoomStates = {[index: number]: PanZoomState}
+const panZoomStates: {[index: number]: PanZoomState} = {}
 
-export function newPanZoomStates(): PanZoomStates {
-    return {}
-}
+export async function renderMermaidBlocksWithPanZoom() {
+    
+    // Add styles to document
+    document.head.appendChild(getToggleButtonStyles())
 
-export function renderZoomableMermaidBlock(mermaidContainer: HTMLElement, content: string, panZoomStates: PanZoomStates, index: number) {
+    // Render each mermaid block with pan zoom capabilities
+    const numElements = await renderMermaidBlocksInElement(document.body, (mermaidContainer, content, index) => {
 
-    // Setup container styles
-    mermaidContainer.style.display = "flex";
-    mermaidContainer.style.flexDirection = "column";
+        // Setup container styles
+        mermaidContainer.style.display = "flex";
+        mermaidContainer.style.flexDirection = "column";
 
-    let svgEl = addSvgEl(mermaidContainer, content)
-    const input = createPanZoomToggle(mermaidContainer)
+        let svgEl = addSvgEl(mermaidContainer, content)
+        const input = createPanZoomToggle(mermaidContainer)
 
-    // Create an empty pan zoom state if a previous one isn't found
-    // mark this state as required for initialization which can only
-    // be set when we enable pan and zoom and know what those values are
-    let panZoomState: PanZoomState = panZoomStates[index]
-    if (!panZoomState) {
-        panZoomState = {
-            requireInit: true,
-            enabled: false,
-            panX: 0,
-            panY: 0,
-            scale: 0
+        // Create an empty pan zoom state if a previous one isn't found
+        // mark this state as required for initialization which can only
+        // be set when we enable pan and zoom and know what those values are
+        let panZoomState = panZoomStates[index]
+        if (!panZoomState) {
+            panZoomState = {
+                requireInit: true,
+                enabled: false,
+                panX: 0,
+                panY: 0,
+                scale: 0
+            }
+            panZoomStates[index] = panZoomState
         }
-        panZoomStates[index] = panZoomState
-    }
 
-    // If previously pan & zoom was enabled then re-enable it
-    if (panZoomState.enabled) {
-        input.checked = true
-        enablePanZoom(mermaidContainer, svgEl, panZoomState)
-    }
-
-    input.onchange = () => {
-        if (!panZoomState.enabled) {
+        // If previously pan & zoom was enabled then re-enable it
+        if (panZoomState.enabled) {
+            input.checked = true
             enablePanZoom(mermaidContainer, svgEl, panZoomState)
-            panZoomState.enabled = true
         }
-        else {
-            svgEl.remove()
-            svgEl = addSvgEl(mermaidContainer, content)
-            panZoomState.enabled = false
+
+        input.onchange = () => {
+            if (!panZoomState.enabled) {
+                enablePanZoom(mermaidContainer, svgEl, panZoomState)
+                panZoomState.enabled = true
+            }
+            else {
+                svgEl.remove()
+                svgEl = addSvgEl(mermaidContainer, content)
+                panZoomState.enabled = false
+            }
         }
-    }
+    });
+
+    // Some diagrams maybe removed during edits and if we have states
+    // for more diagrams than there are then we should also remove them
+    removeOldPanZoomStates(numElements)
 }
 
 // removeOldPanZoomStates will remove all pan zoom states where their index
 // is larger than the current amount of rendered elements. The usecase is 
 // if the user creates many diagrams then removes them, we don't want to
 // keep pan zoom states for diagrams that don't exist
-export function removeOldPanZoomStates(panZoomStates: PanZoomStates, numElements: number) {
+function removeOldPanZoomStates(numElements: number) {
     for (const index in panZoomStates) {
         if (Number(index) >= numElements) {
             delete panZoomStates[index]
@@ -73,6 +81,8 @@ export function removeOldPanZoomStates(panZoomStates: PanZoomStates, numElements
     }
 }
 
+// addSvgEl inserts the svg content into the provided mermaid container
+// then finds the svg element to confirm it is created and returns it
 function addSvgEl(mermaidContainer:HTMLElement, content: string): SVGSVGElement {
 
     // Add svg string content
@@ -97,6 +107,7 @@ function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGElement, panZoomS
     const svgSize = svgEl.getBoundingClientRect()
     svgEl.style.height = svgSize.height+"px";
 
+    // Start up svg-pan-zoom
     const panZoomInstance = svgPanZoom(svgEl, {
         zoomEnabled: true,
         controlIconsEnabled: true,
@@ -111,7 +122,7 @@ function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGElement, panZoomS
         panZoomState.scale = panZoomInstance.getZoom()
         panZoomState.requireInit = false
         
-    // Otherwise create initial pan zoom state from the default pan and zoom values
+    // Otherwise restore pan and zoom to this previous state
     } else {
         panZoomInstance?.zoom(panZoomState.scale)
         panZoomInstance?.pan({
@@ -154,7 +165,7 @@ function createPanZoomToggle(mermaidContainer: HTMLElement): HTMLInputElement {
     return input;
 }
 
-export function getToggleButtonStyles(): HTMLStyleElement {
+function getToggleButtonStyles(): HTMLStyleElement {
     const styles = `
     .mermaid:hover .toggle-container {
         opacity: 1;
