@@ -193,6 +193,7 @@ function resizeEnabledPanZoomInstances() {
         if (enabledPanZoomInstances.hasOwnProperty(index)) {
             const panZoomInstance = enabledPanZoomInstances[index]
             panZoomInstance.resize()
+            panZoomInstance.reset()
         }
     }
 }
