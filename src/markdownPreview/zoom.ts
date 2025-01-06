@@ -9,16 +9,27 @@ type PanZoomState = {
     scale: number
 }
 
-// This is a map where key is the index of the diagram element and the
-// value is it's pan zoom state so when we reconstruct the diagrams we know
-// which pan zoom states is for which. There's limitations where if diagrams
-// switches places we won't be able to tell.
+// This is to keep track the state of pan and zoom for each diagram so when
+// the markdown preview is refreshed we can turn on pan zoom for diagrams that
+// had it on and restore the state to what it was. 
+// Given we use a simple index to track which diagram is which, if the user 
+// switches around say diagram 1 with diagram 2 and save then we may end up
+// using states for diagram 2 with diagram 1 and vice versa
 const panZoomStates: {[index: number]: PanZoomState} = {}
+
+// This is to keep track of all the diagrams that have pan zoom enabled so when
+// the page resizes we can loop through all these pan zoom instances and call
+// .resize() on all of them
+const enabledPanZoomInstances: {[index: number]: SvgPanZoom.Instance} = {}
 
 export async function renderMermaidBlocksWithPanZoom() {
     
     // Add styles to document
     document.head.appendChild(getToggleButtonStyles())
+
+    // On each re-render we should reset stored pan zoom instances as
+    // all those old elements should be removed already
+    resetEnabledPanZoomInstances() 
 
     // Render each mermaid block with pan zoom capabilities
     const numElements = await renderMermaidBlocksInElement(document.body, (mermaidContainer, content, index) => {
@@ -48,17 +59,20 @@ export async function renderMermaidBlocksWithPanZoom() {
         // If previously pan & zoom was enabled then re-enable it
         if (panZoomState.enabled) {
             input.checked = true
-            enablePanZoom(mermaidContainer, svgEl, panZoomState)
+            const panZoomInstance = enablePanZoom(mermaidContainer, svgEl, panZoomState)
+            enabledPanZoomInstances[index] = panZoomInstance
         }
 
         input.onchange = () => {
             if (!panZoomState.enabled) {
-                enablePanZoom(mermaidContainer, svgEl, panZoomState)
+                const panZoomInstance = enablePanZoom(mermaidContainer, svgEl, panZoomState)
+                enabledPanZoomInstances[index] = panZoomInstance
                 panZoomState.enabled = true
             }
             else {
                 svgEl.remove()
                 svgEl = addSvgEl(mermaidContainer, content)
+                delete enabledPanZoomInstances[index]
                 panZoomState.enabled = false
             }
         }
@@ -69,43 +83,30 @@ export async function renderMermaidBlocksWithPanZoom() {
     removeOldPanZoomStates(numElements)
 }
 
-// removeOldPanZoomStates will remove all pan zoom states where their index
-// is larger than the current amount of rendered elements. The usecase is 
-// if the user creates many diagrams then removes them, we don't want to
-// keep pan zoom states for diagrams that don't exist
-function removeOldPanZoomStates(numElements: number) {
-    for (const index in panZoomStates) {
-        if (Number(index) >= numElements) {
-            delete panZoomStates[index]
-        }
-    }
+// resetPanZoom clears up all states stored as part of pan zoom functionlaity
+// should be used when page is re-rendered with pan zoom turned off
+export function resetPanZoom() {
+    resetPanZoomStates()
+    resetEnabledPanZoomInstances()
 }
 
-// addSvgEl inserts the svg content into the provided mermaid container
-// then finds the svg element to confirm it is created and returns it
-function addSvgEl(mermaidContainer:HTMLElement, content: string): SVGSVGElement {
-
-    // Add svg string content
-    mermaidContainer.insertAdjacentHTML("beforeend", content)
-    
-    // Svg element should be found in container
-    const svgEl = mermaidContainer.querySelector("svg")
-    if (!svgEl) throw("svg element not found");
-
-    return svgEl
+// onResize should added as a callback on window resize events
+export function onResize() {
+    resizeEnabledPanZoomInstances()
 }
 
 // enablePanZoom will modify the provided svgEl with svg-pan-zoom library
 // if the provided pan zoom state is new then it will be populated with
 // default pan zoom values when the library is initiated. If the pan zoom 
 // state is not new then it will resync against the pan zoom state
-function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGElement, panZoomState: PanZoomState) {
+function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGElement, panZoomState: PanZoomState): SvgPanZoom.Instance {
 
     // Svg element doesn't have any width and height defined but relies on auto sizing.
     // For svg-pan-zoom to work we need to define atleast the height so we should
     // take the current height of the svg
     const svgSize = svgEl.getBoundingClientRect()
     svgEl.style.height = svgSize.height+"px";
+    svgEl.style.maxWidth = "none";
 
     // Start up svg-pan-zoom
     const panZoomInstance = svgPanZoom(svgEl, {
@@ -145,6 +146,64 @@ function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGElement, panZoomS
         panZoomState.panY = panZoomInstance.getPan().y;
         panZoomState.scale = panZoomInstance.getZoom();
     })
+
+    return panZoomInstance
+}
+
+// addSvgEl inserts the svg content into the provided mermaid container
+// then finds the svg element to confirm it is created and returns it
+function addSvgEl(mermaidContainer:HTMLElement, content: string): SVGSVGElement {
+
+    // Add svg string content
+    mermaidContainer.insertAdjacentHTML("beforeend", content)
+    
+    // Svg element should be found in container
+    const svgEl = mermaidContainer.querySelector("svg")
+    if (!svgEl) throw("svg element not found");
+
+    return svgEl
+}
+
+// removeOldPanZoomStates will remove all pan zoom states where their index
+// is larger than the current amount of rendered elements. The usecase is 
+// if the user creates many diagrams then removes them, we don't want to
+// keep pan zoom states for diagrams that don't exist
+function removeOldPanZoomStates(numElements: number) {
+    for (const index in panZoomStates) {
+        if (Number(index) >= numElements) {
+            delete panZoomStates[index]
+        }
+    }
+}
+
+// resetPanZoomStates will remove all stored pan zoom states
+function resetPanZoomStates() {
+    for (var index in panZoomStates) {
+        if (panZoomStates.hasOwnProperty(index)) {
+            delete panZoomStates[index]
+        }
+    }
+}
+
+// resizeEnabledPanZoomInstances will loop through all the currently
+// enabled pan zoom instances and call .resize() on them, this should
+// be called only on page resizing
+function resizeEnabledPanZoomInstances() {
+    for (var index in enabledPanZoomInstances) {
+        if (enabledPanZoomInstances.hasOwnProperty(index)) {
+            const panZoomInstance = enabledPanZoomInstances[index]
+            panZoomInstance.resize()
+        }
+    }
+}
+
+// resetEnabledPanZoomInstances will remove all stored enabled pan zoom instaces
+function resetEnabledPanZoomInstances() {
+    for (var index in enabledPanZoomInstances) {
+        if (enabledPanZoomInstances.hasOwnProperty(index)) {
+            delete enabledPanZoomInstances[index]
+        }
+    }
 }
 
 function createPanZoomToggle(mermaidContainer: HTMLElement): HTMLInputElement {
