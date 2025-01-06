@@ -5,7 +5,7 @@
  */
 import mermaid, { MermaidConfig } from 'mermaid';
 import { registerMermaidAddons, renderMermaidBlocksInElement } from '../shared-mermaid';
-import { renderMermaidBlocksWithPanZoom } from './zoom';
+import { renderMermaidBlocksWithPanZoom, resetPanZoom, onResize } from './zoom';
 
 async function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
@@ -31,8 +31,12 @@ async function init() {
         renderMermaidBlocksInElement(document.body, (mermaidContainer, content, _) => {
             mermaidContainer.innerHTML = content;
         });
+
+        // Reset everything as pan zoom has been disabled
+        resetPanZoom()
     }
 }
 
+window.addEventListener('resize', onResize)
 window.addEventListener('vscode.markdown.updateContent', init);
 init();
