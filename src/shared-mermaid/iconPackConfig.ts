@@ -4,6 +4,10 @@ export const iconPackConfig = [
         pack: '@iconify-json/logos',
     },
     {
+        prefix: 'material-symbols',
+        pack: '@iconify-json/material-symbols',
+    },
+    {
         prefix: 'mdi',
         pack: '@iconify-json/mdi',
     }
