@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.26.0 - TBD
+## 1.26.0 - October 23, 2024
 - Pick up Mermaid 11.3.0. Thanks @RickHermansDSA!
 - Add ELK layout support. Thanks @worbunkel!
 - Added ZenUML support.
