@@ -10,9 +10,11 @@ function init() {
     const configSpan = document.getElementById('markdown-mermaid');
     const darkModeTheme = configSpan?.dataset.darkModeTheme;
     const lightModeTheme = configSpan?.dataset.lightModeTheme;
+    const maxTextSize = configSpan?.dataset.maxTextSize;
 
     const config: MermaidConfig = {
         startOnLoad: false,
+        maxTextSize: maxTextSize ? Number(maxTextSize) : 50000,
         theme: (document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
             ? darkModeTheme ?? 'dark'
             : lightModeTheme ?? 'default' ) as MermaidConfig['theme'],

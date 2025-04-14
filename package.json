@@ -79,6 +79,12 @@
             "mermaid"
           ],
           "description": "Default languages in markdown."
+        },
+        "markdown-mermaid.maxTextSize": {
+          "order": 3,
+          "type": "number",
+          "default": 50000,
+          "description": "The maximum allowed size of the users text diagram."
         }
       }
     }
