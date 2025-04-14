@@ -1,6 +1,6 @@
 // A launch configuration that compiles the extension and then opens it inside a new window
 {
-	"version": "0.2.0",
+    "version": "0.2.0",
     "configurations": [
         {
             "name": "Launch Extension",
@@ -8,11 +8,12 @@
             "request": "launch",
             "runtimeExecutable": "${execPath}",
             "args": [
-				"--extensionDevelopmentPath=${workspaceFolder}"
+                "--extensionDevelopmentPath=${workspaceFolder}",
+                "${workspaceFolder}/test-workspace"
             ],
             "outFiles": [
-				"${workspaceFolder}/dist/**/*.js"
-			],
+                "${workspaceFolder}/dist/**/*.js"
+            ],
             "preLaunchTask": "npm: compile-ext",
             "sourceMaps": true
         },
@@ -22,7 +23,7 @@
             "debugWebWorkerHost": true,
             "request": "launch",
             "args": [
-				"--extensionDevelopmentPath=${workspaceFolder}",
+                "--extensionDevelopmentPath=${workspaceFolder}",
                 "--extensionDevelopmentKind=web"
             ],
             "outFiles": [
