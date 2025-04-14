@@ -34,6 +34,19 @@ graph TD;
 :::
 ```
 
+Supports [MDI](https://icon-sets.iconify.design/mdi/) and [logos](https://icon-sets.iconify.design/logos/) icons from Iconify:
+
+```markdown
+
+::: mermaid
+architecture-beta
+    service user(mdi:account)
+    service lambda(logos:aws-lambda)
+
+    user:R --> L:lambda
+:::
+```
+
 
 ## Configuration
 
