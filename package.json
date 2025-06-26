@@ -1,6 +1,6 @@
 {
   "name": "markdown-mermaid",
-  "version": "1.27.0",
+  "version": "1.28.0",
   "displayName": "Markdown Preview Mermaid Support",
   "description": "Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview",
   "icon": "docs/logo.png",
@@ -85,6 +85,12 @@
           "type": "number",
           "default": 50000,
           "description": "The maximum allowed size of the users text diagram."
+        },
+        "markdown-mermaid.enableHandDrawnStyle": {
+          "order": 4,
+          "type": "boolean",
+          "default": false,
+          "description": "Enable hand-drawn style for Mermaid diagrams using Rough.js."
         }
       }
     }
@@ -92,7 +98,8 @@
   "dependencies": {
     "@iconify-json/logos": "^1.2.0",
     "@iconify-json/mdi": "^1.2.0",
-    "@mermaid-js/mermaid-zenuml": "^0.2.0"
+    "@mermaid-js/mermaid-zenuml": "^0.2.0",
+    "roughjs": "^4.6.6"
   },
   "devDependencies": {
     "@babel/core": "^7.15.0",
