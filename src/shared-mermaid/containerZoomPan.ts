@@ -272,14 +272,16 @@ export function destroyContainerZoomPan(container: HTMLElement): void {
   INSTANCES.delete(container);
 }
 
-/**
- * Extracts zoom/pan configuration from the special <span id="markdown-mermaid"> injected by the VS Code side.
- */
 export function getZoomPanConfig(): ContainerZoomPanConfig {
   const host = document.getElementById('markdown-mermaid');
-  return {
-    minZoom: parseFloat(host?.dataset.zoomMinZoom || `${DEFAULT_CFG.minZoom}`),
-    maxZoom: parseFloat(host?.dataset.zoomMaxZoom || `${DEFAULT_CFG.maxZoom}`),
-    zoomStep: parseFloat(host?.dataset.zoomStep || `${DEFAULT_CFG.zoomStep}`),
+  const safeParseFloat = (value: string | undefined, defaultValue: number): number => {
+    const parsed = parseFloat(value || '');
+    return isNaN(parsed) ? defaultValue : parsed;
   };
-} 
+
+  return {
+    minZoom: safeParseFloat(host?.dataset.zoomMinZoom, DEFAULT_CFG.minZoom),
+    maxZoom: safeParseFloat(host?.dataset.zoomMaxZoom, DEFAULT_CFG.maxZoom),
+    zoomStep: safeParseFloat(host?.dataset.zoomStep, DEFAULT_CFG.zoomStep),
+  };
+}
