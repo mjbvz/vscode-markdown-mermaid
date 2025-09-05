@@ -3,10 +3,9 @@ import zenuml from '@mermaid-js/mermaid-zenuml';
 import mermaid, { MermaidConfig } from 'mermaid';
 import { iconPackConfig, requireIconPack } from './iconPackConfig';
 
-function renderMermaidElement(
-    mermaidContainer: HTMLElement,
-    writeOut: (mermaidContainer: HTMLElement, content: string) => void,
-): {
+type WriteOutFN = (mermaidContainer: HTMLElement, content: string, index: number) => void
+
+function renderMermaidElement(mermaidContainer: HTMLElement, index: number, writeOut: WriteOutFN): {
     containerId: string;
     p: Promise<void>;
 } {
@@ -26,14 +25,14 @@ function renderMermaidElement(
 
                 //  Render the diagram
                 const renderResult = await mermaid.render(diagramId, source);
-                writeOut(mermaidContainer, renderResult.svg);
+                writeOut(mermaidContainer, renderResult.svg, index);
                 renderResult.bindFunctions?.(mermaidContainer);
             } catch (error) {
                 if (error instanceof Error) {
                     const errorMessageNode = document.createElement('pre');
                     errorMessageNode.className = 'mermaid-error';
                     errorMessageNode.innerText = error.message;
-                    writeOut(mermaidContainer, errorMessageNode.outerHTML);
+                    writeOut(mermaidContainer, errorMessageNode.outerHTML, index);
                 }
 
                 throw error;
@@ -42,7 +41,7 @@ function renderMermaidElement(
     };
 }
 
-export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void): Promise<void> {
+export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: WriteOutFN): Promise<number> {
     // Delete existing mermaid outputs
     for (const el of root.querySelectorAll('.mermaid > svg')) {
         el.remove();
@@ -55,13 +54,16 @@ export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: 
 
     // We need to generate all the container ids sync, but then do the actual rendering async
     const renderPromises: Array<Promise<void>> = [];
-    for (const mermaidContainer of root.querySelectorAll<HTMLElement>('.mermaid')) {
-        renderPromises.push(renderMermaidElement(mermaidContainer, writeOut).p);
+    const mermaidElements = root.querySelectorAll<HTMLElement>('.mermaid')
+    for (let i=0; i<mermaidElements.length; i++) {
+        renderPromises.push(renderMermaidElement(mermaidElements[i], i, writeOut).p);
     }
 
     for (const p of renderPromises) {
         await p;
     }
+
+    return mermaidElements.length
 }
 
 function registerIconPacks(config: Array<{ prefix?: string; pack: string }>) {
