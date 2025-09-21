@@ -25,7 +25,7 @@ export function injectMermaidTheme(md: MarkdownIt) {
         return `<span id="${configSection}" aria-hidden="true"
                     data-dark-mode-theme="${darkModeTheme}"
                     data-light-mode-theme="${lightModeTheme}"
-                    data-max-text-size="${maxTextSize}">
+                    data-max-text-size="${maxTextSize}"
                     data-enable-pan-zoom=${enablePanZoom}></span>
                 ${render.apply(md.renderer, args)}`;
     };
