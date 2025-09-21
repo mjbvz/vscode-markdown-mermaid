@@ -31,6 +31,10 @@ export function injectMermaidTheme(md: MarkdownIt) {
         return `<span id="${configSection}" aria-hidden="true"
                     data-dark-mode-theme="${darkModeTheme}"
                     data-light-mode-theme="${lightModeTheme}"
+<<<<<<< HEAD
+=======
+                    data-max-text-size="${maxTextSize}"
+>>>>>>> ab89051 (Removed extra '>')
                     data-enable-pan-zoom=${enablePanZoom}></span>
 >>>>>>> 960537e (Added enable pan zoom config setting)
                 ${render.apply(md.renderer, args)}`;
