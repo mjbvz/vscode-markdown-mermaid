@@ -105,10 +105,12 @@ function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGElement, panZoomS
 
     // Svg element by default doesn't have any width and height defined 
     // but relies on auto sizing. When svg-pan-zoom is initialized with 
-    // the svg element, the auto sizing breaks. In order to get around this, 
-    // manually setting the aspect ratio based on current sizing seems to work.
+    // the svg element, the auto sizing breaks. In order to get around this
+    // and take the maximum width, we can define just the height and let width
+    // automatically take the maximum size
     const svgSize = svgEl.getBoundingClientRect()
-    svgEl.style.aspectRatio = `${svgSize.width} / ${svgSize.height}`
+    svgEl.style.height = svgSize.height+"px";
+    svgEl.style.maxWidth = "none";
 
     // Start up svg-pan-zoom
     const panZoomInstance = svgPanZoom(svgEl, {
