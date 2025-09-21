@@ -95,18 +95,20 @@ export function onResize() {
     resizeEnabledPanZoomInstances()
 }
 
-// enablePanZoom will modify the provided svgEl with svg-pan-zoom library
-// if the provided pan zoom state is new then it will be populated with
-// default pan zoom values when the library is initiated. If the pan zoom 
-// state is not new then it will resync against the pan zoom state
+// enablePanZoom will initialize svg-pan-zoom library with the
+// provided svg element. This will create wrap the svg element
+// to provide pan zoom functionality with an UI overlay.
+// If the provided pan zoom state is not initialized then
+// it will be populated with default values, otherwise it will
+// load the provided pan zoom state.
 function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGElement, panZoomState: PanZoomState): SvgPanZoom.Instance {
 
-    // Svg element doesn't have any width and height defined but relies on auto sizing.
-    // For svg-pan-zoom to work we need to define atleast the height so we should
-    // take the current height of the svg
+    // Svg element by default doesn't have any width and height defined 
+    // but relies on auto sizing. When svg-pan-zoom is initialized with 
+    // the svg element, the auto sizing breaks. In order to get around this, 
+    // manually setting the aspect ratio based on current sizing seems to work.
     const svgSize = svgEl.getBoundingClientRect()
-    svgEl.style.height = svgSize.height+"px";
-    svgEl.style.maxWidth = "none";
+    svgEl.style.aspectRatio = `${svgSize.width} / ${svgSize.height}`
 
     // Start up svg-pan-zoom
     const panZoomInstance = svgPanZoom(svgEl, {
