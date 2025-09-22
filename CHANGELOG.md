@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.20.0 - Unrelease
+- Pick up Mermaid 11.12.0.
+
 ## 1.28.0 - April 14, 2025
 - Pick up Mermaid 11.6.0. Thanks @jinhong!
 - Reduce bundle size. Thanks @frabera!
