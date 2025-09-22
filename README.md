@@ -6,7 +6,7 @@ Adds [Mermaid](https://mermaid-js.github.io/mermaid/#/) diagram and flowchart su
 
 ![A mermaid diagram in VS Code's built-in markdown preview](https://github.com/mjbvz/vscode-markdown-mermaid/raw/master/docs/example.png)
 
-Currently supports Mermaid version 11.6.0.
+Currently supports Mermaid version 11.12.0.
 
 ## Usage
 
