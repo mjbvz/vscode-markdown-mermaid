@@ -1,6 +1,6 @@
 # Change Log
 
-## 1.20.0 - Unrelease
+## 1.29.0 - September 23, 2025
 - Pick up Mermaid 11.12.0.
 
 ## 1.28.0 - April 14, 2025
