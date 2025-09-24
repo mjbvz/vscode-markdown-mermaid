@@ -1,0 +1,7 @@
+{
+  "name": "markdown-mermaid-aws",
+  "displayName": "Markdown Preview Mermaid Support with AWS Icons",
+  "description": "Adds Mermaid diagram and flowchart support with AWS icons to VS Code's builtin markdown preview",
+  "version": "1.0.0",
+  "path": "./extensions/markdown-mermaid-aws"
+}
