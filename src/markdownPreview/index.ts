@@ -5,12 +5,15 @@
  */
 import mermaid, { MermaidConfig } from 'mermaid';
 import { registerMermaidAddons, renderMermaidBlocksInElement } from '../shared-mermaid';
+import { renderMermaidBlocksWithPanZoom, resetPanZoom, onResize } from './zoom';
 
-function init() { 
+async function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
     const darkModeTheme = configSpan?.dataset.darkModeTheme;
     const lightModeTheme = configSpan?.dataset.lightModeTheme;
     const maxTextSize = configSpan?.dataset.maxTextSize;
+    const enablePanZoomStr = configSpan?.dataset.enablePanZoom;
+    const enablePanZoom = enablePanZoomStr ? enablePanZoomStr == "true" : false
 
     const config: MermaidConfig = {
         startOnLoad: false,
@@ -22,11 +25,20 @@ function init() {
 
     mermaid.initialize(config);
     registerMermaidAddons();
-    
-    renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
-        mermaidContainer.innerHTML = content;
-    });
+
+
+    if (enablePanZoom) {
+        renderMermaidBlocksWithPanZoom()
+    } else {
+        renderMermaidBlocksInElement(document.body, (mermaidContainer, content, _) => {
+            mermaidContainer.innerHTML = content;
+        });
+
+        // Reset everything as pan zoom has been disabled
+        resetPanZoom()
+    }
 }
 
+window.addEventListener('resize', onResize)
 window.addEventListener('vscode.markdown.updateContent', init);
 init();
