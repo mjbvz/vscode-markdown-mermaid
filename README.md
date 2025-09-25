@@ -22,6 +22,16 @@ graph TD;
 ```
 ~~~
 
+### Zoom, Pan, and Reset
+
+All rendered Mermaid diagrams are interactive:
+
+* **Zoom** – Hold <kbd>Ctrl</kbd> (or <kbd>⌘</kbd> on macOS) and scroll the mouse-wheel to zoom in or out at the cursor position.
+* **Pan** – Hold <kbd>Ctrl</kbd> and drag with the **left** mouse button to move the diagram when zoomed.
+* **Reset** – Hold <kbd>Ctrl</kbd> and click the **right** mouse button to return to the default view.
+
+These shortcuts only affect the diagram container; normal scrolling and text selection behave as usual.
+
 You can also use `:::` blocks:
 
 ```markdown
