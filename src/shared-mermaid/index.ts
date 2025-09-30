@@ -77,10 +77,8 @@ export async function renderMermaidBlocksInElement(
         svg.setAttribute('preserveAspectRatio', 'xMidYMid meet');
       }
       if (svg && config) {
-        // Initialize zoom/pan after rendering
-        setTimeout(() => {
-          initializeContainerZoomPan(svg, mermaidContainer, config);
-        }, 50);
+        // Initialize zoom/pan immediately to prevent visual flicker
+        initializeContainerZoomPan(svg, mermaidContainer, config);
       }
     }));
   }

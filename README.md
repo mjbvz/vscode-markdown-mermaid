@@ -60,11 +60,45 @@ architecture-beta
 
 ## Configuration
 
+### Theme Settings
+
 - `markdown-mermaid.lightModeTheme` — Configures the Mermaid theme used when VS Code is using a light color theme. Supported values are: `"base"`, `"forest"`, `"dark"`, `"default"`, `"neutral"`. Currently not supported in notebooks.
 
 - `markdown-mermaid.darkModeTheme` — Configures the Mermaid theme used when VS Code is using a dark color theme. Supported values are: `"base"`, `"forest"`, `"dark"`, `"default"`, `"neutral"`. Currently not supported in notebooks.
 
 - `markdown-mermaid.languages` — Configures language ids for Mermaid code blocks. The default is `["mermaid"]`.
+
+### Zoom and Pan Settings
+
+**Accessing Settings:**
+1. Open VS Code Settings: `Ctrl+,` (Windows/Linux) or `Cmd+,` (macOS)
+2. Search for: `markdown mermaid`
+3. Find the "Zoom and Pan" options
+
+**Available Settings:**
+
+- `markdown-mermaid.enableZoomPan` — Enable or disable zoom and pan functionality for Mermaid diagrams. Default is `true`.
+
+- `markdown-mermaid.minZoom` — Minimum zoom level. Default is `0.2` (20%).
+
+- `markdown-mermaid.maxZoom` — Maximum zoom level. Default is `10` (1000%).
+
+- `markdown-mermaid.zoomStep` — Zoom step per scroll tick as a fraction of the current zoom level. Default is `0.25` (25%). For example, at 1x zoom, each scroll will change zoom by 25%, but at 2x zoom, each scroll will change by 50%.
+
+**Example:**
+
+To restrict zoom range and make zoom changes more gradual, add to your VS Code settings:
+
+```json
+{
+  "markdown-mermaid.enableZoomPan": true,
+  "markdown-mermaid.minZoom": 0.5,
+  "markdown-mermaid.maxZoom": 5,
+  "markdown-mermaid.zoomStep": 0.1
+}
+```
+
+**Note:** Changes to these settings require reloading the VS Code window to take effect.
 
 ### Using custom CSS in the Markdown Preview
 

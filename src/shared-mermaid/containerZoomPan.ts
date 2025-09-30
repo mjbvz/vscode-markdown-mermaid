@@ -46,11 +46,13 @@ function clamp(value: number, min: number, max: number): number {
   return Math.max(min, Math.min(max, value));
 }
 
+
 class ContainerZoomPan {
   private readonly container: HTMLElement;
   private readonly svg: SVGElement;
   private readonly wrapper: HTMLDivElement;
   private readonly config: Required<ContainerZoomPanConfig>;
+  private readonly statusHint: HTMLDivElement;
 
   private scale = 1;
   private offset: Point = { x: 0, y: 0 };
@@ -63,10 +65,12 @@ class ContainerZoomPan {
     this.config = { ...DEFAULT_CFG, ...cfg };
 
     this.wrapper = this.createWrapper();
+    this.statusHint = this.createStatusHint();
     this.prepareContainer();
     this.prepareSvg();
     this.adjustMinHeight();
     this.bindEvents();
+    this.restoreState(); // Restore state before first transform
     this.updateTransform();
   }
 
@@ -91,6 +95,46 @@ class ContainerZoomPan {
     wrapper.appendChild(this.svg);
     this.container.appendChild(wrapper);
     return wrapper;
+  }
+
+  /**
+   * Create status hint overlay that shows keyboard shortcuts.
+   * Positioned on container (outside zoom/pan area) so it doesn't transform.
+   */
+  private createStatusHint(): HTMLDivElement {
+    const hint = document.createElement('div');
+    hint.className = 'zoom-pan-status-hint';
+
+    // Detect platform for correct modifier key display
+    const isMac = /Mac|iPod|iPhone|iPad/.test(navigator.platform);
+    const modKey = isMac ? '⌘' : 'Ctrl';
+
+    hint.innerHTML = `
+      ${modKey}+Wheel: Zoom<br>
+      ${modKey}+Drag: Pan<br>
+      ${modKey}+Right-click: Reset
+    `;
+
+    Object.assign(hint.style, {
+      position: 'absolute',
+      top: '8px',
+      right: '8px',
+      background: 'rgba(0, 0, 0, 0.75)',
+      color: 'white',
+      padding: '8px 12px',
+      borderRadius: '4px',
+      fontSize: '11px',
+      fontFamily: 'system-ui, -apple-system, sans-serif',
+      lineHeight: '1.5',
+      textAlign: 'right',
+      opacity: '0',
+      transition: 'opacity 0.3s ease',
+      pointerEvents: 'none',
+      zIndex: '100',
+    });
+
+    this.container.appendChild(hint);
+    return hint;
   }
 
   /**
@@ -133,6 +177,57 @@ class ContainerZoomPan {
 
   //#endregion --------------------------------------------------------------------
 
+  //#region State persistence ------------------------------------------------------
+
+  /**
+   * Generate a stable storage key based on diagram index in the document.
+   * This allows state to persist across re-renders when source changes,
+   * as long as the diagram's position remains the same.
+   */
+  private getStorageKey(): string {
+    const allContainers = document.querySelectorAll('.mermaid');
+    const index = Array.from(allContainers).indexOf(this.container);
+    return `mermaid-zoom-pan-${index}`;
+  }
+
+  /**
+   * Save current zoom/pan state to sessionStorage.
+   */
+  private saveState(): void {
+    try {
+      const key = this.getStorageKey();
+      const state = {
+        scale: this.scale,
+        offset: this.offset,
+      };
+      sessionStorage.setItem(key, JSON.stringify(state));
+    } catch (error) {
+      // Silently fail if sessionStorage is unavailable (e.g., in restricted contexts)
+    }
+  }
+
+  /**
+   * Restore zoom/pan state from sessionStorage if available.
+   */
+  private restoreState(): void {
+    try {
+      const key = this.getStorageKey();
+      const saved = sessionStorage.getItem(key);
+      if (saved) {
+        const state = JSON.parse(saved);
+        // Validate restored values
+        if (typeof state.scale === 'number' && state.offset?.x !== undefined && state.offset?.y !== undefined) {
+          this.scale = clamp(state.scale, this.config.minZoom, this.config.maxZoom);
+          this.offset = { x: state.offset.x, y: state.offset.y };
+        }
+      }
+    } catch (error) {
+      // Silently fail if sessionStorage is unavailable or data is corrupted
+    }
+  }
+
+  //#endregion --------------------------------------------------------------------
+
   //#region Event handling ---------------------------------------------------------
 
   /** Bind all required DOM events */
@@ -140,6 +235,8 @@ class ContainerZoomPan {
     this.container.addEventListener('wheel', this.onWheel, { passive: false });
     this.container.addEventListener('mousedown', this.onMouseDown);
     this.container.addEventListener('contextmenu', this.onContextMenu);
+    this.container.addEventListener('mouseenter', this.onMouseEnter);
+    this.container.addEventListener('mouseleave', this.onMouseLeave);
     document.addEventListener('mousemove', this.onMouseMove);
     document.addEventListener('mouseup', this.onMouseUp);
   }
@@ -149,6 +246,8 @@ class ContainerZoomPan {
     this.container.removeEventListener('wheel', this.onWheel);
     this.container.removeEventListener('mousedown', this.onMouseDown);
     this.container.removeEventListener('contextmenu', this.onContextMenu);
+    this.container.removeEventListener('mouseenter', this.onMouseEnter);
+    this.container.removeEventListener('mouseleave', this.onMouseLeave);
     document.removeEventListener('mousemove', this.onMouseMove);
     document.removeEventListener('mouseup', this.onMouseUp);
   }
@@ -201,6 +300,14 @@ class ContainerZoomPan {
     }
   };
 
+  private onMouseEnter = (): void => {
+    this.statusHint.style.opacity = '1';
+  };
+
+  private onMouseLeave = (): void => {
+    this.statusHint.style.opacity = '0';
+  };
+
   //#endregion --------------------------------------------------------------------
 
   //#region Core transforms --------------------------------------------------------
@@ -225,6 +332,7 @@ class ContainerZoomPan {
   /** Apply `translate` & `scale` to the wrapper */
   private updateTransform(): void {
     this.wrapper.style.transform = `translate(${this.offset.x}px, ${this.offset.y}px) scale(${this.scale})`;
+    this.saveState(); // Persist state after transform
   }
 
   //#endregion --------------------------------------------------------------------
@@ -236,6 +344,13 @@ class ContainerZoomPan {
     this.scale = 1;
     this.offset = { x: 0, y: 0 };
     this.updateTransform();
+    // Clear saved state on reset
+    try {
+      const key = this.getStorageKey();
+      sessionStorage.removeItem(key);
+    } catch (error) {
+      // Silently fail
+    }
   }
 
   /** Clean up DOM & event-listeners */
@@ -272,12 +387,18 @@ export function destroyContainerZoomPan(container: HTMLElement): void {
   INSTANCES.delete(container);
 }
 
-export function getZoomPanConfig(): ContainerZoomPanConfig {
+export function getZoomPanConfig(): ContainerZoomPanConfig | null {
   const host = document.getElementById('markdown-mermaid');
   const safeParseFloat = (value: string | undefined, defaultValue: number): number => {
     const parsed = parseFloat(value || '');
     return isNaN(parsed) ? defaultValue : parsed;
   };
+
+  // Check if zoom/pan is enabled
+  const enabled = host?.dataset.zoomPanEnabled !== 'false';
+  if (!enabled) {
+    return null;
+  }
 
   return {
     minZoom: safeParseFloat(host?.dataset.zoomMinZoom, DEFAULT_CFG.minZoom),

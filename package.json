@@ -1,6 +1,6 @@
 {
   "name": "markdown-mermaid",
-  "version": "1.27.0",
+  "version": "1.30.0",
   "displayName": "Markdown Preview Mermaid Support",
   "description": "Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview",
   "icon": "docs/logo.png",
@@ -85,6 +85,30 @@
           "type": "number",
           "default": 50000,
           "description": "The maximum allowed size of the users text diagram."
+        },
+        "markdown-mermaid.enableZoomPan": {
+          "order": 4,
+          "type": "boolean",
+          "default": true,
+          "description": "Enable zoom and pan for Mermaid diagrams."
+        },
+        "markdown-mermaid.minZoom": {
+          "order": 5,
+          "type": "number",
+          "default": 0.2,
+          "description": "Minimum zoom level for Mermaid diagrams."
+        },
+        "markdown-mermaid.maxZoom": {
+          "order": 6,
+          "type": "number",
+          "default": 10,
+          "description": "Maximum zoom level for Mermaid diagrams."
+        },
+        "markdown-mermaid.zoomStep": {
+          "order": 7,
+          "type": "number",
+          "default": 0.25,
+          "description": "Zoom step for Mermaid diagrams (percentage of current zoom)."
         }
       }
     }
