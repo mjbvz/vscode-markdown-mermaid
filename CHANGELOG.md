@@ -1,5 +1,13 @@
 # Change Log
 
+## 1.29.0 - September 23, 2025
+- Pick up Mermaid 11.12.0.
+
+## 1.28.0 - April 14, 2025
+- Pick up Mermaid 11.6.0. Thanks @jinhong!
+- Reduce bundle size. Thanks @frabera!
+- Add `markdown-mermaid.maxTextSize` setting for maximum text size. Thanks @jmwachtel!
+
 ## 1.26.0 - October 23, 2024
 - Pick up Mermaid 11.3.0. Thanks @RickHermansDSA!
 - Add ELK layout support. Thanks @worbunkel!

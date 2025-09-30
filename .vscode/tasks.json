@@ -1,0 +1,16 @@
+{
+	"version": "2.0.0",
+	"tasks": [
+		{
+			"type": "npm",
+			"script": "vscode:prepublish",
+			"problemMatcher": [],
+			"label": "npm: vscode:prepublish",
+			"detail": "npm-run-all package-ext package-ext-web build-preview build-notebook",
+			"group": {
+				"kind": "build",
+				"isDefault": true
+			}
+		}
+	]
+}
