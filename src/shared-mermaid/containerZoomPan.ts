@@ -180,14 +180,16 @@ class ContainerZoomPan {
   //#region State persistence ------------------------------------------------------
 
   /**
-   * Generate a stable storage key based on diagram index in the document.
-   * This allows state to persist across re-renders when source changes,
-   * as long as the diagram's position remains the same.
+   * Generate a stable storage key based on document URI and diagram index.
+   * This allows state to persist across re-renders of the same file,
+   * but reset when switching to different files.
    */
   private getStorageKey(): string {
     const allContainers = document.querySelectorAll('.mermaid');
     const index = Array.from(allContainers).indexOf(this.container);
-    return `mermaid-zoom-pan-${index}`;
+    // Use document.baseURI or a data attribute if available for document identification
+    const docUri = document.baseURI || window.location.href;
+    return `mermaid-zoom-pan-${docUri}-${index}`;
   }
 
   /**
