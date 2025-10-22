@@ -45,7 +45,7 @@ export function activate(ctx: vscode.ExtensionContext) {
 
                         vscode.window.showTextDocument(doc, {
                             selection: new vscode.Range(position, position),
-                            viewColumn: vscode.ViewColumn.One
+                            viewColumn: vscode.ViewColumn.Beside
                         });
                     }, (err: Error) => {
                         vscode.window.showErrorMessage(`Failed to open file: ${err.message}`);

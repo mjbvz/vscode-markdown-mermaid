@@ -121,6 +121,7 @@ flowchart TD
 
 ### Tips
 
+- **Multi-panel support**: When you click a link in the markdown preview, the source file opens in an adjacent editor panel, allowing you to view both the diagram and code simultaneously
 - Use relative paths when documenting project files that may be in different locations
 - Include line numbers to point to specific functions or important sections
 - Add tooltips (the third parameter in click directive) to describe what users will see
