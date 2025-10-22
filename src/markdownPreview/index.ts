@@ -15,6 +15,7 @@ function init() {
     const config: MermaidConfig = {
         startOnLoad: false,
         maxTextSize: maxTextSize ? Number(maxTextSize) : 50000,
+        securityLevel: 'loose', // Enable click functionality for interactive diagrams
         theme: (document.body.classList.contains('vscode-dark') || document.body.classList.contains('vscode-high-contrast')
             ? darkModeTheme ?? 'dark'
             : lightModeTheme ?? 'default' ) as MermaidConfig['theme'],

@@ -11,6 +11,50 @@ export function activate(ctx: vscode.ExtensionContext) {
         }
     }));
 
+    // Register URI handler for mermaid diagram links
+    ctx.subscriptions.push(vscode.window.registerUriHandler({
+        handleUri(uri: vscode.Uri) {
+            // Handle URIs like: vscode://bierner.markdown-mermaid/open?file=/path/to/file.ts&line=25
+            if (uri.path === '/open') {
+                const query = new URLSearchParams(uri.query);
+                const fileParam = query.get('file');
+                const lineParam = query.get('line');
+
+                if (fileParam) {
+                    let fileUri: vscode.Uri;
+
+                    // Handle both absolute paths and workspace-relative paths
+                    if (fileParam.startsWith('/')) {
+                        // Absolute path
+                        fileUri = vscode.Uri.file(fileParam);
+                    } else {
+                        // Relative path - resolve against workspace root
+                        const workspaceFolder = vscode.workspace.workspaceFolders?.[0];
+                        if (workspaceFolder) {
+                            fileUri = vscode.Uri.joinPath(workspaceFolder.uri, fileParam);
+                        } else {
+                            vscode.window.showErrorMessage(`Cannot resolve relative path: ${fileParam} (no workspace folder open)`);
+                            return;
+                        }
+                    }
+
+                    // Open the file
+                    vscode.workspace.openTextDocument(fileUri).then(doc => {
+                        const line = lineParam ? Math.max(0, parseInt(lineParam) - 1) : 0; // Convert to 0-based
+                        const position = new vscode.Position(line, 0);
+
+                        vscode.window.showTextDocument(doc, {
+                            selection: new vscode.Range(position, position),
+                            viewColumn: vscode.ViewColumn.One
+                        });
+                    }, (err: Error) => {
+                        vscode.window.showErrorMessage(`Failed to open file: ${err.message}`);
+                    });
+                }
+            }
+        }
+    }));
+
     return {
         extendMarkdownIt(md: MarkdownIt) {
             extendMarkdownItWithMermaid(md, {
