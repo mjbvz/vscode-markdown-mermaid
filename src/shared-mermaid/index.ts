@@ -1,4 +1,5 @@
 import elkLayouts from '@mermaid-js/layout-elk';
+import tidyTreeLayouts from '@mermaid-js/layout-tidy-tree';
 import zenuml from '@mermaid-js/mermaid-zenuml';
 import mermaid, { MermaidConfig } from 'mermaid';
 import { iconPackConfig, requireIconPack } from './iconPackConfig';
@@ -84,6 +85,7 @@ function registerIconPacks(config: Array<{ prefix?: string; pack: string }>) {
 export async function registerMermaidAddons() {
     registerIconPacks(iconPackConfig);
     mermaid.registerLayoutLoaders(elkLayouts);
+    mermaid.registerLayoutLoaders(tidyTreeLayouts);
     await mermaid.registerExternalDiagrams([zenuml]);
 }
 
