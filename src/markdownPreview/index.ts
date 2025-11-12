@@ -27,17 +27,17 @@ async function init() {
     registerMermaidAddons();
 
     if (enablePanZoom) {
-        await renderMermaidBlocksWithPanZoom();
+        renderMermaidBlocksWithPanZoom();
     } else {
-        await renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
+        renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
             mermaidContainer.innerHTML = content;
         });
 
         // Reset everything as pan zoom has been disabled
-        resetPanZoom()
+        resetPanZoom();
     }
 }
 
-window.addEventListener('resize', onResize)
+window.addEventListener('resize', onResize);
 window.addEventListener('vscode.markdown.updateContent', init);
 init();
