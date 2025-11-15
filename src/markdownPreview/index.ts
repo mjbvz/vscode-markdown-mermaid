@@ -27,7 +27,7 @@ async function init() {
     registerMermaidAddons();
 
     if (enablePanZoom) {
-        renderMermaidBlocksWithPanZoom();
+        await renderMermaidBlocksWithPanZoom();
     } else {
         ensureMermaidEnhancementStyles();
         const renderedCount = await renderMermaidBlocksInElement(document.body, (mermaidContainer, content, index) => {

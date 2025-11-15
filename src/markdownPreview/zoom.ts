@@ -291,6 +291,23 @@ async function openMermaidModal(mermaidContainer: HTMLElement, index: number): P
         return;
     }
 
+    try {
+        const vscode = (window as any).acquireVsCodeApi?.();
+        if (vscode) {
+            const data = JSON.stringify({ source, index });
+            const encoded = btoa(unescape(encodeURIComponent(data)));
+            if (encoded.length < 8000) {
+                const commandUri = `command:markdown-mermaid.openDiagram?${encodeURIComponent(encoded)}`;
+                const link = document.createElement('a');
+                link.href = commandUri;
+                link.click();
+                return;
+            }
+        }
+    } catch (error) {
+        console.warn("Could not access VS Code API, falling back to in-preview modal", error);
+    }
+
     closeActiveModal();
     ensureMermaidEnhancementStyles();
 
