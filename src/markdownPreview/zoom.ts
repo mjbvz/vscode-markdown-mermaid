@@ -1,3 +1,4 @@
+import mermaid from 'mermaid';
 import { renderMermaidBlocksInElement } from '../shared-mermaid';
 
 type PanZoomState = {
@@ -14,101 +15,514 @@ type PanZoomInstance = {
     cleanup: () => void
     reset: () => void
     restore: () => void
+    setScale: (scale: number) => void
+    state: PanZoomState
 }
 
-// This is to keep track the state of pan and zoom for each diagram so when
-// the markdown preview is refreshed we can turn on pan zoom for diagrams that
-// had it on and restore the state to what it was. 
-// Given we use a simple index to track which diagram is which, if the user 
-// switches around say diagram 1 with diagram 2 and save then we may end up
-// using states for diagram 2 with diagram 1 and vice versa
-const panZoomStates: {[index: number]: PanZoomState} = {};
+const ENHANCEMENT_STYLES_ID = 'mermaid-enhancement-styles';
+const MODAL_BODY_CLASS = 'mermaid-modal-open';
 
-// This is to keep track of all the diagrams that have pan zoom enabled so when
-// the page resizes we can loop through all these pan zoom instances and call
-// restore on all of them
-const enabledPanZoomInstances: {[index: number]: PanZoomInstance} = {};
-const TOGGLE_STYLES_ID = 'mermaid-pan-zoom-toggle-styles';
+type ActiveModal = {
+    index: number
+    element: HTMLDivElement
+    diagramHost: HTMLElement
+    panZoomInstance: PanZoomInstance | null
+    sourceContainer: HTMLElement
+};
 
-export async function renderMermaidBlocksWithPanZoom() {
-    
-    // Add styles to document
-    if (!document.getElementById(TOGGLE_STYLES_ID)) {
-        const styleElement = getToggleButtonStyles();
-        styleElement.id = TOGGLE_STYLES_ID;
-        document.head.appendChild(styleElement);
+const modalPanZoomStates: {[index: number]: PanZoomState} = {};
+let activeModal: ActiveModal | null = null;
+let escapeKeyHandler: ((event: KeyboardEvent) => void) | null = null;
+
+export function ensureMermaidEnhancementStyles() {
+    if (document.getElementById(ENHANCEMENT_STYLES_ID)) {
+        return;
     }
 
-    // On each re-render we should reset stored pan zoom instances as
-    // all those old elements should be removed already
-    resetEnabledPanZoomInstances(); 
+    const styleElement = document.createElement("style");
+    styleElement.id = ENHANCEMENT_STYLES_ID;
+    styleElement.textContent = getEnhancementStyles();
+    document.head.appendChild(styleElement);
+}
 
-    // Render each mermaid block with pan zoom capabilities
-    const numElements = await renderMermaidBlocksInElement(document.body, (mermaidContainer, content, index) => {
+export function attachMermaidEnhancements(mermaidContainer: HTMLElement, svgEl: SVGSVGElement, index: number) {
+    ensureMermaidEnhancementStyles();
 
-        // Setup container styles
-        mermaidContainer.style.display = "flex";
-        mermaidContainer.style.flexDirection = "column";
+    mermaidContainer.classList.add("mermaid-enhanced");
 
-        let svgEl = addSvgEl(mermaidContainer, content);
-        const input = createPanZoomToggle(mermaidContainer);
-
-        // Create an empty pan zoom state if a previous one isn't found
-        // mark this state as required for initialization which can only
-        // be set when we enable pan and zoom and know what those values are
-        let panZoomState = panZoomStates[index];
-        if (!panZoomState) {
-            panZoomState = {
-                requireInit: true,
-                enabled: false,
-                panX: 0,
-                panY: 0,
-                scale: 0
-            };
-            panZoomStates[index] = panZoomState;
+    if (!mermaidContainer.dataset.positionSet) {
+        const currentPosition = window.getComputedStyle(mermaidContainer).position;
+        if (currentPosition === "static") {
+            mermaidContainer.style.position = "relative";
         }
+        mermaidContainer.dataset.positionSet = "true";
+    }
 
-        // If previously pan & zoom was enabled then re-enable it
-        if (panZoomState.enabled) {
-            input.checked = true;
-            const panZoomInstance = enablePanZoom(mermaidContainer, svgEl, panZoomState);
-            enabledPanZoomInstances[index] = panZoomInstance;
-        }
+    const existingMenu = mermaidContainer.querySelector<HTMLDivElement>(".mermaid-tool-menu");
+    if (!existingMenu) {
+        const menu = createHoverToolMenu(mermaidContainer, index);
+        mermaidContainer.appendChild(menu);
+    }
 
-        input.onchange = () => {
-            if (!panZoomState.enabled) {
-                const panZoomInstance = enablePanZoom(mermaidContainer, svgEl, panZoomState);
-                enabledPanZoomInstances[index] = panZoomInstance;
-                panZoomState.enabled = true;
-            }
-            else {
-                const instance = enabledPanZoomInstances[index];
-                if (instance) {
-                    instance.cleanup();
-                }
-                svgEl.remove();
-                svgEl = addSvgEl(mermaidContainer, content);
-                delete enabledPanZoomInstances[index];
-                panZoomState.enabled = false;
-            }
-        };
+    if (mermaidContainer.dataset.toolMenuReady !== "true") {
+        mermaidContainer.dataset.toolMenuReady = "true";
+    }
+
+    svgEl.classList.add("mermaid-enhanced__svg");
+}
+
+function getEnhancementStyles(): string {
+    return `
+    body.${MODAL_BODY_CLASS} {
+        overflow: hidden;
+    }
+
+    .mermaid.mermaid-enhanced {
+        position: relative;
+        border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border, rgba(128, 128, 128, 0.4)));
+        border-radius: 4px;
+        padding: 12px;
+        box-sizing: border-box;
+        transition: border-color 0.2s ease-in-out, box-shadow 0.2s ease-in-out;
+    }
+
+    .mermaid.mermaid-enhanced:hover {
+        border-color: var(--vscode-focusBorder, var(--vscode-panel-border, rgba(128, 128, 128, 0.4)));
+        box-shadow: 0 0 0 1px var(--vscode-focusBorder, transparent);
+    }
+
+    .mermaid-enhanced__svg {
+        width: 100%;
+    }
+
+    .mermaid-tool-menu {
+        position: absolute;
+        top: 8px;
+        right: 8px;
+        display: flex;
+        gap: 6px;
+        padding: 4px;
+        background: var(--vscode-editorWidget-background);
+        border: 1px solid var(--vscode-widget-border, var(--vscode-panel-border));
+        border-radius: 6px;
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        opacity: 0;
+        pointer-events: none;
+        transition: opacity 0.15s ease-in-out;
+        z-index: 2;
+    }
+
+    .mermaid.mermaid-enhanced:hover .mermaid-tool-menu,
+    .mermaid.mermaid-enhanced:focus-within .mermaid-tool-menu {
+        opacity: 1;
+        pointer-events: auto;
+    }
+
+    .mermaid-control-button {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 28px;
+        height: 28px;
+        padding: 0;
+        border-radius: 4px;
+        border: 1px solid transparent;
+        background: var(--vscode-button-secondaryBackground);
+        color: var(--vscode-button-secondaryForeground);
+        cursor: pointer;
+        transition: background 0.15s ease-in-out, color 0.15s ease-in-out, border-color 0.15s ease-in-out;
+    }
+
+    .mermaid-control-button:hover {
+        background: var(--vscode-button-secondaryHoverBackground, var(--vscode-button-secondaryBackground));
+        border-color: var(--vscode-panel-border, transparent);
+    }
+
+    .mermaid-control-button:focus-visible {
+        outline: 2px solid var(--vscode-focusBorder, rgba(14, 99, 156, 0.6));
+        outline-offset: 2px;
+    }
+
+    .mermaid-control-button svg {
+        width: 16px;
+        height: 16px;
+        fill: currentColor;
+    }
+
+    .mermaid-modal {
+        position: fixed;
+        inset: 0;
+        z-index: 10000;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+
+    .mermaid-modal__backdrop {
+        position: absolute;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.45);
+    }
+
+    .mermaid-modal__body {
+        position: relative;
+        width: 90vw;
+        height: 90vh;
+        max-width: 1200px;
+        max-height: 90vh;
+        background: var(--vscode-editor-background);
+        border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+        border-radius: 8px;
+        box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
+        display: flex;
+        flex-direction: column;
+        overflow: hidden;
+    }
+
+    .mermaid-modal__toolbar {
+        padding: 12px;
+        display: flex;
+        gap: 8px;
+        justify-content: flex-end;
+        background: var(--vscode-editorWidget-background);
+        border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
+        z-index: 1;
+    }
+
+    .mermaid-modal__diagram {
+        flex: 1;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        overflow: hidden;
+        padding: 16px;
+    }
+
+    .mermaid-modal__diagram svg {
+        width: 100%;
+        height: auto;
+        max-width: none;
+    }
+
+    .mermaid-modal__loading,
+    .mermaid-modal__error {
+        color: var(--vscode-foreground);
+        font-size: 14px;
+        text-align: center;
+    }
+
+    .mermaid-modal__error {
+        white-space: pre-wrap;
+    }
+    `;
+}
+
+function createHoverToolMenu(mermaidContainer: HTMLElement, index: number): HTMLDivElement {
+    const menu = document.createElement("div");
+    menu.className = "mermaid-tool-menu";
+
+    const expandButton = createControlButton("Expand diagram", getExpandIconMarkup(), "expand");
+    expandButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        openMermaidModal(mermaidContainer, index);
     });
 
-    // Some diagrams maybe removed during edits and if we have states
-    // for more diagrams than there are then we should also remove them
-    removeOldPanZoomStates(numElements);
+    const copyButton = createControlButton("Copy Mermaid source", getCopyIconMarkup(), "copy");
+    copyButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        event.stopPropagation();
+        await copyMermaidSource(mermaidContainer);
+    });
+
+    menu.append(expandButton, copyButton);
+    return menu;
 }
 
-// resetPanZoom clears up all states stored as part of pan zoom functionlaity
-// should be used when page is re-rendered with pan zoom turned off
+function createControlButton(label: string, iconMarkup: string, action: string): HTMLButtonElement {
+    const button = document.createElement("button");
+    button.type = "button";
+    button.className = "mermaid-control-button";
+    button.setAttribute("aria-label", label);
+    button.title = label;
+    button.dataset.action = action;
+    button.innerHTML = iconMarkup;
+    return button;
+}
+
+async function copyMermaidSource(mermaidContainer: HTMLElement): Promise<void> {
+    const source = mermaidContainer.dataset.mermaidSource;
+    if (!source) {
+        console.warn("No Mermaid source available for copy.");
+        return;
+    }
+
+    try {
+        if (navigator.clipboard?.writeText) {
+            await navigator.clipboard.writeText(source);
+            return;
+        }
+    } catch (error) {
+        console.error("navigator.clipboard.writeText failed, attempting fallback copy.", error);
+    }
+
+    const textarea = document.createElement("textarea");
+    textarea.value = source;
+    textarea.setAttribute("readonly", "");
+    textarea.style.position = "fixed";
+    textarea.style.top = "-1000px";
+    textarea.style.opacity = "0";
+    document.body.appendChild(textarea);
+    textarea.select();
+
+    try {
+        document.execCommand("copy");
+    } catch (error) {
+        console.error("Fallback copy failed.", error);
+    } finally {
+        textarea.remove();
+    }
+}
+
+async function openMermaidModal(mermaidContainer: HTMLElement, index: number): Promise<void> {
+    const source = mermaidContainer.dataset.mermaidSource;
+    if (!source) {
+        console.warn("No Mermaid source available for modal rendering.");
+        return;
+    }
+
+    closeActiveModal();
+    ensureMermaidEnhancementStyles();
+
+    const modal = document.createElement("div");
+    modal.className = "mermaid-modal";
+    modal.setAttribute("role", "dialog");
+    modal.setAttribute("aria-modal", "true");
+    modal.dataset.diagramIndex = String(index);
+
+    const backdrop = document.createElement("div");
+    backdrop.className = "mermaid-modal__backdrop";
+
+    const body = document.createElement("div");
+    body.className = "mermaid-modal__body";
+
+    const toolbar = document.createElement("div");
+    toolbar.className = "mermaid-modal__toolbar";
+
+    const closeButton = createControlButton("Close modal", getCloseIconMarkup(), "close");
+    const zoomInButton = createControlButton("Zoom in", getZoomInIconMarkup(), "zoom-in");
+    const zoomOutButton = createControlButton("Zoom out", getZoomOutIconMarkup(), "zoom-out");
+    const copyButton = createControlButton("Copy Mermaid source", getCopyIconMarkup(), "copy");
+
+    toolbar.append(closeButton, zoomInButton, zoomOutButton, copyButton);
+
+    const diagramHost = document.createElement("div");
+    diagramHost.className = "mermaid-modal__diagram";
+
+    body.append(toolbar, diagramHost);
+    modal.append(backdrop, body);
+
+    const state = modalPanZoomStates[index] ?? {
+        requireInit: true,
+        enabled: true,
+        panX: 0,
+        panY: 0,
+        scale: 1
+    };
+    modalPanZoomStates[index] = state;
+
+    activeModal = {
+        index,
+        element: modal,
+        diagramHost,
+        panZoomInstance: null,
+        sourceContainer: mermaidContainer
+    };
+
+    document.body.appendChild(modal);
+    document.body.classList.add(MODAL_BODY_CLASS);
+
+    attachModalEventHandlers(modal);
+
+    const loading = document.createElement("div");
+    loading.className = "mermaid-modal__loading";
+    loading.textContent = "Rendering diagram...";
+    diagramHost.appendChild(loading);
+
+    try {
+        const renderId = `modal-mermaid-${crypto.randomUUID()}`;
+        const renderResult = await mermaid.render(renderId, source);
+        if (!activeModal || activeModal.element !== modal) {
+            return;
+        }
+
+        diagramHost.innerHTML = renderResult.svg;
+        renderResult.bindFunctions?.(diagramHost);
+
+        const svgEl = diagramHost.querySelector("svg");
+        if (!svgEl) {
+            throw new Error("Mermaid modal render did not return an SVG element.");
+        }
+
+        const panZoomInstance = enablePanZoom(diagramHost, svgEl, state);
+        panZoomInstance.state.enabled = true;
+        setActiveModalPanZoomInstance(panZoomInstance);
+    } catch (error) {
+        if (!activeModal || activeModal.element !== modal) {
+            return;
+        }
+
+        console.error("Failed to render Mermaid diagram in modal.", error);
+        diagramHost.innerHTML = "";
+
+        const errorNode = document.createElement("div");
+        errorNode.className = "mermaid-modal__error";
+        errorNode.textContent = error instanceof Error ? error.message : String(error);
+        diagramHost.appendChild(errorNode);
+
+        setActiveModalPanZoomInstance(null);
+    }
+
+    closeButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        closeActiveModal();
+    });
+
+    zoomInButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        const instance = activeModal?.panZoomInstance;
+        if (instance) {
+            const nextScale = instance.state.scale * 1.2;
+            instance.setScale(nextScale);
+        }
+    });
+
+    zoomOutButton.addEventListener("click", (event) => {
+        event.preventDefault();
+        const instance = activeModal?.panZoomInstance;
+        if (instance) {
+            const nextScale = instance.state.scale / 1.2;
+            instance.setScale(nextScale);
+        }
+    });
+
+    copyButton.addEventListener("click", async (event) => {
+        event.preventDefault();
+        const sourceEl = activeModal?.sourceContainer ?? mermaidContainer;
+        await copyMermaidSource(sourceEl);
+    });
+
+    backdrop.addEventListener("click", (event) => {
+        event.preventDefault();
+        closeActiveModal();
+    });
+}
+
+function setActiveModalPanZoomInstance(instance: PanZoomInstance | null) {
+    if (activeModal) {
+        activeModal.panZoomInstance?.cleanup();
+        activeModal.panZoomInstance = instance;
+    }
+}
+
+function closeActiveModal() {
+    if (!activeModal) {
+        return;
+    }
+
+    activeModal.panZoomInstance?.cleanup();
+    activeModal.element.remove();
+    document.body.classList.remove(MODAL_BODY_CLASS);
+    detachModalEventHandlers();
+    activeModal = null;
+}
+
+function attachModalEventHandlers(modal: HTMLDivElement) {
+    detachModalEventHandlers();
+
+    escapeKeyHandler = (event: KeyboardEvent) => {
+        if (event.key === "Escape") {
+            closeActiveModal();
+        }
+    };
+
+    window.addEventListener("keydown", escapeKeyHandler, true);
+
+    modal.addEventListener("wheel", (event) => {
+        if (event.ctrlKey) {
+            event.preventDefault();
+        }
+    }, { passive: false });
+}
+
+function detachModalEventHandlers() {
+    if (escapeKeyHandler) {
+        window.removeEventListener("keydown", escapeKeyHandler, true);
+        escapeKeyHandler = null;
+    }
+}
+
+function getExpandIconMarkup(): string {
+    return `
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M2 6h2V4h2V2H2v4zm10-4v2h2v2h2V2h-4zM2 10H0v4h4v-2H2v-2zm10 2h-2v2h4v-4h-2v2z" />
+    </svg>
+    `;
+}
+
+function getCopyIconMarkup(): string {
+    return `
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M5 1h9v11H5z" opacity="0.4" />
+        <path d="M2 4h9v11H2zM3 5v9h7V5z" />
+    </svg>
+    `;
+}
+
+function getCloseIconMarkup(): string {
+    return `
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M4.22 4.22 8 8l3.78-3.78 1.44 1.44L9.44 9.44l3.78 3.78-1.44 1.44L8 10.88l-3.78 3.78-1.44-1.44L6.56 9.44 2.78 5.66z" />
+    </svg>
+    `;
+}
+
+function getZoomInIconMarkup(): string {
+    return `
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="m11.29 10.29 3.42 3.42-1.42 1.42-3.42-3.42a5.5 5.5 0 1 1 1.42-1.42zM7 3.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zm1.5 2h-1V5h-1v.5h-1V7h1v1h1V7h1z" />
+    </svg>
+    `;
+}
+
+function getZoomOutIconMarkup(): string {
+    return `
+    <svg viewBox="0 0 16 16" aria-hidden="true">
+        <path d="m11.29 10.29 3.42 3.42-1.42 1.42-3.42-3.42a5.5 5.5 0 1 1 1.42-1.42zM7 3.5a3.5 3.5 0 1 0 0 7 3.5 3.5 0 0 0 0-7zM5 6.5h4V8H5z" />
+    </svg>
+    `;
+}
+
+export async function renderMermaidBlocksWithPanZoom() {
+    ensureMermaidEnhancementStyles();
+
+    const numElements = await renderMermaidBlocksInElement(document.body, (mermaidContainer, content, index) => {
+        mermaidContainer.innerHTML = content;
+        const svgEl = mermaidContainer.querySelector('svg');
+        if (svgEl) {
+            attachMermaidEnhancements(mermaidContainer, svgEl, index);
+        }
+    });
+
+    removeOldModalPanZoomStates(numElements);
+}
+
 export function resetPanZoom() {
-    resetPanZoomStates();
-    resetEnabledPanZoomInstances();
+    // No-op: pan zoom state is now only managed in modals
 }
 
-// onResize should added as a callback on window resize events
 export function onResize() {
-    resizeEnabledPanZoomInstances();
+    // No-op: pan zoom is now only managed in modals
 }
 
 // enablePanZoom will initialize native pan/zoom handling for the
@@ -135,6 +549,42 @@ function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGSVGElement, panZo
         y: viewBox.y,
         width: viewBox.width,
         height: viewBox.height
+    };
+
+    const clampScale = (value: number) => Math.max(0.1, Math.min(10, value));
+
+    const updateScale = (targetScale: number, pointer?: { clientX: number; clientY: number }) => {
+        const nextScale = clampScale(targetScale);
+        const svgRect = svgEl.getBoundingClientRect();
+
+        if (svgRect.width === 0 || svgRect.height === 0) {
+            panZoomState.scale = nextScale;
+            applyTransform(svgEl, initialViewBox, panZoomState);
+            return;
+        }
+
+        const pointerX = pointer ? pointer.clientX - svgRect.left : svgRect.width / 2;
+        const pointerY = pointer ? pointer.clientY - svgRect.top : svgRect.height / 2;
+
+        const currentViewBox = svgEl.viewBox.baseVal;
+        const svgX = (pointerX / svgRect.width) * currentViewBox.width + currentViewBox.x;
+        const svgY = (pointerY / svgRect.height) * currentViewBox.height + currentViewBox.y;
+
+        const newScaledWidth = initialViewBox.width / nextScale;
+        const newScaledHeight = initialViewBox.height / nextScale;
+
+        const newX = svgX - (pointerX / svgRect.width) * newScaledWidth;
+        const newY = svgY - (pointerY / svgRect.height) * newScaledHeight;
+
+        panZoomState.panX = newX - initialViewBox.x;
+        panZoomState.panY = newY - initialViewBox.y;
+        panZoomState.scale = nextScale;
+
+        applyTransform(svgEl, initialViewBox, panZoomState);
+    };
+
+    const setScale = (targetScale: number, pointer?: { clientX: number; clientY: number }) => {
+        updateScale(targetScale, pointer);
     };
 
     // Initialize state if needed
@@ -197,33 +647,9 @@ function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGSVGElement, panZo
 
     const handleWheel = (e: WheelEvent) => {
         e.preventDefault();
-        
-        const svgRect = svgEl.getBoundingClientRect();
-        const pointerX = e.clientX - svgRect.left;
-        const pointerY = e.clientY - svgRect.top;
-        
-        // Convert pointer position to SVG coordinates using current viewBox
-        const currentViewBox = svgEl.viewBox.baseVal;
-        const svgX = (pointerX / svgRect.width) * currentViewBox.width + currentViewBox.x;
-        const svgY = (pointerY / svgRect.height) * currentViewBox.height + currentViewBox.y;
-        
-        // Zoom factor
         const zoomFactor = e.deltaY > 0 ? 0.9 : 1.1;
-        const newScale = Math.max(0.1, Math.min(10, panZoomState.scale * zoomFactor));
-        
-        // Adjust pan so the point under cursor stays fixed
-        const newScaledWidth = initialViewBox.width / newScale;
-        const newScaledHeight = initialViewBox.height / newScale;
-        
-        // Calculate new pan to keep svgX, svgY at the same screen position
-        const newX = svgX - (pointerX / svgRect.width) * newScaledWidth;
-        const newY = svgY - (pointerY / svgRect.height) * newScaledHeight;
-        
-        panZoomState.panX = newX - initialViewBox.x;
-        panZoomState.panY = newY - initialViewBox.y;
-        panZoomState.scale = newScale;
-        
-        applyTransform(svgEl, initialViewBox, panZoomState);
+        const targetScale = panZoomState.scale * zoomFactor;
+        setScale(targetScale, { clientX: e.clientX, clientY: e.clientY });
     };
 
     svgEl.style.cursor = 'grab';
@@ -254,7 +680,9 @@ function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGSVGElement, panZo
         container: mermaidContainer,
         cleanup,
         reset,
-        restore
+        restore,
+        setScale,
+        state: panZoomState
     };
 }
 
@@ -269,142 +697,11 @@ function applyTransform(svgEl: SVGSVGElement, initialViewBox: { x: number, y: nu
     svgEl.setAttribute('viewBox', `${newX} ${newY} ${scaledWidth} ${scaledHeight}`);
 }
 
-// addSvgEl inserts the svg content into the provided mermaid container
-// then finds the svg element to confirm it is created and returns it
-function addSvgEl(mermaidContainer:HTMLElement, content: string): SVGSVGElement {
 
-    // Add svg string content
-    mermaidContainer.insertAdjacentHTML("beforeend", content);
-    
-    // Svg element should be found in container
-    const svgEl = mermaidContainer.querySelector("svg");
-    if (!svgEl) throw("svg element not found");
-
-    return svgEl;
-}
-
-// removeOldPanZoomStates will remove all pan zoom states where their index
-// is larger than the current amount of rendered elements. The usecase is 
-// if the user creates many diagrams then removes them, we don't want to
-// keep pan zoom states for diagrams that don't exist
-function removeOldPanZoomStates(numElements: number) {
-    for (const index in panZoomStates) {
+export function removeOldModalPanZoomStates(numElements: number) {
+    for (const index in modalPanZoomStates) {
         if (Number(index) >= numElements) {
-            delete panZoomStates[index];
+            delete modalPanZoomStates[index];
         }
     }
-}
-
-// resetPanZoomStates will remove all stored pan zoom states
-function resetPanZoomStates() {
-    for (const index in panZoomStates) {
-        if (Object.prototype.hasOwnProperty.call(panZoomStates, index)) {
-            delete panZoomStates[index];
-        }
-    }
-}
-
-// resizeEnabledPanZoomInstances will loop through all the currently
-// enabled pan zoom instances and call restore on them, this should
-// be called only on page resizing
-function resizeEnabledPanZoomInstances() {
-    for (const index in enabledPanZoomInstances) {
-        if (Object.prototype.hasOwnProperty.call(enabledPanZoomInstances, index)) {
-            const panZoomInstance = enabledPanZoomInstances[index];
-            panZoomInstance.restore();
-        }
-    }
-}
-
-// resetEnabledPanZoomInstances will remove all stored enabled pan zoom instances
-function resetEnabledPanZoomInstances() {
-    for (const index in enabledPanZoomInstances) {
-        if (Object.prototype.hasOwnProperty.call(enabledPanZoomInstances, index)) {
-            const instance = enabledPanZoomInstances[index];
-            instance.cleanup();
-            delete enabledPanZoomInstances[index];
-        }
-    }
-}
-
-function createPanZoomToggle(mermaidContainer: HTMLElement): HTMLInputElement {
-    const inputID = `checkbox-${crypto.randomUUID()}`;
-    mermaidContainer.insertAdjacentHTML("afterbegin", `
-    <div class="toggle-container">
-        <input id="${inputID}" class="checkbox" type="checkbox" />
-        <label class="label" for="${inputID}">
-            <span class="ball" />
-        </label>
-        <div class="text">Pan & Zoom</div>
-    </div>
-    `);
-
-    const input = mermaidContainer.querySelector("input");
-    if (!input) throw Error("toggle input should be defined");
-
-    return input;
-}
-
-function getToggleButtonStyles(): HTMLStyleElement {
-    const styles = `
-    .mermaid:hover .toggle-container {
-        opacity: 1;
-    }
-
-    .toggle-container {
-        opacity: 0;
-        display: flex;
-        align-items: center;
-        margin-bottom: 6px;
-        transition: opacity 0.2s ease-in-out;
-    }
-
-    .toggle-container .text {
-        margin-left: 6px;
-        font-size: 12px;
-        cursor: default;
-    }
-
-    .toggle-container .checkbox {
-        opacity: 0;
-        position: absolute;
-    }
-      
-    .toggle-container .label {
-        background-color: var(--vscode-editorWidget-background);
-        width: 33px;
-        height: 19px;
-        border-radius: 50px;
-        position: relative;
-        padding: 5px;
-        cursor: pointer;
-        display: flex;
-        justify-content: space-between;
-        align-items: center;
-        box-sizing: border-box;
-    }
-
-    .toggle-container .label .ball {
-        background-color: var(--vscode-editorWidget-foreground);
-        width: 15px;
-        height: 15px;
-        position: absolute;
-        left: 2px;
-        top: 1px;
-        border-radius: 50%;
-        transition: transform 0.2s linear;
-    }
-
-    .toggle-container .checkbox:checked + .label .ball {
-        transform: translateX(14px);
-    }
-    
-    .toggle-container .checkbox:checked + .label {
-        background-color: var(--vscode-textLink-activeForeground);
-    }
-    `;
-
-    const styleSheet = document.createElement("style");
-    styleSheet.textContent = styles;
-    return styleSheet;
 }

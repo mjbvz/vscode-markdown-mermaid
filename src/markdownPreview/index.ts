@@ -5,7 +5,7 @@
  */
 import mermaid, { MermaidConfig } from 'mermaid';
 import { registerMermaidAddons, renderMermaidBlocksInElement } from '../shared-mermaid';
-import { renderMermaidBlocksWithPanZoom, resetPanZoom, onResize } from './zoom';
+import { renderMermaidBlocksWithPanZoom, resetPanZoom, onResize, ensureMermaidEnhancementStyles, attachMermaidEnhancements, removeOldModalPanZoomStates } from './zoom';
 
 async function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
@@ -29,9 +29,15 @@ async function init() {
     if (enablePanZoom) {
         renderMermaidBlocksWithPanZoom();
     } else {
-        renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
+        ensureMermaidEnhancementStyles();
+        const renderedCount = await renderMermaidBlocksInElement(document.body, (mermaidContainer, content, index) => {
             mermaidContainer.innerHTML = content;
+            const svgEl = mermaidContainer.querySelector('svg');
+            if (svgEl) {
+                attachMermaidEnhancements(mermaidContainer, svgEl, index);
+            }
         });
+        removeOldModalPanZoomStates(renderedCount);
 
         // Reset everything as pan zoom has been disabled
         resetPanZoom();

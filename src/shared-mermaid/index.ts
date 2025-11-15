@@ -15,6 +15,7 @@ function renderMermaidElement(
 
     const source = mermaidContainer.textContent ?? '';
     mermaidContainer.id = containerId;
+    mermaidContainer.dataset.mermaidSource = source;
     mermaidContainer.innerHTML = '';
 
     return {
