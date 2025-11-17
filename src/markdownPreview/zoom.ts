@@ -198,13 +198,17 @@ function getEnhancementStyles(): string {
         align-items: center;
         justify-content: center;
         overflow: hidden;
-        padding: 16px;
+        padding: 0;
+        width: 100%;
+        height: 100%;
+        min-height: 0;
     }
 
     .mermaid-modal__diagram svg {
         width: 100%;
-        height: auto;
+        height: 100%;
         max-width: none;
+        max-height: none;
     }
 
     .mermaid-modal__loading,
@@ -582,10 +586,11 @@ export function onResize() {
 // it will be populated with default values, otherwise it will
 // load the provided pan zoom state.
 function enablePanZoom(mermaidContainer:HTMLElement, svgEl: SVGSVGElement, panZoomState: PanZoomState): PanZoomInstance {
-    // Ensure SVG uses viewBox for aspect ratio preservation
+    // Ensure SVG uses viewBox for aspect ratio preservation and fills container
     svgEl.style.width = "100%";
-    svgEl.style.height = "auto";
+    svgEl.style.height = "100%";
     svgEl.style.maxWidth = "none";
+    svgEl.style.maxHeight = "none";
 
     // Get initial viewBox if not set
     let viewBox = svgEl.viewBox.baseVal;
