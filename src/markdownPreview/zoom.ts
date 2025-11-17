@@ -175,18 +175,21 @@ function getEnhancementStyles(): string {
         border-radius: 8px;
         box-shadow: 0 18px 48px rgba(0, 0, 0, 0.35);
         display: flex;
-        flex-direction: column;
         overflow: hidden;
     }
 
     .mermaid-modal__toolbar {
-        padding: 12px;
+        position: absolute;
+        top: 12px;
+        right: 12px;
         display: flex;
         gap: 8px;
-        justify-content: flex-end;
+        z-index: 10;
         background: var(--vscode-editorWidget-background);
-        border-bottom: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
-        z-index: 1;
+        padding: 8px;
+        border-radius: 6px;
+        border: 1px solid var(--vscode-widget-border, var(--vscode-panel-border));
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
     }
 
     .mermaid-modal__diagram {
@@ -326,7 +329,7 @@ async function openMermaidModal(mermaidContainer: HTMLElement, index: number): P
     const toolbar = document.createElement("div");
     toolbar.className = "mermaid-modal__toolbar";
 
-    const closeButton = createControlButton("Close modal", getCloseIconMarkup(), "close");
+    const closeButton = createControlButton("Close modal gemini", getCloseIconMarkup(), "close");
     const zoomInButton = createControlButton("Zoom in", getZoomInIconMarkup(), "zoom-in");
     const zoomOutButton = createControlButton("Zoom out", getZoomOutIconMarkup(), "zoom-out");
     const copyButton = createControlButton("Copy Mermaid source", getCopyIconMarkup(), "copy");
