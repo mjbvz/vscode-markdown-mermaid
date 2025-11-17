@@ -33,6 +33,7 @@ type ActiveModal = {
 const modalPanZoomStates: {[index: number]: PanZoomState} = {};
 let activeModal: ActiveModal | null = null;
 let escapeKeyHandler: ((event: KeyboardEvent) => void) | null = null;
+let doubleClickHandler: ((event: MouseEvent) => void) | null = null;
 
 export function ensureMermaidEnhancementStyles() {
     if (document.getElementById(ENHANCEMENT_STYLES_ID)) {
@@ -462,10 +463,11 @@ function closeActiveModal() {
         return;
     }
 
+    const modalElement = activeModal.element;
     activeModal.panZoomInstance?.cleanup();
-    activeModal.element.remove();
-    document.body.classList.remove(MODAL_BODY_CLASS);
     detachModalEventHandlers();
+    modalElement.remove();
+    document.body.classList.remove(MODAL_BODY_CLASS);
     activeModal = null;
 }
 
@@ -485,12 +487,30 @@ function attachModalEventHandlers(modal: HTMLDivElement) {
             event.preventDefault();
         }
     }, { passive: false });
+
+    // Prevent double-click from navigating to source file when modal is open
+    doubleClickHandler = (event: MouseEvent) => {
+        // Only prevent if the click is within the modal
+        if (activeModal && activeModal.element.contains(event.target as Node)) {
+            event.preventDefault();
+            event.stopPropagation();
+            event.stopImmediatePropagation();
+        }
+    };
+
+    // Use capture phase to intercept before VS Code's handler
+    // Attach to document to catch all double-clicks when modal is open
+    document.addEventListener("dblclick", doubleClickHandler, true);
 }
 
 function detachModalEventHandlers() {
     if (escapeKeyHandler) {
         window.removeEventListener("keydown", escapeKeyHandler, true);
         escapeKeyHandler = null;
+    }
+    if (doubleClickHandler) {
+        document.removeEventListener("dblclick", doubleClickHandler, true);
+        doubleClickHandler = null;
     }
 }
 
