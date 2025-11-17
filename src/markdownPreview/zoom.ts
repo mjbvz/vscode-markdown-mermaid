@@ -329,12 +329,12 @@ async function openMermaidModal(mermaidContainer: HTMLElement, index: number): P
     const toolbar = document.createElement("div");
     toolbar.className = "mermaid-modal__toolbar";
 
-    const closeButton = createControlButton("Close modal gemini", getCloseIconMarkup(), "close");
     const zoomInButton = createControlButton("Zoom in", getZoomInIconMarkup(), "zoom-in");
     const zoomOutButton = createControlButton("Zoom out", getZoomOutIconMarkup(), "zoom-out");
     const copyButton = createControlButton("Copy Mermaid source", getCopyIconMarkup(), "copy");
+    const closeButton = createControlButton("Close modal gemini", getCloseIconMarkup(), "close");
 
-    toolbar.append(closeButton, zoomInButton, zoomOutButton, copyButton);
+    toolbar.append(zoomInButton, zoomOutButton, copyButton, closeButton);
 
     const diagramHost = document.createElement("div");
     diagramHost.className = "mermaid-modal__diagram";
