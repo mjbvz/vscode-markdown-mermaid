@@ -235,7 +235,10 @@ function createHoverToolMenu(mermaidContainer: HTMLElement, index: number): HTML
     copyButton.addEventListener("click", async (event) => {
         event.preventDefault();
         event.stopPropagation();
-        await copyMermaidSource(mermaidContainer);
+        const success = await copyMermaidSource(mermaidContainer);
+        if (success) {
+            showCopySuccessFeedback(copyButton);
+        }
     });
 
     menu.append(expandButton, copyButton);
@@ -253,17 +256,17 @@ function createControlButton(label: string, iconMarkup: string, action: string):
     return button;
 }
 
-async function copyMermaidSource(mermaidContainer: HTMLElement): Promise<void> {
+async function copyMermaidSource(mermaidContainer: HTMLElement): Promise<boolean> {
     const source = mermaidContainer.dataset.mermaidSource;
     if (!source) {
         console.warn("No Mermaid source available for copy.");
-        return;
+        return false;
     }
 
     try {
         if (navigator.clipboard?.writeText) {
             await navigator.clipboard.writeText(source);
-            return;
+            return true;
         }
     } catch (error) {
         console.error("navigator.clipboard.writeText failed, attempting fallback copy.", error);
@@ -279,9 +282,11 @@ async function copyMermaidSource(mermaidContainer: HTMLElement): Promise<void> {
     textarea.select();
 
     try {
-        document.execCommand("copy");
+        const success = document.execCommand("copy");
+        return success;
     } catch (error) {
         console.error("Fallback copy failed.", error);
+        return false;
     } finally {
         textarea.remove();
     }
@@ -332,7 +337,7 @@ async function openMermaidModal(mermaidContainer: HTMLElement, index: number): P
     const zoomInButton = createControlButton("Zoom in", getZoomInIconMarkup(), "zoom-in");
     const zoomOutButton = createControlButton("Zoom out", getZoomOutIconMarkup(), "zoom-out");
     const copyButton = createControlButton("Copy Mermaid source", getCopyIconMarkup(), "copy");
-    const closeButton = createControlButton("Close modal gemini", getCloseIconMarkup(), "close");
+    const closeButton = createControlButton("Close modal", getCloseIconMarkup(), "close");
 
     toolbar.append(zoomInButton, zoomOutButton, copyButton, closeButton);
 
@@ -429,7 +434,10 @@ async function openMermaidModal(mermaidContainer: HTMLElement, index: number): P
     copyButton.addEventListener("click", async (event) => {
         event.preventDefault();
         const sourceEl = activeModal?.sourceContainer ?? mermaidContainer;
-        await copyMermaidSource(sourceEl);
+        const success = await copyMermaidSource(sourceEl);
+        if (success) {
+            showCopySuccessFeedback(copyButton);
+        }
     });
 
     backdrop.addEventListener("click", (event) => {
@@ -525,6 +533,25 @@ function getZoomOutIconMarkup(): string {
         <path fill-rule="evenodd" d="M3 6.5a.5.5 0 0 1 .5-.5h6a.5.5 0 0 1 0 1h-6a.5.5 0 0 1-.5-.5z"/>
     </svg>
     `;
+}
+
+function getCheckmarkIconMarkup(): string {
+    return `
+    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16" aria-hidden="true">
+        <path d="M13.854 3.646a.5.5 0 0 1 0 .708l-7 7a.5.5 0 0 1-.708 0l-3.5-3.5a.5.5 0 1 1 .708-.708L6.5 10.293l6.646-6.647a.5.5 0 0 1 .708 0z"/>
+    </svg>
+    `;
+}
+
+function showCopySuccessFeedback(button: HTMLButtonElement): void {
+    const originalIcon = button.innerHTML;
+    button.innerHTML = getCheckmarkIconMarkup();
+    button.style.color = "var(--vscode-testing-iconPassed, #4ec9b0)";
+
+    setTimeout(() => {
+        button.innerHTML = originalIcon;
+        button.style.color = "";
+    }, 2000);
 }
 
 export async function renderMermaidBlocksWithPanZoom() {
