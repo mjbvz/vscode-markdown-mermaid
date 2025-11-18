@@ -167,10 +167,8 @@ function getEnhancementStyles(): string {
 
     .mermaid-modal__body {
         position: relative;
-        width: 90vw;
-        height: 90vh;
-        max-width: 1200px;
-        max-height: 90vh;
+        width: 95vw;
+        height: 95vh;
         background: var(--vscode-editor-background);
         border: 1px solid var(--vscode-panel-border, var(--vscode-widget-border));
         border-radius: 8px;
