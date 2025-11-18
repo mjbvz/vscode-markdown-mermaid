@@ -125,10 +125,11 @@ function getWebviewContent(source: string, theme: string): string {
             theme: theme
         });
 
-        async function renderDiagram() {
+        async function renderDiagram(diagramSource) {
+            const sourceToRender = diagramSource || source;
             try {
                 const renderId = 'mermaid-' + Math.random().toString(36).substr(2, 9);
-                const result = await mermaid.render(renderId, source);
+                const result = await mermaid.render(renderId, sourceToRender);
                 container.innerHTML = result.svg;
                 if (result.bindFunctions) {
                     result.bindFunctions(container);
@@ -146,7 +147,7 @@ function getWebviewContent(source: string, theme: string): string {
             const message = event.data;
             if (message.command === 'updateDiagram') {
                 const newSource = message.source;
-                renderDiagram();
+                renderDiagram(newSource);
             }
         });
 
