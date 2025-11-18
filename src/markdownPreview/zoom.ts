@@ -469,6 +469,94 @@ function closeActiveModal() {
     activeModal = null;
 }
 
+export async function updateActiveModalIfNeeded() {
+    if (!activeModal) {
+        return;
+    }
+
+    // Find the source container by index, as it may have been recreated during preview update
+    const mermaidElements = document.body.querySelectorAll<HTMLElement>('.mermaid');
+    const sourceContainer = mermaidElements[activeModal.index];
+
+    if (!sourceContainer) {
+        // Source container no longer exists (diagram was removed), close modal
+        closeActiveModal();
+        return;
+    }
+
+    const newSource = sourceContainer.dataset.mermaidSource;
+
+    if (!newSource) {
+        // Source container no longer has source, close modal
+        closeActiveModal();
+        return;
+    }
+
+    // Update the stored reference to the source container
+    activeModal.sourceContainer = sourceContainer;
+
+    // Re-render the diagram in the modal with the updated source
+    const diagramHost = activeModal.diagramHost;
+    const state = modalPanZoomStates[activeModal.index] ?? {
+        requireInit: true,
+        enabled: true,
+        panX: 0,
+        panY: 0,
+        scale: 1
+    };
+
+    // Preserve current pan/zoom state
+    if (activeModal.panZoomInstance) {
+        state.panX = activeModal.panZoomInstance.state.panX;
+        state.panY = activeModal.panZoomInstance.state.panY;
+        state.scale = activeModal.panZoomInstance.state.scale;
+        state.requireInit = false;
+    }
+
+    const loading = document.createElement("div");
+    loading.className = "mermaid-modal__loading";
+    loading.textContent = "Rendering diagram...";
+    diagramHost.innerHTML = "";
+    diagramHost.appendChild(loading);
+
+    try {
+        const renderId = `modal-mermaid-${crypto.randomUUID()}`;
+        const renderResult = await mermaid.render(renderId, newSource);
+
+        // Check if modal is still active (user might have closed it)
+        if (!activeModal || activeModal.element !== diagramHost.closest('.mermaid-modal')) {
+            return;
+        }
+
+        diagramHost.innerHTML = renderResult.svg;
+        renderResult.bindFunctions?.(diagramHost);
+
+        const svgEl = diagramHost.querySelector("svg");
+        if (!svgEl) {
+            throw new Error("Mermaid modal render did not return an SVG element.");
+        }
+
+        const panZoomInstance = enablePanZoom(diagramHost, svgEl, state);
+        panZoomInstance.state.enabled = true;
+        setActiveModalPanZoomInstance(panZoomInstance);
+    } catch (error) {
+        // Check if modal is still active
+        if (!activeModal || activeModal.element !== diagramHost.closest('.mermaid-modal')) {
+            return;
+        }
+
+        console.error("Failed to re-render Mermaid diagram in modal.", error);
+        diagramHost.innerHTML = "";
+
+        const errorNode = document.createElement("div");
+        errorNode.className = "mermaid-modal__error";
+        errorNode.textContent = error instanceof Error ? error.message : String(error);
+        diagramHost.appendChild(errorNode);
+
+        setActiveModalPanZoomInstance(null);
+    }
+}
+
 function attachModalEventHandlers(modal: HTMLDivElement) {
     detachModalEventHandlers();
 

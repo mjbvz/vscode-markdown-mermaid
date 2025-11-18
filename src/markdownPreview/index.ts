@@ -5,7 +5,7 @@
  */
 import mermaid, { MermaidConfig } from 'mermaid';
 import { registerMermaidAddons, renderMermaidBlocksInElement } from '../shared-mermaid';
-import { renderMermaidBlocksWithPanZoom, resetPanZoom, onResize, ensureMermaidEnhancementStyles, attachMermaidEnhancements, removeOldModalPanZoomStates } from './zoom';
+import { renderMermaidBlocksWithPanZoom, resetPanZoom, onResize, ensureMermaidEnhancementStyles, attachMermaidEnhancements, removeOldModalPanZoomStates, updateActiveModalIfNeeded } from './zoom';
 
 async function init() { 
     const configSpan = document.getElementById('markdown-mermaid');
@@ -42,6 +42,9 @@ async function init() {
         // Reset everything as pan zoom has been disabled
         resetPanZoom();
     }
+
+    // Update active modal if it's open and the source has changed
+    await updateActiveModalIfNeeded();
 }
 
 window.addEventListener('resize', onResize);
