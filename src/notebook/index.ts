@@ -34,7 +34,7 @@ export async function activate(ctx: RendererContext<void>) {
 
             const temp = document.createElement('div');
             temp.innerHTML = result;
-            renderMermaidBlocksInElement(temp, (mermaidContainer, content) => {
+            renderMermaidBlocksInElement(temp, (mermaidContainer, content, _index) => {
                 // The original element we are rendering to has been disconnected.
                 const liveEl = shadowRoot?.getElementById(mermaidContainer.id);
                 if (liveEl) {
