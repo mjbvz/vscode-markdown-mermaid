@@ -15,6 +15,20 @@ interface MarkdownItRenderer {
     extendMarkdownIt(fn: (md: MarkdownIt) => void): void;
 }
 
+let zoomLevel = 1;
+
+function addZoomToElement(element: HTMLElement) {
+    element.addEventListener('wheel', (e) => {
+        if (e.ctrlKey || e.metaKey) {
+            e.preventDefault();
+            const delta = e.deltaY > 0 ? 0.9 : 1.1;
+            zoomLevel = Math.max(0.1, Math.min(5, zoomLevel * delta));
+            element.style.transform = `scale(${zoomLevel})`;
+            element.style.transformOrigin = 'center';
+        }
+    });
+}
+
 export async function activate(ctx: RendererContext<void>) {
     const markdownItRenderer = await ctx.getRenderer('vscode.markdown-it-renderer') as MarkdownItRenderer | undefined;
     if (!markdownItRenderer) {
@@ -39,6 +53,7 @@ export async function activate(ctx: RendererContext<void>) {
                 const liveEl = shadowRoot?.getElementById(mermaidContainer.id);
                 if (liveEl) {
                     liveEl.innerHTML = content;
+                    addZoomToElement(liveEl as HTMLElement);
                 } else {
                     console.warn('Could not find live element to render mermaid to');
                 }
