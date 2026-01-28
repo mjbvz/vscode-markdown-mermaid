@@ -67,10 +67,10 @@ To pan around a diagram:
 - **Click and drag** — Hold <kbd>alt</kbd> (<kbd>option</kbd> on Mac) and click and drag to pan
 - **Pan mode** — Click the `pan mode` button in the navigation controls to enable click-and-drag panning without holding <kbd>alt</kbd>. Click it again to turn off `pan mode`.
 
-By default, click-and-drag panning requires holding the <kbd>alt</alt> key to prevent accidental panning. Use `markdown-mermaid.mouseNavigation.enabled` to change this:
+By default, click-and-drag panning requires holding the <kbd>alt</kbd> key to prevent accidental panning. Use `markdown-mermaid.mouseNavigation.enabled` to change this:
 
 - `always` — Click and drag always pans (no modifier key needed)
-- `alt` — Click and drag only pans when holding <kbd>alt</alt> (default)
+- `alt` — Click and drag only pans when holding <kbd>alt</kbd> (default)
 - `never` — Disable mouse-based panning (controls and pinch-to-zoom still work)
 
 
