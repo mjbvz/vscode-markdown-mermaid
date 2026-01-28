@@ -1,6 +1,6 @@
 {
   "name": "markdown-mermaid",
-  "version": "1.29.0",
+  "version": "1.30.0",
   "displayName": "Markdown Preview Mermaid Support",
   "description": "Adds Mermaid diagram and flowchart support to VS Code's builtin markdown preview",
   "icon": "docs/logo.png",
@@ -9,7 +9,10 @@
     "markdown",
     "flowchart",
     "diagram",
-    "preview"
+    "diagrams",
+    "chart",
+    "preview",
+    "mermaidjs"
   ],
   "publisher": "bierner",
   "license": "MIT",
@@ -20,7 +23,7 @@
     "url": "https://github.com/mjbvz/vscode-markdown-mermaid/issues"
   },
   "engines": {
-    "vscode": "^1.72.0"
+    "vscode": "^1.100.0"
   },
   "activationEvents": [],
   "main": "./dist/index.js",
@@ -35,7 +38,7 @@
     "notebookRenderer": [
       {
         "id": "bierner.markdown-it.mermaid-extension",
-        "displayName": "Markdown it Mermaid renderer",
+        "displayName": "Markdown-It Mermaid renderer",
         "entrypoint": {
           "extends": "vscode.markdown-it-renderer",
           "path": "./dist-notebook/index.bundle.js"
@@ -85,6 +88,36 @@
           "type": "number",
           "default": 50000,
           "description": "The maximum allowed size of the users text diagram."
+        },
+        "markdown-mermaid.mouseNavigation.enabled": {
+          "type": "string",
+          "description": "Controls when mouse-based navigation (panning and zooming) is enabled on mermaid diagrams.",
+          "enum": [
+            "always",
+            "alt",
+            "never"
+          ],
+          "default": "alt",
+          "markdownEnumDescriptions": [
+            "Always enable mouse navigation on mermaid diagrams",
+            "Only enable mouse navigation when holding down `alt` (`option` on mac). Gestures such as pinch-to-zoom will still work without `alt`.",
+            "Disable mouse navigation"
+          ]
+        },
+        "markdown-mermaid.controls.show": {
+          "type": "string",
+          "description": "Enables/disables showing UI controls on mermaid diagrams.",
+          "enum": [
+            "never",
+            "onHoverOrFocus",
+            "always"
+          ],
+          "enumDescriptions": [
+            "Never show controls",
+            "Show zoom controls when hovering over or focusing on a diagram",
+            "Always show zoom controls"
+          ],
+          "default": "onHoverOrFocus"
         }
       }
     }
@@ -103,9 +136,10 @@
     "@types/vscode-notebook-renderer": "^1.72.0",
     "@typescript-eslint/eslint-plugin": "^8.11.0",
     "@typescript-eslint/parser": "^8.11.0",
+    "@vscode/codicons": "^0.0.44",
     "esbuild": "^0.21.0",
     "eslint": "^9.13.0",
-    "mermaid": "^11.12.0",
+    "mermaid": "^11.12.2",
     "npm-run-all": "^4.1.5",
     "typescript": "^5.4.5",
     "typescript-eslint": "^8.11.0"
