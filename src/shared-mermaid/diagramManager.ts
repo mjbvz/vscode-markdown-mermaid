@@ -312,7 +312,10 @@ export class DiagramElement {
             const mouseX = e.clientX - rect.left;
             const mouseY = e.clientY - rect.top;
 
-            const delta = -e.deltaY * zoomFactor;
+            // Pinch gestures report smaller deltaY values than scroll wheel,
+            // so we apply a multiplier to make them feel equally sensitive
+            const pinchMultiplier = isPinchZoom ? 10 : 1;
+            const delta = -e.deltaY * zoomFactor * pinchMultiplier;
             const newScale = Math.min(maxScale, Math.max(minScale, this.scale * (1 + delta)));
 
             const scaleFactor = newScale / this.scale;
