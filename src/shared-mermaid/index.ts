@@ -6,14 +6,19 @@ import { iconPackConfig, requireIconPack } from './iconPackConfig';
 function renderMermaidElement(
     mermaidContainer: HTMLElement,
     writeOut: (mermaidContainer: HTMLElement, content: string) => void,
+    signal?: AbortSignal,
 ): {
     containerId: string;
     p: Promise<void>;
-} {
+} | undefined {
     const containerId = `mermaid-container-${crypto.randomUUID()}`;
     const diagramId = `mermaid-${crypto.randomUUID()}`;
 
-    const source = mermaidContainer.textContent ?? '';
+    const source = (mermaidContainer.textContent ?? '').trim();
+    if (!source) {
+        return;
+    }
+
     mermaidContainer.id = containerId;
     mermaidContainer.innerHTML = '';
 
@@ -23,13 +28,20 @@ function renderMermaidElement(
             try {
                 // Catch any parsing errors
                 await mermaid.parse(source);
+                if (signal?.aborted) {
+                    throw new DOMException('Aborted', 'AbortError');
+                }
 
                 //  Render the diagram
                 const renderResult = await mermaid.render(diagramId, source);
+                if (signal?.aborted) {
+                    throw new DOMException('Aborted', 'AbortError');
+                }
+
                 writeOut(mermaidContainer, renderResult.svg);
                 renderResult.bindFunctions?.(mermaidContainer);
             } catch (error) {
-                if (error instanceof Error) {
+                if (error instanceof Error && error.name !== 'AbortError') {
                     const errorMessageNode = document.createElement('pre');
                     errorMessageNode.className = 'mermaid-error';
                     errorMessageNode.innerText = error.message;
@@ -42,7 +54,7 @@ function renderMermaidElement(
     };
 }
 
-export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void): Promise<void> {
+export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: (mermaidContainer: HTMLElement, content: string) => void, signal?: AbortSignal): Promise<void> {
     // Delete existing mermaid outputs
     for (const el of root.querySelectorAll('.mermaid > svg')) {
         el.remove();
@@ -56,12 +68,13 @@ export async function renderMermaidBlocksInElement(root: HTMLElement, writeOut: 
     // We need to generate all the container ids sync, but then do the actual rendering async
     const renderPromises: Array<Promise<void>> = [];
     for (const mermaidContainer of root.querySelectorAll<HTMLElement>('.mermaid')) {
-        renderPromises.push(renderMermaidElement(mermaidContainer, writeOut).p);
+        const result = renderMermaidElement(mermaidContainer, writeOut, signal);
+        if (result) {
+            renderPromises.push(result.p);
+        }
     }
 
-    for (const p of renderPromises) {
-        await p;
-    }
+    await Promise.all(renderPromises);
 }
 
 function registerIconPacks(config: Array<{ prefix?: string; pack: string }>) {
