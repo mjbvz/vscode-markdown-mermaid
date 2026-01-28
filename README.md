@@ -76,51 +76,56 @@ By default, click-and-drag panning requires holding the <kbd>alt</kbd> key to pr
 
 ## Configuration
 
-- `markdown-mermaid.lightModeTheme` — Configures the Mermaid theme used when VS Code is using a light color theme.
+### `markdown-mermaid.lightModeTheme`
 
-    Supported values:
+Configures the Mermaid theme used when VS Code is using a light color theme. Supported values:
 
-    - `base`
-    - `forest`
-    - `dark`
-    - `default`
-    - `neutral`
-    
-    Currently not supported in notebooks.
+- `base`
+- `forest`
+- `dark`
+- `default`
+- `neutral`
 
-- `markdown-mermaid.darkModeTheme` — Configures the Mermaid theme used when VS Code is using a dark color theme.
-    
-    Supported values:
+Currently not supported in notebooks.
 
-    - `base`
-    - `forest`
-    - `dark`
-    - `default`
-    - `neutral`
-    
-    Currently not supported in notebooks.
+### `markdown-mermaid.darkModeTheme`
 
-- `markdown-mermaid.languages` — Configures language ids used to identify Mermaid code blocks in markdown. The default is `["mermaid"]`.
+Configures the Mermaid theme used when VS Code is using a dark color theme. Supported values:
 
-- `markdown-mermaid.mouseNavigation.enabled` — Controls when mouse-based navigation (panning and zooming) is enabled. The default is `alt`.
-    
-    Supported values:
+- `base`
+- `forest`
+- `dark`
+- `default`
+- `neutral`
 
-    - `always` — Always enable mouse navigation on mermaid diagrams
-    - `alt` — Only enable mouse navigation when holding down <kbd>alt</kbd> (<kbd>option</kbd> on Mac)
-    - `never` — Disable mouse navigation
+Currently not supported in notebooks.
 
-- `markdown-mermaid.controls.show` — When to show navigation control buttons. The default is `onHoverOrFocus`.
-    
-    Supported values:
+### `markdown-mermaid.languages`
 
-    - `never` — Never show navigation controls
-    - `onHoverOrFocus` — Show navigation controls when hovering over or focusing on a diagram
-    - `always` — Always show navigation controls
+Configures language ids used to identify Mermaid code blocks in markdown. The default is `["mermaid"]`.
 
-- `markdown-mermaid.maxTextSize` — Maximum allowed size of diagram text. The default is `50000`.
+### `markdown-mermaid.mouseNavigation.enabled`
 
-### Using custom CSS in the Markdown Preview
+Controls when mouse-based navigation (panning and zooming) is enabled. The default is `alt`. Supported values:
+
+- `always` — Always enable mouse navigation on mermaid diagrams
+- `alt` — Only enable mouse navigation when holding down <kbd>alt</kbd> (<kbd>option</kbd> on Mac)
+- `never` — Disable mouse navigation
+
+### `markdown-mermaid.controls.show`
+
+When to show navigation control buttons. The default is `onHoverOrFocus`. Supported values:
+
+- `never` — Never show navigation controls
+- `onHoverOrFocus` — Show navigation controls when hovering over or focusing on a diagram
+- `always` — Always show navigation controls
+
+### `markdown-mermaid.maxTextSize`
+
+Maximum allowed size of diagram text. The default is `50000`.
+
+
+## Using custom CSS in the Markdown Preview
 
 You can use the built-in functionality to add custom CSS. More info can be found in the [markdown.styles documentation](https://code.visualstudio.com/Docs/languages/markdown#_using-your-own-css)
 
