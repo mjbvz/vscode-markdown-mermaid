@@ -1,16 +1,10 @@
-export const iconPackConfig = [
+export const iconPacks = [
     {
-        prefix: 'logos',
-        pack: '@iconify-json/logos',
+        name: 'logos',
+        loader: () => import('@iconify-json/logos').then(m => m.icons),
     },
     {
-        prefix: 'mdi',
-        pack: '@iconify-json/mdi',
-    }
+        name: 'mdi',
+        loader: () => import('@iconify-json/mdi').then(m => m.icons),
+    },
 ];
-
-export const requireIconPack = require.context(
-    '@iconify-json',
-    true,
-    /^\.\/(logos|mdi)$/,
-);
