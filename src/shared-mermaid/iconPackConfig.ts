@@ -7,4 +7,4 @@ export const iconPacks = [
         name: 'mdi',
         loader: () => import('@iconify-json/mdi').then(m => m.icons),
     },
-];
+];  

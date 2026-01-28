@@ -1,15 +1,11 @@
 {
     "extends": "../tsconfig.base.json",
     "compilerOptions": {
-        "module": "esnext",
-        "moduleResolution": "bundler",
+        "module": "es2020",
         "lib": [
             "es2020",
             "DOM",
             "DOM.Iterable"
         ]
-    },
-    "exclude": [
-        "node_modules"
-    ]
+    }
 }

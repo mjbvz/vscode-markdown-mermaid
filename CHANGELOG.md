@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.30.0 - January 28, 2026
+- Added pan and zoom support for mermaid diagrams. Pan by dragging, zoom with scroll wheel or pinch gestures.
+- Added `markdown-mermaid.mouseNavigation.enabled` setting to control when mouse navigation is enabled.
+- Added `markdown-mermaid.controls.show` setting to control when zoom control buttons are visible.
+
 ## 1.29.0 - September 23, 2025
 - Pick up Mermaid 11.12.0.
 

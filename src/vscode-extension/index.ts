@@ -1,10 +1,11 @@
 import type MarkdownIt from 'markdown-it';
 import * as vscode from 'vscode';
 import { extendMarkdownItWithMermaid } from '../shared-md-mermaid';
-import { configSection } from './config';
-import { injectMermaidTheme } from './themeing';
+import { configSection, injectMermaidConfig } from './config';
 
 export function activate(ctx: vscode.ExtensionContext) {
+    // Reload the previews when the configuration changes. This is needed so that the markdown plugin can see the
+    // latest configuration values
     ctx.subscriptions.push(vscode.workspace.onDidChangeConfiguration(e => {
         if (e.affectsConfiguration(configSection) || e.affectsConfiguration('workbench.colorTheme')) {
             vscode.commands.executeCommand('markdown.preview.refresh');
@@ -18,7 +19,7 @@ export function activate(ctx: vscode.ExtensionContext) {
                     return vscode.workspace.getConfiguration(configSection).get<string[]>('languages', ['mermaid']);
                 }
             });
-            md.use(injectMermaidTheme);
+            md.use(injectMermaidConfig);
             return md;
         }
     };
