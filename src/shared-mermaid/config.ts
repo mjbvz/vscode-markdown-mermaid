@@ -4,6 +4,8 @@ export interface MermaidExtensionConfig {
     readonly maxTextSize: number;
     readonly clickDrag: ClickDragMode;
     readonly showControls: ShowControlsMode;
+    readonly resizable: boolean;
+    readonly maxHeight: string;
 }
 
 export const enum ShowControlsMode {

@@ -73,11 +73,15 @@ By default, click-and-drag panning requires holding the <kbd>alt</kbd> key to pr
 - `alt` — Click and drag only pans when holding <kbd>alt</kbd> (default)
 - `never` — Disable mouse-based panning (controls and pinch-to-zoom still work)
 
+### Resizing
+Diagrams can be resized vertically by dragging the bottom edge. This is most useful if you use the `markdown-mermaid.maxHeight` setting or use css to limit the diagram's natural size.
+
+Use `markdown-mermaid.resizable` to disable this behavior, or `markdown-mermaid.maxHeight` to set a maximum height.
+
 
 ## Configuration
 
 ### `markdown-mermaid.lightModeTheme`
-
 Configures the Mermaid theme used when VS Code is using a light color theme. Supported values:
 
 - `base`
@@ -89,7 +93,6 @@ Configures the Mermaid theme used when VS Code is using a light color theme. Sup
 Currently not supported in notebooks.
 
 ### `markdown-mermaid.darkModeTheme`
-
 Configures the Mermaid theme used when VS Code is using a dark color theme. Supported values:
 
 - `base`
@@ -101,11 +104,9 @@ Configures the Mermaid theme used when VS Code is using a dark color theme. Supp
 Currently not supported in notebooks.
 
 ### `markdown-mermaid.languages`
-
 Configures language ids used to identify Mermaid code blocks in markdown. The default is `["mermaid"]`.
 
 ### `markdown-mermaid.mouseNavigation.enabled`
-
 Controls when mouse-based navigation (panning and zooming) is enabled. The default is `alt`. Supported values:
 
 - `always` — Always enable mouse navigation on mermaid diagrams
@@ -119,6 +120,19 @@ When to show navigation control buttons. The default is `onHoverOrFocus`. Suppor
 - `never` — Never show navigation controls
 - `onHoverOrFocus` — Show navigation controls when hovering over or focusing on a diagram
 - `always` — Always show navigation controls
+
+### `markdown-mermaid.resizable`
+Allow diagrams to be resized vertically by dragging the bottom edge. The default is `true`.
+
+When enabled, you can drag the bottom edge of any diagram to adjust its height. The custom height is preserved as long as the diagram content doesn't change.
+
+### `markdown-mermaid.maxHeight`
+Maximum height for diagrams. Can be a number (pixels) or a CSS value like `80vh` or `400px`. Leave empty for no limit. The default is empty (no limit).
+
+Examples:
+- `400` — 400 pixels.
+- `80vh` — 80% of the viewport (markdown-preview) height.
+
 
 ### `markdown-mermaid.maxTextSize`
 

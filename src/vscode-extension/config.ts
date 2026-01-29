@@ -27,6 +27,8 @@ export function injectMermaidConfig(md: MarkdownIt) {
             maxTextSize: config.get('maxTextSize') as number,
             clickDrag: config.get<ClickDragMode>('mouseNavigation.enabled', ClickDragMode.Alt),
             showControls: config.get<ShowControlsMode>('controls.show', ShowControlsMode.OnHoverOrFocus),
+            resizable: config.get<boolean>('resizable', true),
+            maxHeight: config.get<string>('maxHeight', ''),
         };
 
         const escapedConfig = escapeHtmlAttribute(JSON.stringify(configData));

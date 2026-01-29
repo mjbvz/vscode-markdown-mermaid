@@ -104,6 +104,8 @@ const defaultConfig: MermaidExtensionConfig = {
     maxTextSize: 50000,
     clickDrag: ClickDragMode.Alt,
     showControls: ShowControlsMode.OnHoverOrFocus,
+    resizable: true,
+    maxHeight: '',
 };
 
 export function loadExtensionConfig(): MermaidExtensionConfig {

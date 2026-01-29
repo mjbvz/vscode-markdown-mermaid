@@ -118,6 +118,16 @@
             "Always show zoom controls"
           ],
           "default": "onHoverOrFocus"
+        },
+        "markdown-mermaid.resizable": {
+          "type": "boolean",
+          "default": true,
+          "description": "Allow diagrams to be resized vertically by dragging the bottom edge."
+        },
+        "markdown-mermaid.maxHeight": {
+          "type": "string",
+          "default": "",
+          "markdownDescription": "Maximum height for diagrams. Can be a number (pixels) or a CSS value like `80vh` or `400px`. Leave empty to try to automatically size diagrams based on their content."
         }
       }
     }

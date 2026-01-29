@@ -11,6 +11,7 @@ export interface PanZoomState {
     readonly translateX: number;
     readonly translateY: number;
     readonly hasInteracted: boolean;
+    readonly customHeight?: number;
 }
 
 /**
@@ -123,10 +124,18 @@ export class DiagramElement {
     private startX = 0;
     private startY = 0;
 
+    private isResizing = false;
+    private resizeStartY = 0;
+    private resizeStartHeight = 0;
+    private customHeight: number | undefined;
+
     private panModeButton: HTMLButtonElement | null = null;
+    private readonly resizeHandle: HTMLElement | null = null;
 
     private readonly showControls: ShowControlsMode;
     private readonly clickDrag: ClickDragMode;
+    private readonly resizable: boolean;
+    private readonly maxHeight: string;
 
     private readonly abortController = new AbortController();
 
@@ -138,6 +147,8 @@ export class DiagramElement {
     ) {
         this.showControls = config.showControls;
         this.clickDrag = config.clickDrag;
+        this.resizable = config.resizable;
+        this.maxHeight = config.maxHeight;
 
         // Restore state if provided
         if (initialState) {
@@ -145,11 +156,20 @@ export class DiagramElement {
             this.translateX = initialState.translateX;
             this.translateY = initialState.translateY;
             this.hasInteracted = initialState.hasInteracted;
+            this.customHeight = initialState.customHeight;
         }
 
         this.content.style.transformOrigin = '0 0';
         this.container.style.overflow = 'hidden';
         this.container.tabIndex = 0;
+
+        // Apply max height if configured and valid
+        if (this.maxHeight) {
+            const sanitizedMaxHeight = sanitizeCssLength(this.maxHeight);
+            if (sanitizedMaxHeight) {
+                this.container.style.maxHeight = sanitizedMaxHeight;
+            }
+        }
 
         // Set initial cursor based on click-drag mode
         this.setCursor(false, false);
@@ -157,6 +177,11 @@ export class DiagramElement {
         this.setupEventListeners();
         if (this.showControls !== ShowControlsMode.Never) {
             this.createZoomControls();
+        }
+
+        if (this.resizable) {
+            this.resizeHandle = this.createResizeHandle();
+            this.container.appendChild(this.resizeHandle);
         }
     }
 
@@ -175,6 +200,7 @@ export class DiagramElement {
             translateX: this.translateX,
             translateY: this.translateY,
             hasInteracted: this.hasInteracted,
+            customHeight: this.customHeight,
         };
     }
 
@@ -238,6 +264,46 @@ export class DiagramElement {
         }, { signal });
 
         this.container.appendChild(controls);
+    }
+
+    private createResizeHandle(): HTMLElement {
+        const signal = this.abortController.signal;
+
+        const resizeHandle = document.createElement('div');
+        resizeHandle.className = 'mermaid-resize-handle';
+        resizeHandle.title = 'Drag to resize';
+
+        resizeHandle.addEventListener('mousedown', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.isResizing = true;
+            this.resizeStartY = e.clientY;
+            this.resizeStartHeight = this.container.getBoundingClientRect().height;
+            document.body.style.cursor = 'ns-resize';
+        }, { signal });
+
+        document.addEventListener('mousemove', e => {
+            if (!this.isResizing) return;
+            // Check if mouse button was released outside the window
+            if (e.buttons === 0) {
+                this.isResizing = false;
+                document.body.style.cursor = '';
+                return;
+            }
+            const deltaY = e.clientY - this.resizeStartY;
+            const newHeight = Math.max(100, this.resizeStartHeight + deltaY);
+            this.container.style.height = `${newHeight}px`;
+            this.customHeight = newHeight;
+        }, { signal });
+
+        document.addEventListener('mouseup', () => {
+            if (this.isResizing) {
+                this.isResizing = false;
+                document.body.style.cursor = '';
+            }
+        }, { signal });
+
+        return resizeHandle;
     }
 
     private togglePanMode(): void {
@@ -398,8 +464,9 @@ export class DiagramElement {
         const svgHeight = rect.height;
         this.content.style.transform = oldTransform;
 
-        // Set the wrapper height to match the SVG's intrinsic height
-        this.container.style.height = `${svgHeight}px`;
+        // Use custom height if set, otherwise use the SVG's intrinsic height
+        const containerHeight = this.customHeight ?? svgHeight;
+        this.container.style.height = `${containerHeight}px`;
 
         // Start at scale 1, centered
         this.scale = 1;
@@ -415,6 +482,7 @@ export class DiagramElement {
         this.translateX = 0;
         this.translateY = 0;
         this.hasInteracted = false;
+        this.customHeight = undefined;
         this.centerContent();
     }
 
@@ -436,5 +504,14 @@ export class DiagramElement {
         this.scale = newScale;
         this.applyTransform();
         this.hasInteracted = true;
+    }
+}
+
+function sanitizeCssLength(value: string): string {
+    try {
+        const parsed = CSSNumericValue.parse(value);
+        return parsed.toString();
+    } catch {
+        return '';
     }
 }

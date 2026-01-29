@@ -66,3 +66,34 @@
 .mermaid-content {
     transform-origin: 0 0;
 }
+
+.mermaid-resize-handle {
+    position: absolute;
+    bottom: 0;
+    left: 0;
+    right: 0;
+    height: 10px;
+    cursor: ns-resize;
+    background: transparent;
+    z-index: 50;
+}
+
+.mermaid-resize-handle::after {
+    content: '';
+    position: absolute;
+    bottom: 2px;
+    left: 50%;
+    transform: translateX(-50%);
+    width: 40px;
+    height: 3px;
+    background: var(--vscode-editorWidget-border, rgba(128, 128, 128, 0.4));
+    border-radius: 2px;
+    opacity: 0;
+    transition: opacity 0.15s ease-in-out;
+    transition-delay: 0s;
+}
+
+.mermaid-resize-handle:hover::after {
+    opacity: 1;
+    transition-delay: 0.3s;
+}
