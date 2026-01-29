@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.30.2 - Unreleased
+- Fix some diagrams having extra height padding
+
 ## 1.30.1 - January 29, 2026
 - Always try to show whole diagram when initially rendered.
 

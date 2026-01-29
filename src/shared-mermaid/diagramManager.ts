@@ -388,6 +388,8 @@ export class DiagramElement {
             return;
         }
 
+        svg.removeAttribute('height');
+
         // Get the intrinsic size from SVG attributes (width/height or viewBox)
         const oldTransform = this.content.style.transform;
         this.content.style.transform = 'none';
