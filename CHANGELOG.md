@@ -1,5 +1,10 @@
 # Change Log
 
+## 1.31.0 - January 29, 2026
+- Added vertical resizing of diagrams by dragging the bottom edge.
+- Added `markdown-mermaid.resizable` setting to enable/disable diagram resizing.
+- Added `markdown-mermaid.maxHeight` setting to limit diagram height.
+
 ## 1.30.2 - January 29, 2026
 - Fix some diagrams having extra height padding.
 - Tweaking size of controls.
