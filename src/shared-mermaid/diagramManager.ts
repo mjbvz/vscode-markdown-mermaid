@@ -26,7 +26,6 @@ export class DiagramManager {
     private config: MermaidExtensionConfig;
 
     constructor(config: MermaidExtensionConfig) {
-        console.log('DiagramManager new');
         this.config = config;
 
         this.diagramStyleSheet = document.createElement('style');
@@ -69,7 +68,6 @@ export class DiagramManager {
 
         // Create and track instance
         const state = this.savedStates.get(id);
-        console.log(`setup ${id} with state:`, state);
         const instance = new DiagramElement(wrapper, content, this.config, state);
         this.instances.set(id, instance);
 
@@ -385,15 +383,28 @@ export class DiagramElement {
     }
 
     private centerContent(): void {
-        const containerRect = this.container.getBoundingClientRect();
         const svg = this.content.querySelector('svg');
         if (!svg) {
             return;
         }
-        const svgRect = svg.getBoundingClientRect();
 
-        this.translateX = (containerRect.width - svgRect.width) / 2;
-        this.translateY = (containerRect.height - svgRect.height) / 2;
+        // Get the intrinsic size from SVG attributes (width/height or viewBox)
+        const oldTransform = this.content.style.transform;
+        this.content.style.transform = 'none';
+        const rect = svg.getBoundingClientRect();
+        const svgWidth = rect.width;
+        const svgHeight = rect.height;
+        this.content.style.transform = oldTransform;
+
+        // Set the wrapper height to match the SVG's intrinsic height
+        this.container.style.height = `${svgHeight}px`;
+
+        // Start at scale 1, centered
+        this.scale = 1;
+        const containerRect = this.container.getBoundingClientRect();
+        this.translateX = (containerRect.width - svgWidth) / 2;
+        this.translateY = 0;
+
         this.applyTransform();
     }
 
@@ -402,11 +413,7 @@ export class DiagramElement {
         this.translateX = 0;
         this.translateY = 0;
         this.hasInteracted = false;
-        this.applyTransform();
-
-        requestAnimationFrame(() => {
-            this.centerContent();
-        });
+        this.centerContent();
     }
 
     public zoomIn(): void {
