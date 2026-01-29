@@ -1,5 +1,8 @@
 # Change Log
 
+## 1.30.1 - January 29, 2026
+- Always try to show whole diagram when initially rendered.
+
 ## 1.30.0 - January 28, 2026
 - Added pan and zoom support for mermaid diagrams. Pan by dragging, zoom with scroll wheel or pinch gestures.
 - Added `markdown-mermaid.mouseNavigation.enabled` setting to control when mouse navigation is enabled.
