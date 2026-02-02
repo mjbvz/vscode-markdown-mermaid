@@ -6,10 +6,19 @@ const minScale = 0.1;
 const maxScale = 5;
 const zoomFactor = 0.002;
 
+interface Dimensions {
+    readonly width: number;
+    readonly height: number;
+}
+
+interface Point {
+    readonly x: number;
+    readonly y: number;
+}
+
 export interface PanZoomState {
     readonly scale: number;
-    readonly translateX: number;
-    readonly translateY: number;
+    readonly translate: Point;
     readonly hasInteracted: boolean;
     readonly customHeight?: number;
 }
@@ -114,8 +123,10 @@ export class DiagramManager {
  */
 export class DiagramElement {
     private scale = 1;
-    private translateX = 0;
-    private translateY = 0;
+    private translate: Point = { x: 0, y: 0 };
+
+    /** Cached SVG intrinsic dimensions from last layout */
+    private lastSvgSize: Dimensions = { width: 0, height: 0 };
 
     private isPanning = false;
     private hasDragged = false;
@@ -131,6 +142,7 @@ export class DiagramElement {
 
     private panModeButton: HTMLButtonElement | null = null;
     private readonly resizeHandle: HTMLElement | null = null;
+    private readonly resizeObserver: ResizeObserver;
 
     private readonly showControls: ShowControlsMode;
     private readonly clickDrag: ClickDragMode;
@@ -153,8 +165,7 @@ export class DiagramElement {
         // Restore state if provided
         if (initialState) {
             this.scale = initialState.scale;
-            this.translateX = initialState.translateX;
-            this.translateY = initialState.translateY;
+            this.translate = { x: initialState.translate.x, y: initialState.translate.y };
             this.hasInteracted = initialState.hasInteracted;
             this.customHeight = initialState.customHeight;
         }
@@ -183,11 +194,17 @@ export class DiagramElement {
             this.resizeHandle = this.createResizeHandle();
             this.container.appendChild(this.resizeHandle);
         }
+
+        // Watch for container size changes
+        this.resizeObserver = new ResizeObserver(() => this.handleResize());
+        this.resizeObserver.observe(this.container);
     }
 
     public initialize(): void {
         if (this.hasInteracted) {
             // Restore previous transform if user had interacted
+            // Also cache SVG dimensions for resize calculations
+            this.tryResizeContainerToFitSvg();
             this.applyTransform();
         } else {
             this.centerContent();
@@ -197,8 +214,7 @@ export class DiagramElement {
     public getState(): PanZoomState {
         return {
             scale: this.scale,
-            translateX: this.translateX,
-            translateY: this.translateY,
+            translate: { x: this.translate.x, y: this.translate.y },
             hasInteracted: this.hasInteracted,
             customHeight: this.customHeight,
         };
@@ -206,6 +222,7 @@ export class DiagramElement {
 
     public dispose(): void {
         this.abortController.abort();
+        this.resizeObserver.disconnect();
     }
 
     private setupEventListeners(): void {
@@ -222,8 +239,6 @@ export class DiagramElement {
         this.container.addEventListener('mouseenter', e => this.updateCursor(e), { signal });
         window.addEventListener('keydown', e => this.handleKeyChange(e), { signal });
         window.addEventListener('keyup', e => this.handleKeyChange(e), { signal });
-
-        window.addEventListener('resize', () => this.handleResize(), { signal });
     }
 
     private createZoomControls(): void {
@@ -383,8 +398,10 @@ export class DiagramElement {
             const newScale = Math.min(maxScale, Math.max(minScale, this.scale * (1 + delta)));
 
             const scaleFactor = newScale / this.scale;
-            this.translateX = mouseX - (mouseX - this.translateX) * scaleFactor;
-            this.translateY = mouseY - (mouseY - this.translateY) * scaleFactor;
+            this.translate = {
+                x: mouseX - (mouseX - this.translate.x) * scaleFactor,
+                y: mouseY - (mouseY - this.translate.y) * scaleFactor,
+            };
             this.scale = newScale;
 
             this.applyTransform();
@@ -406,8 +423,8 @@ export class DiagramElement {
         e.stopPropagation();
         this.isPanning = true;
         this.hasDragged = false;
-        this.startX = e.clientX - this.translateX;
-        this.startY = e.clientY - this.translateY;
+        this.startX = e.clientX - this.translate.x;
+        this.startY = e.clientY - this.translate.y;
         this.container.style.cursor = 'grabbing';
     }
 
@@ -420,13 +437,15 @@ export class DiagramElement {
             return;
         }
 
-        const dx = e.clientX - this.startX - this.translateX;
-        const dy = e.clientY - this.startY - this.translateY;
+        const dx = e.clientX - this.startX - this.translate.x;
+        const dy = e.clientY - this.startY - this.translate.y;
         if (Math.abs(dx) > 3 || Math.abs(dy) > 3) {
             this.hasDragged = true;
         }
-        this.translateX = e.clientX - this.startX;
-        this.translateY = e.clientY - this.startY;
+        this.translate = {
+            x: e.clientX - this.startX,
+            y: e.clientY - this.startY,
+        };
         this.applyTransform();
     }
 
@@ -439,48 +458,94 @@ export class DiagramElement {
     }
 
     private applyTransform(): void {
-        this.content.style.transform = `translate(${this.translateX}px, ${this.translateY}px) scale(${this.scale})`;
+        this.content.style.transform = `translate(${this.translate.x}px, ${this.translate.y}px) scale(${this.scale})`;
     }
 
     private handleResize(): void {
-        if (!this.hasInteracted) {
+        if (this.hasInteracted) {
+            // Try to preserve the  visible content as percentage of the SVG,
+            // then restore that same percentage after resize.
+
+            // Step 1: Calculate which SVG point is at the viewport's top-left (0, 0)
+            const svgAtOriginX = -this.translate.x / this.scale;
+            const svgAtOriginY = -this.translate.y / this.scale;
+
+            // Express as percentage of old SVG dimensions
+            const percentX = this.lastSvgSize.width > 0 ? svgAtOriginX / this.lastSvgSize.width : 0;
+            const percentY = this.lastSvgSize.height > 0 ? svgAtOriginY / this.lastSvgSize.height : 0;
+
+            // Step 2: Resize and update cached SVG dimensions
+            if (!this.tryResizeContainerToFitSvg()) {
+                return;
+            }
+
+            // Step 3: Calculate new translate to keep the same percentage at origin
+            const newSvgAtOriginX = percentX * this.lastSvgSize.width;
+            const newSvgAtOriginY = percentY * this.lastSvgSize.height;
+            this.translate = {
+                x: -newSvgAtOriginX * this.scale,
+                y: -newSvgAtOriginY * this.scale,
+            };
+
+            this.applyTransform();
+        } else {
             this.centerContent();
         }
     }
 
-    private centerContent(): void {
+    /**
+     * Resizes the container's height and updates cached SVG dimensions.
+     * 
+     * This will try to preserve the current height if the user has resized the diagram. Otherwise 
+     * it will resize to fit the SVG's intrinsic height.
+     * 
+     * Updates `lastSvgSize` with the SVG's intrinsic dimensions.
+     * 
+     * @returns true if the SVG was found and dimensions were updated, false otherwise.
+     */
+    private tryResizeContainerToFitSvg(): boolean {
         const svg = this.content.querySelector('svg');
         if (!svg) {
-            return;
+            return false;
         }
 
         svg.removeAttribute('height');
 
-        // Get the intrinsic size from SVG attributes (width/height or viewBox)
+        // Get the intrinsic size
         const oldTransform = this.content.style.transform;
         this.content.style.transform = 'none';
         const rect = svg.getBoundingClientRect();
-        const svgWidth = rect.width;
-        const svgHeight = rect.height;
         this.content.style.transform = oldTransform;
 
+        // Update cache
+        this.lastSvgSize = { width: rect.width, height: rect.height };
+
         // Use custom height if set, otherwise use the SVG's intrinsic height
-        const containerHeight = this.customHeight ?? svgHeight;
+        const containerHeight = this.customHeight ?? this.lastSvgSize.height;
         this.container.style.height = `${containerHeight}px`;
+
+        return true;
+    }
+
+    private centerContent(): void {
+        if (!this.tryResizeContainerToFitSvg()) {
+            return;
+        }
 
         // Start at scale 1, centered
         this.scale = 1;
         const containerRect = this.container.getBoundingClientRect();
-        this.translateX = (containerRect.width - svgWidth) / 2;
-        this.translateY = 0;
+        this.translate = {
+            x: (containerRect.width - this.lastSvgSize.width) / 2,
+            y: 0,
+        };
 
         this.applyTransform();
     }
 
     public reset(): void {
         this.scale = 1;
-        this.translateX = 0;
-        this.translateY = 0;
+        this.translate = { x: 0, y: 0 };
         this.hasInteracted = false;
         this.customHeight = undefined;
         this.centerContent();
@@ -499,8 +564,10 @@ export class DiagramElement {
     private zoomAtPoint(factor: number, x: number, y: number): void {
         const newScale = Math.min(maxScale, Math.max(minScale, this.scale * factor));
         const scaleFactor = newScale / this.scale;
-        this.translateX = x - (x - this.translateX) * scaleFactor;
-        this.translateY = y - (y - this.translateY) * scaleFactor;
+        this.translate = {
+            x: x - (x - this.translate.x) * scaleFactor,
+            y: y - (y - this.translate.y) * scaleFactor,
+        };
         this.scale = newScale;
         this.applyTransform();
         this.hasInteracted = true;
