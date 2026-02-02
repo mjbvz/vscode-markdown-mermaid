@@ -140,7 +140,7 @@ export function extendMarkdownItWithMermaid(md: MarkdownIt, config: { languageId
     md.options.highlight = (code: string, lang: string, attrs: string) => {
         const reg = new RegExp('\\b(' + config.languageIds().map(escapeRegExp).join('|') + ')\\b', 'i');
         if (lang && reg.test(lang)) {
-            return `<pre style="all:unset;"><div class="${mermaidLanguageId}">${preProcess(code)}</div></pre>`;
+            return `<pre class="${mermaidLanguageId}" style="all: unset;">${preProcess(code)}</pre>`;
         }
         return highlight?.(code, lang, attrs) ?? code;
     };

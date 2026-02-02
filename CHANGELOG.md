@@ -1,5 +1,26 @@
 # Change Log
 
+## 1.31.1 - Feb 2, 2026
+- Better try to preserve visible area when resizing after panning or zooming.
+- Allow zooming in further.
+
+## 1.31.0 - January 29, 2026
+- Added vertical resizing of diagrams by dragging the bottom edge.
+- Added `markdown-mermaid.resizable` setting to enable/disable diagram resizing.
+- Added `markdown-mermaid.maxHeight` setting to limit diagram height.
+
+## 1.30.2 - January 29, 2026
+- Fix some diagrams having extra height padding.
+- Tweaking size of controls.
+
+## 1.30.1 - January 29, 2026
+- Always try to show whole diagram when initially rendered.
+
+## 1.30.0 - January 28, 2026
+- Added pan and zoom support for mermaid diagrams. Pan by dragging, zoom with scroll wheel or pinch gestures.
+- Added `markdown-mermaid.mouseNavigation.enabled` setting to control when mouse navigation is enabled.
+- Added `markdown-mermaid.controls.show` setting to control when zoom control buttons are visible.
+
 ## 1.29.0 - September 23, 2025
 - Pick up Mermaid 11.12.0.
 
