@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.31.1 - Feb 2, 2026
+- Better try to preserve visible area when resizing after panning or zooming.
+- Allow zooming in further.
+
 ## 1.31.0 - January 29, 2026
 - Added vertical resizing of diagrams by dragging the bottom edge.
 - Added `markdown-mermaid.resizable` setting to enable/disable diagram resizing.
