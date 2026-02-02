@@ -2,8 +2,8 @@ import { ClickDragMode, MermaidExtensionConfig, ShowControlsMode } from './confi
 import diagramStyles from './diagramStyles.css';
 import { IDisposable } from './disposable';
 
-const minScale = 0.1;
-const maxScale = 5;
+const minScale = 0.5;
+const maxScale = 10;
 const zoomFactor = 0.002;
 
 interface Dimensions {
