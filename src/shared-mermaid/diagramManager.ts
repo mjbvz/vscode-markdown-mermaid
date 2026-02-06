@@ -254,6 +254,7 @@ export class DiagramElement {
             <button class="zoom-out-btn" title="Zoom Out"><span class="codicon codicon-zoom-out"></span></button>
             <button class="zoom-in-btn" title="Zoom In"><span class="codicon codicon-zoom-in"></span></button>
             <button class="zoom-reset-btn" title="Reset Zoom"><span class="codicon codicon-screen-normal"></span></button>
+            <button class="fullscreen-btn" title="Fullscreen"><span class="codicon codicon-screen-full"></span></button>
         `;
 
         this.panModeButton = controls.querySelector('.pan-mode-btn');
@@ -276,6 +277,11 @@ export class DiagramElement {
             e.preventDefault();
             e.stopPropagation();
             this.reset();
+        }, { signal });
+        controls.querySelector('.fullscreen-btn')?.addEventListener('click', e => {
+            e.preventDefault();
+            e.stopPropagation();
+            this.openFullscreen();
         }, { signal });
 
         this.container.appendChild(controls);
@@ -541,6 +547,183 @@ export class DiagramElement {
         };
 
         this.applyTransform();
+    }
+
+    private openFullscreen(): void {
+        const svg = this.content.querySelector('svg');
+        if (!svg) {
+            return;
+        }
+
+        const clonedSvg = svg.cloneNode(true) as SVGElement;
+
+        const ac = new AbortController();
+        const signal = ac.signal;
+
+        // Build overlay DOM
+        const overlay = document.createElement('div');
+        overlay.className = 'mermaid-fullscreen-overlay';
+
+        const header = document.createElement('div');
+        header.className = 'mermaid-fullscreen-header';
+
+        const toolbar = document.createElement('div');
+        toolbar.className = 'mermaid-fullscreen-toolbar';
+        toolbar.innerHTML = `
+            <button class="zoom-out-btn" title="Zoom Out"><span class="codicon codicon-zoom-out"></span></button>
+            <button class="zoom-in-btn" title="Zoom In"><span class="codicon codicon-zoom-in"></span></button>
+            <button class="zoom-reset-btn" title="Reset Zoom"><span class="codicon codicon-screen-normal"></span></button>
+        `;
+
+        const closeBtn = document.createElement('button');
+        closeBtn.className = 'mermaid-fullscreen-close';
+        closeBtn.title = 'Close';
+        closeBtn.innerHTML = '<span class="codicon codicon-close"></span>';
+
+        header.appendChild(toolbar);
+        header.appendChild(closeBtn);
+
+        const viewport = document.createElement('div');
+        viewport.className = 'mermaid-fullscreen-viewport';
+
+        const contentEl = document.createElement('div');
+        contentEl.className = 'mermaid-fullscreen-content';
+        contentEl.appendChild(clonedSvg);
+
+        viewport.appendChild(contentEl);
+        overlay.appendChild(header);
+        overlay.appendChild(viewport);
+
+        // Pan/zoom state
+        let fsScale = 1;
+        let fsTranslate = { x: 0, y: 0 };
+        let fsPanning = false;
+        let fsStartX = 0;
+        let fsStartY = 0;
+
+        const applyFsTransform = () => {
+            contentEl.style.transform = `translate(${fsTranslate.x}px, ${fsTranslate.y}px) scale(${fsScale})`;
+        };
+
+        const fsZoomAtPoint = (factor: number, x: number, y: number) => {
+            const newScale = Math.min(maxScale, Math.max(minScale, fsScale * factor));
+            const scaleFactor = newScale / fsScale;
+            fsTranslate = {
+                x: x - (x - fsTranslate.x) * scaleFactor,
+                y: y - (y - fsTranslate.y) * scaleFactor,
+            };
+            fsScale = newScale;
+            applyFsTransform();
+        };
+
+        const close = () => {
+            ac.abort();
+            overlay.remove();
+        };
+
+        // Close handlers
+        closeBtn.addEventListener('click', close, { signal });
+        document.addEventListener('keydown', e => {
+            if (e.key === 'Escape') {
+                close();
+            }
+        }, { signal });
+
+        // Toolbar buttons
+        toolbar.querySelector('.zoom-out-btn')?.addEventListener('click', () => {
+            const rect = viewport.getBoundingClientRect();
+            fsZoomAtPoint(0.8, rect.width / 2, rect.height / 2);
+        }, { signal });
+        toolbar.querySelector('.zoom-in-btn')?.addEventListener('click', () => {
+            const rect = viewport.getBoundingClientRect();
+            fsZoomAtPoint(1.25, rect.width / 2, rect.height / 2);
+        }, { signal });
+        toolbar.querySelector('.zoom-reset-btn')?.addEventListener('click', () => {
+            fsScale = 1;
+            fsTranslate = { x: 0, y: 0 };
+            fitAndCenter();
+        }, { signal });
+
+        // Mouse drag panning (always on)
+        viewport.addEventListener('mousedown', e => {
+            if (e.button !== 0) return;
+            e.preventDefault();
+            fsPanning = true;
+            fsStartX = e.clientX - fsTranslate.x;
+            fsStartY = e.clientY - fsTranslate.y;
+            viewport.style.cursor = 'grabbing';
+        }, { signal });
+
+        document.addEventListener('mousemove', e => {
+            if (!fsPanning) return;
+            if (e.buttons === 0) {
+                fsPanning = false;
+                viewport.style.cursor = '';
+                return;
+            }
+            fsTranslate = {
+                x: e.clientX - fsStartX,
+                y: e.clientY - fsStartY,
+            };
+            applyFsTransform();
+        }, { signal });
+
+        document.addEventListener('mouseup', () => {
+            if (fsPanning) {
+                fsPanning = false;
+                viewport.style.cursor = '';
+            }
+        }, { signal });
+
+        // Wheel zoom (always on)
+        viewport.addEventListener('wheel', e => {
+            e.preventDefault();
+            const rect = viewport.getBoundingClientRect();
+            const mouseX = e.clientX - rect.left;
+            const mouseY = e.clientY - rect.top;
+
+            const isPinch = e.ctrlKey;
+            const pinchMultiplier = isPinch ? 10 : 1;
+            const delta = -e.deltaY * zoomFactor * pinchMultiplier;
+            const newScale = Math.min(maxScale, Math.max(minScale, fsScale * (1 + delta)));
+
+            const scaleFactor = newScale / fsScale;
+            fsTranslate = {
+                x: mouseX - (mouseX - fsTranslate.x) * scaleFactor,
+                y: mouseY - (mouseY - fsTranslate.y) * scaleFactor,
+            };
+            fsScale = newScale;
+            applyFsTransform();
+        }, { passive: false, signal });
+
+        // Fit & center on open
+        const fitAndCenter = () => {
+            const vpRect = viewport.getBoundingClientRect();
+            // Temporarily reset transform to measure SVG
+            contentEl.style.transform = 'none';
+            const svgRect = clonedSvg.getBoundingClientRect();
+            const svgW = svgRect.width;
+            const svgH = svgRect.height;
+
+            if (svgW === 0 || svgH === 0) {
+                applyFsTransform();
+                return;
+            }
+
+            const padding = 40;
+            const availW = vpRect.width - padding * 2;
+            const availH = vpRect.height - padding * 2;
+
+            fsScale = Math.min(1, availW / svgW, availH / svgH);
+            fsTranslate = {
+                x: (vpRect.width - svgW * fsScale) / 2,
+                y: (vpRect.height - svgH * fsScale) / 2,
+            };
+            applyFsTransform();
+        };
+
+        document.body.appendChild(overlay);
+        requestAnimationFrame(fitAndCenter);
     }
 
     public reset(): void {
