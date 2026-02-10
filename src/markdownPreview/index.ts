@@ -35,7 +35,7 @@ async function init() {
     };
 
     mermaid.initialize(config);
-    registerMermaidAddons();
+    await registerMermaidAddons();
 
     const activeIds = new Set<string>();
     await renderMermaidBlocksInElement(document.body, (mermaidContainer, content) => {
