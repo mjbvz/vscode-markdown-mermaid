@@ -1,5 +1,9 @@
 # Change Log
 
+## 1.32.0 - Feb 10, 2026
+- Add tidy-tree layouts for mindmap. Thanks @fissssssh!
+- Fix race for registered diagram types. Thanks @bkbaheti!
+
 ## 1.31.1 - Feb 2, 2026
 - Better try to preserve visible area when resizing after panning or zooming.
 - Allow zooming in further.
