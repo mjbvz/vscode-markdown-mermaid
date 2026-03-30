@@ -25,7 +25,9 @@
   "engines": {
     "vscode": "^1.100.0"
   },
-  "activationEvents": [],
+  "activationEvents": [
+    "onUri"
+  ],
   "main": "./dist/index.js",
   "browser": "./dist/web/index.js",
   "categories": [

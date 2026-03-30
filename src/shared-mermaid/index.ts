@@ -5,6 +5,12 @@ import mermaid, { MermaidConfig } from 'mermaid';
 import { iconPacks } from './iconPackConfig';
 import { ClickDragMode, ShowControlsMode } from './config';
 import { MermaidExtensionConfig } from './config';
+import { generateContentId, hashString } from './markdownBlocks';
+
+interface PreviewRuntimeData {
+    readonly extensionId: string;
+    readonly uriScheme: string;
+}
 
 function renderMermaidElement(
     mermaidContainer: HTMLElement,
@@ -134,32 +140,21 @@ export function loadMermaidConfig(): MermaidConfig {
     };
 }
 
-/**
- * Generate a simple hash from a string for content-based IDs.
- * Uses a fast non-cryptographic hash suitable for deduplication.
- */
-function hashString(str: string): string {
-    let hash = 0;
-    for (let i = 0; i < str.length; i++) {
-        const char = str.charCodeAt(i);
-        hash = ((hash << 5) - hash) + char;
-        hash = hash & hash; // Convert to 32bit integer
-    }
-    // Convert to hex and ensure positive
-    return (hash >>> 0).toString(16).padStart(8, '0');
-}
-
-function generateContentId(source: string, usedIds: Set<string>): string {
-    const hash = hashString(source);
-    let id = `mermaid-${hash}`;
-    let counter = 0;
-
-    // Handle collisions by appending a counter
-    while (usedIds.has(id)) {
-        counter++;
-        id = `mermaid-${hash}-${counter}`;
+export function loadPreviewRuntimeData(): PreviewRuntimeData | undefined {
+    const configSpan = document.getElementById('markdown-mermaid');
+    const runtimeAttr = configSpan?.dataset.previewRuntime;
+    if (!runtimeAttr) {
+        return;
     }
 
-    usedIds.add(id);
-    return id;
+    try {
+        const runtime = JSON.parse(runtimeAttr);
+        if (runtime && typeof runtime.extensionId === 'string' && typeof runtime.uriScheme === 'string') {
+            return runtime;
+        }
+    } catch {
+        // Ignore malformed runtime metadata and fall back to disabling pop-out links.
+    }
 }
+
+export { extractMermaidBlocks, generateContentId, hashString } from './markdownBlocks';

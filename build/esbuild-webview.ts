@@ -4,6 +4,7 @@ import path from 'path';
 const srcDir = path.join(import.meta.dirname, '..', 'src');
 const distPreviewDir = path.join(import.meta.dirname, '..', 'dist-preview');
 const distNotebookDir = path.join(import.meta.dirname, '..', 'dist-notebook');
+const distViewerDir = path.join(import.meta.dirname, '..', 'dist-viewer');
 
 // Plugin to bundle CSS files (with @import resolution) and export as text
 const cssTextPlugin: Plugin = {
@@ -69,13 +70,23 @@ async function main() {
         format: 'esm',
     };
 
+    const viewerOptions: BuildOptions = {
+        ...sharedOptions,
+        entryPoints: {
+            'index.bundle': path.join(srcDir, 'viewer', 'index.ts'),
+        },
+        outdir: distViewerDir,
+        format: 'iife',
+    };
+
     if (isWatch) {
         const previewCtx = await esbuild.context(previewOptions);
         const notebookCtx = await esbuild.context(notebookOptions);
-        await Promise.all([previewCtx.watch(), notebookCtx.watch()]);
+        const viewerCtx = await esbuild.context(viewerOptions);
+        await Promise.all([previewCtx.watch(), notebookCtx.watch(), viewerCtx.watch()]);
         console.log('Watching for changes...');
     } else {
-        await Promise.all([build(previewOptions), build(notebookOptions)]);
+        await Promise.all([build(previewOptions), build(notebookOptions), build(viewerOptions)]);
     }
 }
 

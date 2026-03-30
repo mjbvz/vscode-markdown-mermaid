@@ -23,6 +23,17 @@ export interface PanZoomState {
     readonly customHeight?: number;
 }
 
+export const enum FullscreenBehavior {
+    Overlay = 'overlay',
+    Link = 'link',
+    Disabled = 'disabled',
+}
+
+export interface DiagramManagerOptions {
+    readonly fullscreenBehavior?: FullscreenBehavior;
+    readonly getFullscreenLinkHref?: (id: string) => string | undefined;
+}
+
 /**
  * Manages all DiagramElement instances within a window/document.
  */
@@ -34,9 +45,11 @@ export class DiagramManager {
     private readonly diagramStyleSheet: HTMLStyleElement;
 
     private config: MermaidExtensionConfig;
+    private options: DiagramManagerOptions;
 
-    constructor(config: MermaidExtensionConfig) {
+    constructor(config: MermaidExtensionConfig, options: DiagramManagerOptions = {}) {
         this.config = config;
+        this.options = options;
 
         this.diagramStyleSheet = document.createElement('style');
         this.diagramStyleSheet.className = 'markdown-style mermaid-diagram-styles';
@@ -46,6 +59,10 @@ export class DiagramManager {
 
     public updateConfig(config: MermaidExtensionConfig): void {
         this.config = config;
+    }
+
+    public updateOptions(options: DiagramManagerOptions): void {
+        this.options = options;
     }
 
     /**
@@ -78,7 +95,7 @@ export class DiagramManager {
 
         // Create and track instance
         const state = this.savedStates.get(id);
-        const instance = new DiagramElement(wrapper, content, this.config, state);
+        const instance = new DiagramElement(id, wrapper, content, this.config, this.options, state);
         this.instances.set(id, instance);
 
         // Initialize after DOM update
@@ -141,6 +158,7 @@ export class DiagramElement {
     private customHeight: number | undefined;
 
     private panModeButton: HTMLButtonElement | null = null;
+    private fullscreenButton: HTMLButtonElement | null = null;
     private readonly resizeHandle: HTMLElement | null = null;
     private readonly resizeObserver: ResizeObserver;
 
@@ -148,19 +166,29 @@ export class DiagramElement {
     private readonly clickDrag: ClickDragMode;
     private readonly resizable: boolean;
     private readonly maxHeight: string;
+    private readonly fullscreenBehavior: FullscreenBehavior;
+    private readonly getFullscreenLinkHref?: (id: string) => string | undefined;
 
     private readonly abortController = new AbortController();
 
+    private isFullscreenActive = false;
+    private savedContainerHeight = '';
+    private savedContainerMaxHeight = '';
+
     constructor(
+        private readonly id: string,
         private readonly container: HTMLElement,
         private readonly content: HTMLElement,
         config: MermaidExtensionConfig,
+        options: DiagramManagerOptions,
         initialState?: PanZoomState
     ) {
         this.showControls = config.showControls;
         this.clickDrag = config.clickDrag;
         this.resizable = config.resizable;
         this.maxHeight = config.maxHeight;
+        this.fullscreenBehavior = options.fullscreenBehavior ?? FullscreenBehavior.Overlay;
+        this.getFullscreenLinkHref = options.getFullscreenLinkHref;
 
         // Restore state if provided
         if (initialState) {
@@ -255,6 +283,7 @@ export class DiagramElement {
             <button class="zoom-in-btn" title="Zoom In"><span class="codicon codicon-zoom-in"></span></button>
             <button class="zoom-reset-btn" title="Reset Zoom"><span class="codicon codicon-screen-normal"></span></button>
         `;
+        controls.addEventListener('mousedown', e => e.stopPropagation(), { signal });
 
         this.panModeButton = controls.querySelector('.pan-mode-btn');
         this.panModeButton?.addEventListener('click', e => {
@@ -277,6 +306,36 @@ export class DiagramElement {
             e.stopPropagation();
             this.reset();
         }, { signal });
+
+        if (this.fullscreenBehavior === FullscreenBehavior.Overlay) {
+            this.fullscreenButton = document.createElement('button');
+            this.fullscreenButton.className = 'fullscreen-btn';
+            this.fullscreenButton.title = 'Fullscreen';
+            this.fullscreenButton.innerHTML = '<span class="codicon codicon-screen-full"></span>';
+            this.fullscreenButton.addEventListener('click', e => {
+                e.preventDefault();
+                e.stopPropagation();
+                this.toggleFullscreen();
+            }, { signal });
+            controls.appendChild(this.fullscreenButton);
+
+            window.addEventListener('keydown', e => {
+                if (e.key === 'Escape' && this.isFullscreenActive) {
+                    this.exitFullscreen();
+                }
+            }, { signal });
+        } else if (this.fullscreenBehavior === FullscreenBehavior.Link) {
+            const href = this.getFullscreenLinkHref?.(this.id);
+            if (href) {
+                const fullscreenLink = document.createElement('a');
+                fullscreenLink.className = 'fullscreen-btn';
+                fullscreenLink.href = href;
+                fullscreenLink.title = 'Open in New Window';
+                fullscreenLink.setAttribute('aria-label', 'Open in New Window');
+                fullscreenLink.innerHTML = '<span class="codicon codicon-screen-full"></span>';
+                controls.appendChild(fullscreenLink);
+            }
+        }
 
         this.container.appendChild(controls);
     }
@@ -541,6 +600,52 @@ export class DiagramElement {
         };
 
         this.applyTransform();
+    }
+
+    private toggleFullscreen(): void {
+        if (this.isFullscreenActive) {
+            this.exitFullscreen();
+        } else {
+            this.enterFullscreen();
+        }
+    }
+
+    private enterFullscreen(): void {
+        this.isFullscreenActive = true;
+
+        // Save current inline styles before fullscreen overrides them
+        this.savedContainerHeight = this.container.style.height;
+        this.savedContainerMaxHeight = this.container.style.maxHeight;
+
+        this.container.classList.add('mermaid-fullscreen');
+
+        // Update button icon
+        if (this.fullscreenButton) {
+            const icon = this.fullscreenButton.querySelector('.codicon');
+            icon?.classList.replace('codicon-screen-full', 'codicon-screen-normal');
+            this.fullscreenButton.title = 'Exit Fullscreen';
+        }
+
+        this.container.focus();
+        this.centerContent();
+    }
+
+    private exitFullscreen(): void {
+        this.isFullscreenActive = false;
+        this.container.classList.remove('mermaid-fullscreen');
+
+        // Restore inline styles
+        this.container.style.height = this.savedContainerHeight;
+        this.container.style.maxHeight = this.savedContainerMaxHeight;
+
+        // Update button icon
+        if (this.fullscreenButton) {
+            const icon = this.fullscreenButton.querySelector('.codicon');
+            icon?.classList.replace('codicon-screen-normal', 'codicon-screen-full');
+            this.fullscreenButton.title = 'Fullscreen';
+        }
+
+        this.centerContent();
     }
 
     public reset(): void {
