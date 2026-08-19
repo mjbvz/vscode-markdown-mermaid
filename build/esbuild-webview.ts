@@ -62,6 +62,10 @@ async function main() {
 
     const notebookOptions: BuildOptions = {
         ...sharedOptions,
+        // Notebook webviews have VS Code's AMD loader global (`define`), which makes
+        // fastdom's UMD wrapper take the AMD branch and never assign module.exports.
+        // Shadow it so CJS interop works.
+        banner: { js: 'var define = undefined;' },
         entryPoints: {
             'index.bundle': path.join(srcDir, 'notebook', 'index.ts'),
         },
